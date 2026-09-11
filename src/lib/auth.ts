@@ -1,12 +1,25 @@
 import NextAuth from "next-auth";
 import type { NextAuthConfig } from "next-auth";
+import { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { loginSchema } from "@/lib/validators";
 import { getClientIp } from "@/lib/utils";
+import { isRateLimited } from "@/lib/rate-limit";
 import type { DefaultSession } from "next-auth";
+
+// Custom sign-in error so the exact failure code reaches the UI.
+// (Plain Error instances get masked as "Configuration" by Auth.js,
+// which made every failure show a generic message.)
+class LoginError extends CredentialsSignin {
+  code: string;
+  constructor(code: string) {
+    super();
+    this.code = code;
+  }
+}
 
 declare module "next-auth" {
   interface Session {
@@ -27,26 +40,6 @@ declare module "next-auth/jwt" {
     role?: string;
     isBanned?: boolean;
   }
-}
-
-// Simple in-memory rate limiter (per-process; use Upstash in production)
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_MAX = 5;
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-
-function isRateLimited(key: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(key);
-  if (!entry) {
-    rateLimitMap.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return false;
-  }
-  if (now > entry.resetAt) {
-    rateLimitMap.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return false;
-  }
-  entry.count += 1;
-  return entry.count > RATE_LIMIT_MAX;
 }
 
 export const authConfig = {
@@ -70,30 +63,30 @@ export const authConfig = {
       async authorize(credentials, request) {
         const ip = getClientIp(request.headers as Headers);
         if (isRateLimited(ip)) {
-          throw new Error("RateLimitExceeded");
+          throw new LoginError("RateLimitExceeded");
         }
 
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) {
-          throw new Error("InvalidInput");
+          throw new LoginError("InvalidInput");
         }
 
         const { email, password } = parsed.data;
         const user = await prisma.user.findUnique({ where: { email } });
 
         if (!user || !user.password) {
-          throw new Error("InvalidCredentials");
+          throw new LoginError("InvalidCredentials");
         }
         if (user.isBanned) {
-          throw new Error("AccountBanned");
+          throw new LoginError("AccountBanned");
         }
         if (!user.isActive) {
-          throw new Error("AccountInactive");
+          throw new LoginError("AccountInactive");
         }
 
         const valid = await bcrypt.compare(password, user.password);
         if (!valid) {
-          throw new Error("InvalidCredentials");
+          throw new LoginError("InvalidCredentials");
         }
 
         await prisma.user.update({

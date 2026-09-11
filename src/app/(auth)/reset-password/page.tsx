@@ -107,7 +107,7 @@ function ResetPasswordForm() {
           </Button>
           <p className="text-center text-sm text-gray-600">
             <Link href="/login" className="font-semibold text-emerald-600 hover:underline">
-              Login par wapas jayen
+              لاگ اِن پر واپس جائیں
             </Link>
           </p>
         </form>

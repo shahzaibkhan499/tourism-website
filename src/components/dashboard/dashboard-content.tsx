@@ -160,7 +160,7 @@ export function DashboardContent({ user, stats, upcomingEvents, activities }: Da
           <CardHeader className="flex-row items-center justify-between">
             <CardTitle className="text-base">Upcoming Events</CardTitle>
             <Link href="/events" className="flex items-center text-xs font-medium text-emerald-600 hover:underline">
-              View All <ArrowRight className="ml-1 h-3 w-3" />
+              سب دیکھیں <ArrowRight className="ml-1 h-3 w-3" />
             </Link>
           </CardHeader>
           <CardContent>

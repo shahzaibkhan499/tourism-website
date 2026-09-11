@@ -150,7 +150,7 @@ export default function BusinessDetailPage() {
         <Button className="mt-4" variant="outline" asChild>
           <Link href="/business">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Directory par wapas jayen
+            ڈائریکٹری پر واپس جائیں
           </Link>
         </Button>
       </div>

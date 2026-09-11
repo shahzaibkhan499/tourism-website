@@ -30,6 +30,25 @@ export default function LoginForm() {
     }
     setLoading(true);
     try {
+      // Pre-flight check: specific errors (Auth.js masks them as "Configuration")
+      const checkRes = await fetch("/api/auth/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const checkData = await checkRes.json();
+      if (!checkRes.ok) {
+        const messages: Record<string, string> = {
+          InvalidCredentials: "ای میل یا پاس ورڈ غلط ہے",
+          AccountBanned: "آپ کا اکاؤنٹ بند کر دیا گیا ہے",
+          AccountInactive: "آپ کا اکاؤنٹ غیر فعال ہے",
+          RateLimitExceeded: "بہت زیادہ کوششیں۔ 15 منٹ بعد دوبارہ کوشش کریں",
+          InvalidInput: "ای میل اور پاس ورڈ درست لکھیں",
+        };
+        toast.error(messages[checkData.error] || (typeof checkData.details === "string" ? checkData.details : undefined) || "لاگ اِن نہیں ہو سکا");
+        return;
+      }
+
       const result = await signIn("credentials", {
         email,
         password,
@@ -41,6 +60,7 @@ export default function LoginForm() {
           AccountBanned: "آپ کا اکاؤنٹ بند کر دیا گیا ہے",
           AccountInactive: "آپ کا اکاؤنٹ غیر فعال ہے",
           RateLimitExceeded: "بہت زیادہ کوششیں۔ 15 منٹ بعد دوبارہ کوشش کریں",
+          Configuration: "لاگ اِن سروس میں مسئلہ ہے۔ تھوڑی دیر بعد دوبارہ کوشش کریں۔",
         };
         toast.error(messages[result.error] || "لاگ اِن نہیں ہو سکا");
         return;
@@ -70,8 +90,8 @@ export default function LoginForm() {
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome Back!</CardTitle>
-        <CardDescription>Apne khandaan ke paas wapas jayen</CardDescription>
+        <CardTitle className="text-2xl">خوش آمدید!</CardTitle>
+        <CardDescription>اپنے خاندان کے پاس واپس جائیں</CardDescription>
       </CardHeader>
       <CardContent>
         <Button
@@ -135,7 +155,7 @@ export default function LoginForm() {
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Password</Label>
               <Link href="/forgot-password" className="text-xs font-medium text-emerald-600 hover:underline">
-                Forgot Password?
+                پاس ورڈ بھول گئے؟
               </Link>
             </div>
             <div className="relative">
@@ -166,9 +186,9 @@ export default function LoginForm() {
         </form>
 
         <p className="mt-5 text-center text-sm text-gray-600">
-          Account nahi hai?{" "}
+          اکاؤنٹ نہیں ہے؟{" "}
           <Link href="/register" className="font-semibold text-emerald-600 hover:underline">
-            Register karein
+            رجسٹر کریں
           </Link>
         </p>
       </CardContent>

@@ -1,5 +1,6 @@
 import { TreePine } from "lucide-react";
 import Link from "next/link";
+import { APP_NAME } from "@/lib/constants";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,7 +10,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <TreePine className="h-6 w-6" />
         </div>
         <span className="text-xl font-bold">
-          Digital <span className="text-emerald-600">Khandaan</span>
+          {APP_NAME.split(" ")[0]}{" "}
+          <span className="text-emerald-600">{APP_NAME.split(" ").slice(1).join(" ")}</span>
         </span>
       </Link>
       {children}

@@ -24,7 +24,7 @@ export function CTA() {
           <div className="mt-8">
             <Button size="xl" className="bg-white text-emerald-700 shadow-lg hover:bg-emerald-50" asChild>
               <Link href="/register">
-                Free Account بنائیں
+                Free اکاؤنٹ بنائیں
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>

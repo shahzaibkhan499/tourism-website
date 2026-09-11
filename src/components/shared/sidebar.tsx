@@ -63,7 +63,8 @@ export function Sidebar({ isAdmin, mobile, onClose }: SidebarProps) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.svg" alt={APP_NAME} className="h-8 w-8 rounded-lg" />
           <span className="font-bold">
-            Digital <span className="text-emerald-600">Khandaan</span>
+            {APP_NAME.split(" ")[0]}{" "}
+            <span className="text-emerald-600">{APP_NAME.split(" ").slice(1).join(" ")}</span>
           </span>
         </Link>
         {mobile && (

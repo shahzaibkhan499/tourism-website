@@ -92,8 +92,8 @@ export default function RegisterPage() {
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Account بنائیں</CardTitle>
-        <CardDescription>Apne khandaan ko digital banane ka pehla qadam</CardDescription>
+        <CardTitle className="text-2xl">اکاؤنٹ بنائیں</CardTitle>
+        <CardDescription>اپنے خاندان کو ڈیجیٹل بنانے کا پہلا قدم</CardDescription>
       </CardHeader>
       <CardContent>
         <Button type="button" variant="outline" className="w-full" onClick={handleGoogle} disabled={googleLoading}>

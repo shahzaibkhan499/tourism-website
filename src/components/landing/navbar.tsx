@@ -50,7 +50,8 @@ export function Navbar() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.svg" alt={`${APP_NAME} logo`} className="h-9 w-9 rounded-lg" />
           <span className="text-lg font-bold tracking-tight">
-            Digital <span className="text-emerald-600">Khandaan</span>
+            {APP_NAME.split(" ")[0]}{" "}
+            <span className="text-emerald-600">{APP_NAME.split(" ").slice(1).join(" ")}</span>
           </span>
         </Link>
 
@@ -110,7 +111,7 @@ export function Navbar() {
                 <Link href="/login">لاگ اِن کریں</Link>
               </Button>
               <Button asChild>
-                <Link href="/register">Free Mein Shuru Karein</Link>
+                <Link href="/register">فری میں شروع کریں</Link>
               </Button>
             </>
           )}
@@ -154,7 +155,7 @@ export function Navbar() {
               ) : (
                 <>
                   <Button asChild>
-                    <Link href="/register">Free Mein Shuru Karein</Link>
+                    <Link href="/register">فری میں شروع کریں</Link>
                   </Button>
                   <Button variant="outline" asChild>
                     <Link href="/login">لاگ اِن کریں</Link>

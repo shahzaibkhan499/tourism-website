@@ -23,7 +23,7 @@ function safeUrl(raw: string | undefined, fallback: string): URL {
 export const metadata: Metadata = {
   metadataBase: safeUrl(process.env.NEXT_PUBLIC_APP_URL, "http://localhost:3000"),
   title: {
-    default: `${APP_NAME} — Apna Digital Khandaan`,
+    default: `${APP_NAME} — آپ کا ڈیجیٹل خاندان`,
     template: `%s | ${APP_NAME}`,
   },
   description: APP_DESCRIPTION,

@@ -90,7 +90,7 @@ export default function ClanDetailPage() {
         <Button className="mt-4" variant="outline" asChild>
           <Link href="/community">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Community par wapas jayen
+            کمیونٹی پر واپس جائیں
           </Link>
         </Button>
       </div>

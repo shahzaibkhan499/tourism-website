@@ -43,7 +43,8 @@ export function Footer() {
               <TreePine className="h-5 w-5" />
             </div>
             <span className="text-lg font-bold text-white">
-              Digital <span className="text-emerald-400">Khandaan</span>
+              {APP_NAME.split(" ")[0]}{" "}
+              <span className="text-emerald-400">{APP_NAME.split(" ").slice(1).join(" ")}</span>
             </span>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-gray-400">

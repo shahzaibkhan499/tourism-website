@@ -48,7 +48,7 @@ export function Hero() {
         >
           <Button size="xl" className="bg-emerald-600 text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700" asChild>
             <Link href="/register">
-              Free Mein Shuru Karein
+              فری میں شروع کریں
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </Button>

@@ -44,8 +44,8 @@ export default function ForgotPasswordPage() {
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Password Bhool Gaye?</CardTitle>
-        <CardDescription>Fikr na karein — hum reset kar denge</CardDescription>
+        <CardTitle className="text-2xl">پاس ورڈ بھول گئے؟</CardTitle>
+        <CardDescription>فکر نہ کریں — ہم ری سیٹ کر دیں گے</CardDescription>
       </CardHeader>
       <CardContent>
         {sent ? (
@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
             <Button className="mt-6" variant="outline" asChild>
               <Link href="/login">
                 <ArrowLeft className="mr-1 h-4 w-4" />
-                Login par wapas jayen
+                لاگ اِن پر واپس جائیں
               </Link>
             </Button>
           </div>

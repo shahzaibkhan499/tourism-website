@@ -133,7 +133,7 @@ export default function EventDetailPage() {
         <Button className="mt-4" variant="outline" asChild>
           <Link href="/events">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Events par wapas jayen
+            ایونٹس پر واپس جائیں
           </Link>
         </Button>
       </div>

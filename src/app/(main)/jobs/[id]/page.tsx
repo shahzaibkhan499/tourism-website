@@ -138,7 +138,7 @@ export default function JobDetailPage() {
         <Button className="mt-4" variant="outline" asChild>
           <Link href="/jobs">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Jobs par wapas jayen
+            نوکریوں پر واپس جائیں
           </Link>
         </Button>
       </div>

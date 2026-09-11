@@ -71,7 +71,7 @@ export function NotificationBell() {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/notifications" className="justify-center text-center text-sm font-medium text-emerald-600">
-            View All
+            سب دیکھیں
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
