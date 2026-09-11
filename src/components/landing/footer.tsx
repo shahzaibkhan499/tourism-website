@@ -49,7 +49,7 @@ export function Footer() {
           </div>
           <p className="mt-4 text-sm leading-relaxed text-gray-400">
             پاکستان کا پہلا مکمل ڈیجیٹل فیملی پلیٹ فارم۔ اپنے خاندان کو جوڑیں، یادیں محفوظ کریں، اور
-            apni community ke saath barhein.
+            اپنی کمیونٹی کے ساتھ بڑھیں۔
           </p>
         </div>
         {columns.map((col) => (

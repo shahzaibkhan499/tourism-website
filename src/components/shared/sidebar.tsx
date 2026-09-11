@@ -18,6 +18,7 @@ import {
   Bell,
   Accessibility,
   Baby,
+  Network,
   Shield,
   LogOut,
   X,
@@ -33,6 +34,7 @@ interface SidebarProps {
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", urdu: "ڈیش بورڈ", icon: LayoutDashboard },
+  { href: "/tree", label: "Family Tree", urdu: "شجرہ نسب", icon: Network },
   { href: "/events", label: "Events", urdu: "ایونٹس", icon: CalendarDays },
   { href: "/community", label: "Community", urdu: "برادری", icon: Users },
   { href: "/rishta", label: "Rishta", urdu: "رشتہ", icon: Heart },

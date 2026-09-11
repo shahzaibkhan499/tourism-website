@@ -64,6 +64,10 @@ model User {
   reports         Report[]       @relation("Reporter")
   reportedBy      Report[]       @relation("Reported")
   auditLogs       AuditLog[]
+  trees           FamilyTree[]     @relation("TreeCreator")
+  treeMembers     FamilyMember[]   @relation("MemberUser")
+  memberComments  MemberComment[]  @relation("CommentUser")
+  memberStories   MemberStory[]    @relation("StoryAuthor")
 
   @@index([email])
   @@index([clanId])
@@ -595,4 +599,462 @@ model ContactMessage {
   createdAt DateTime @default(now())
 
   @@map("contact_messages")
+}
+
+
+// ============================================================
+// FAMILY TREE MODULE — additive schema (models + enums)
+// ============================================================
+
+enum TreeVisibility {
+  PRIVATE
+  COLLABORATORS
+  CLAN_ONLY
+  REGISTERED
+  PUBLIC
+}
+enum RelationshipType {
+  BIOLOGICAL
+  ADOPTED
+  STEP
+  GUARDIAN
+  FOSTER
+}
+enum MarriageStatus {
+  MARRIED
+  DIVORCED
+  WIDOWED
+  SEPARATED
+  ENGAGED
+}
+enum MarriageType {
+  NIKKAH
+  CIVIL
+  COURT
+}
+enum CollaboratorRole {
+  VIEWER
+  EDITOR
+  ADMIN
+  OWNER
+}
+enum InviteType {
+  VIEW
+  COLLABORATE
+  MERGE
+  CLAIM_PROFILE
+}
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CANCELLED
+}
+enum MergeStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  MERGED
+  CANCELLED
+}
+enum DuplicateStatus {
+  PENDING
+  CONFIRMED_SAME
+  CONFIRMED_DIFFERENT
+  MERGED
+}
+enum LifeEventType {
+  BIRTH
+  AQEEQA
+  BISMILLAH
+  KHATAM_QURAN
+  SCHOOL_ADMISSION
+  GRADUATION
+  FIRST_JOB
+  ENGAGEMENT
+  NIKKAH
+  WALIMA
+  HAJJ
+  UMRAH
+  CHILD_BIRTH
+  JOB_CHANGE
+  PROMOTION
+  RETIREMENT
+  HOUSE_PURCHASE
+  MIGRATION
+  ILLNESS
+  SURGERY
+  DEATH
+  FUNERAL
+  OTHER
+}
+
+model FamilyTree {
+  id              String         @id @default(cuid())
+  name            String
+  description     String?
+  isPublic        Boolean        @default(false)
+  visibility      TreeVisibility @default(PRIVATE)
+  creatorId       String
+  rootMemberId    String?
+  memberCount     Int            @default(0)
+  generationCount Int            @default(0)
+  lastModified    DateTime       @default(now())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  creator       User                  @relation("TreeCreator", fields: [creatorId], references: [id])
+  members       FamilyMember[]
+  collaborators TreeCollaborator[]
+  invites       TreeInvite[]
+  mergeSources  TreeMergeRequest[]    @relation("SourceTree")
+  mergeTargets  TreeMergeRequest[]    @relation("TargetTree")
+  accessLogs    TreeAccessLog[]
+  privacy       TreePrivacySettings?
+  versions      TreeVersion[]
+  groupPhotos   GroupPhoto[]
+
+  @@index([creatorId])
+  @@map("family_trees")
+}
+
+model FamilyMember {
+  id           String      @id @default(cuid())
+  treeId       String
+  userId       String?
+  firstName    String
+  lastName     String
+  nickName     String?
+  gender       Gender
+  dateOfBirth  DateTime?
+  dateOfDeath  DateTime?
+  isAlive      Boolean     @default(true)
+  photo        String?
+  birthPlace   String?
+  deathPlace   String?
+  currentCity  String?
+  occupation   String?
+  education    String?
+  bio          String?     @db.Text
+  phone        String?
+  email        String?
+  generation   Int         @default(1)
+  sortOrder    Int         @default(0)
+  isPrivate    Boolean     @default(false)
+  showInPublic Boolean     @default(true)
+  positionX    Float?
+  positionY    Float?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  tree             FamilyTree               @relation(fields: [treeId], references: [id], onDelete: Cascade)
+  user             User?                    @relation("MemberUser", fields: [userId], references: [id])
+  parentRelations  Relationship[]           @relation("ChildOf")
+  childRelations   Relationship[]           @relation("ParentOf")
+  spouse1Relations Marriage[]               @relation("Spouse1")
+  spouse2Relations Marriage[]               @relation("Spouse2")
+  comments         MemberComment[]
+  lifeEvents       MemberLifeEvent[]
+  stories          MemberStory[]
+  memberPrivacy    MemberPrivacy?
+  photoTags        GroupPhotoTag[]
+  verifications    RelationshipVerification[]
+
+  @@index([treeId])
+  @@index([treeId, generation])
+  @@index([userId])
+  @@map("family_members")
+}
+
+model Relationship {
+  id       String           @id @default(cuid())
+  parentId String
+  childId  String
+  type     RelationshipType @default(BIOLOGICAL)
+  treeId   String
+
+  parent FamilyMember @relation("ParentOf", fields: [parentId], references: [id], onDelete: Cascade)
+  child  FamilyMember @relation("ChildOf", fields: [childId], references: [id], onDelete: Cascade)
+
+  @@unique([parentId, childId])
+  @@index([parentId])
+  @@index([childId])
+  @@map("relationships")
+}
+
+model Marriage {
+  id        String         @id @default(cuid())
+  spouse1Id String
+  spouse2Id String
+  treeId    String
+  date      DateTime?
+  endDate   DateTime?
+  location  String?
+  status    MarriageStatus @default(MARRIED)
+  type      MarriageType   @default(NIKKAH)
+  sortOrder Int            @default(0)
+
+  spouse1 FamilyMember @relation("Spouse1", fields: [spouse1Id], references: [id], onDelete: Cascade)
+  spouse2 FamilyMember @relation("Spouse2", fields: [spouse2Id], references: [id], onDelete: Cascade)
+
+  @@unique([spouse1Id, spouse2Id])
+  @@index([spouse1Id])
+  @@index([spouse2Id])
+  @@map("marriages")
+}
+
+model MemberComment {
+  id        String   @id @default(cuid())
+  memberId  String
+  userId    String
+  parentId  String?
+  content   String   @db.Text
+  isPinned  Boolean  @default(false)
+  isEdited  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  member    FamilyMember     @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  user      User             @relation("CommentUser", fields: [userId], references: [id])
+  parent    MemberComment?   @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   MemberComment[]  @relation("CommentReplies")
+  reactions CommentReaction[]
+
+  @@index([memberId])
+  @@index([parentId])
+  @@map("member_comments")
+}
+
+model CommentReaction {
+  id        String   @id @default(cuid())
+  commentId String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+
+  comment MemberComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId, emoji])
+  @@map("comment_reactions")
+}
+
+model MemberLifeEvent {
+  id          String        @id @default(cuid())
+  memberId    String
+  type        LifeEventType
+  title       String
+  description String?       @db.Text
+  date        DateTime
+  location    String?
+  photo       String?
+  source      String?
+  verifiedBy  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  member FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, date])
+  @@map("member_life_events")
+}
+
+model MemberStory {
+  id        String   @id @default(cuid())
+  memberId  String
+  userId    String
+  title     String
+  content   String   @db.Text
+  language  String   @default("ur")
+  isPublic  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  member FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  author User         @relation("StoryAuthor", fields: [userId], references: [id])
+
+  @@index([memberId])
+  @@map("member_stories")
+}
+
+model RelationshipVerification {
+  id             String   @id @default(cuid())
+  relationshipId String?
+  marriageId     String?
+  memberId       String?
+  verifiedBy     String
+  verified       Boolean  @default(true)
+  note           String?
+  createdAt      DateTime @default(now())
+
+  member FamilyMember? @relation(fields: [memberId], references: [id])
+
+  @@map("relationship_verifications")
+}
+
+model TreeVersion {
+  id        String   @id @default(cuid())
+  treeId    String
+  userId    String
+  action    String
+  snapshot  Json
+  changes   Json
+  createdAt DateTime @default(now())
+
+  tree FamilyTree @relation(fields: [treeId], references: [id])
+
+  @@index([treeId, createdAt])
+  @@map("tree_versions")
+}
+
+model TreeCollaborator {
+  id            String           @id @default(cuid())
+  treeId        String
+  userId        String
+  role          CollaboratorRole @default(VIEWER)
+  canEditBranch String?
+  addedById     String?
+  addedAt       DateTime         @default(now())
+
+  tree FamilyTree @relation(fields: [treeId], references: [id])
+
+  @@unique([treeId, userId])
+  @@map("tree_collaborators")
+}
+
+model TreeInvite {
+  id           String       @id @default(cuid())
+  treeId       String
+  inviterId    String
+  inviteeEmail String?
+  inviteePhone String?
+  inviteeName  String?
+  type         InviteType
+  status       InviteStatus @default(PENDING)
+  token        String       @unique @default(uuid())
+  memberId     String?
+  message      String?
+  expiresAt    DateTime
+  respondedAt  DateTime?
+  createdAt    DateTime     @default(now())
+
+  tree FamilyTree @relation(fields: [treeId], references: [id])
+
+  @@index([token])
+  @@map("tree_invites")
+}
+
+model TreeMergeRequest {
+  id            String      @id @default(cuid())
+  sourceTreeId  String
+  targetTreeId  String
+  requesterId   String
+  status        MergeStatus @default(PENDING)
+  commonMembers Json?
+  mergeMap      Json?
+  message       String?
+  respondedAt   DateTime?
+  createdAt     DateTime    @default(now())
+
+  sourceTree FamilyTree @relation("SourceTree", fields: [sourceTreeId], references: [id])
+  targetTree FamilyTree @relation("TargetTree", fields: [targetTreeId], references: [id])
+
+  @@map("tree_merge_requests")
+}
+
+model DuplicateMatch {
+  id         String          @id @default(cuid())
+  treeId     String
+  member1Id  String
+  member2Id  String
+  score      Int
+  status     DuplicateStatus @default(PENDING)
+  resolvedBy String?
+  resolvedAt DateTime?
+  createdAt  DateTime        @default(now())
+
+  @@unique([member1Id, member2Id])
+  @@map("duplicate_matches")
+}
+
+model TreePrivacySettings {
+  id              String  @id @default(cuid())
+  treeId          String  @unique
+  showLiving      Boolean @default(true)
+  showFemales     Boolean @default(true)
+  showPhotos      Boolean @default(true)
+  showDates       Boolean @default(true)
+  showPlaces      Boolean @default(true)
+  showOccupation  Boolean @default(true)
+  showBio         Boolean @default(true)
+  showContact     Boolean @default(false)
+  watermarkPhotos Boolean @default(true)
+  allowDownload   Boolean @default(false)
+  allowExport     Boolean @default(false)
+
+  tree FamilyTree @relation(fields: [treeId], references: [id])
+
+  @@map("tree_privacy_settings")
+}
+
+model MemberPrivacy {
+  id          String  @id @default(cuid())
+  memberId    String  @unique
+  isHidden    Boolean @default(false)
+  hidePhoto   Boolean @default(false)
+  hideDates   Boolean @default(false)
+  hideBio     Boolean @default(false)
+  hideContact Boolean @default(true)
+
+  member FamilyMember? @relation(fields: [memberId], references: [id])
+
+  @@map("member_privacy")
+}
+
+model TreeAccessLog {
+  id        String   @id @default(cuid())
+  treeId    String
+  userId    String?
+  action    String
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  tree FamilyTree @relation(fields: [treeId], references: [id])
+
+  @@index([treeId])
+  @@map("tree_access_logs")
+}
+
+model GroupPhoto {
+  id         String   @id @default(cuid())
+  treeId     String
+  url        String
+  publicId   String?
+  caption    String?
+  date       DateTime?
+  location   String?
+  eventId    String?
+  uploadedBy String
+  createdAt  DateTime @default(now())
+
+  tree FamilyTree     @relation(fields: [treeId], references: [id])
+  tags GroupPhotoTag[]
+
+  @@index([treeId])
+  @@map("group_photos")
+}
+
+model GroupPhotoTag {
+  id       String @id @default(cuid())
+  photoId  String
+  memberId String
+  x        Float
+  y        Float
+
+  photo  GroupPhoto   @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  member FamilyMember? @relation(fields: [memberId], references: [id])
+
+  @@unique([photoId, memberId])
+  @@map("group_photo_tags")
 }
