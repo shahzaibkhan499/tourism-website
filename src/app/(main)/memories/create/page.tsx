@@ -64,7 +64,7 @@ export default function CreateMemoryPage() {
       const res = await fetch("/api/media/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Upload nahi ho saka");
+        toast.error(data.error || "اپ لوڈ نہیں ہو سکا");
         return;
       }
       setMediaList((prev) => [
@@ -73,7 +73,7 @@ export default function CreateMemoryPage() {
       ]);
       toast.success("Media upload ho gayi");
     } catch {
-      toast.error("Upload mein masla aa gaya");
+      toast.error("اپ لوڈ میں مسئلہ آ گیا");
     } finally {
       setUploading(false);
     }
@@ -89,13 +89,13 @@ export default function CreateMemoryPage() {
       });
       const result = await res.json();
       if (!res.ok) {
-        toast.error(result.error || "Memory save nahi ho saki");
+        toast.error(result.error || "یاد محفوظ نہیں ہو سکی");
         return;
       }
-      toast.success("Memory mehfooz ho gayi! 📸");
+      toast.success("یاد محفوظ ہو گئی! 📸");
       router.push("/memories");
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(false);
     }
@@ -103,20 +103,20 @@ export default function CreateMemoryPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <PageHeader title="Nayi Memory Banayein" titleUrdu="نئی یاد" description="Khaas lamhe mehfooz karein" />
+      <PageHeader title="نئی یاد بنائیں" titleUrdu="نئی یاد" description="خاص لمحے محفوظ کریں" />
 
       <Card>
         <CardContent className="p-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-1.5">
               <Label htmlFor="title">Title *</Label>
-              <Input id="title" placeholder="e.g. Swat ka Family Trip" {...register("title")} />
+              <Input id="title" placeholder="مثلاً سوات کا فیملی ٹرپ" {...register("title")} />
               {errors.title && <p className="text-xs text-red-600">{errors.title.message}</p>}
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" rows={4} placeholder="Is lamhe ki kahani likhein..." {...register("description")} />
+              <Textarea id="description" rows={4} placeholder="اس لمحے کی کہانی لکھیں..." {...register("description")} />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -160,7 +160,7 @@ export default function CreateMemoryPage() {
               <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 p-8 text-center transition-colors hover:border-emerald-300 hover:bg-emerald-50/40">
                 <Upload className="h-8 w-8 text-gray-400" />
                 <span className="mt-2 text-sm text-gray-500">
-                  {uploading ? "Upload ho raha hai..." : "Yahan click karein ya file drag karein (photos, videos, documents)"}
+                  {uploading ? "اپ لوڈ ہو رہا ہے..." : "یہاں کلک کریں یا فائل ڈریگ کریں (تصاویر، ویڈیوز، دستاویزات)"}
                 </span>
                 <input
                   type="file"
@@ -207,7 +207,7 @@ export default function CreateMemoryPage() {
               </Button>
               <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700" disabled={loading || uploading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {loading ? "Save ho raha hai..." : "Memory Save Karein"}
+                {loading ? "محفوظ ہو رہا ہے..." : "یاد محفوظ کریں"}
               </Button>
             </div>
           </form>

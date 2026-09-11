@@ -112,7 +112,7 @@ export default function AdminClansPage() {
       const mainData = await mainRes.json();
       const subData = await subRes.json();
       const reqData = await reqRes.json();
-      if (!mainRes.ok) return toast.error(mainData.error || "Data load nahi ho saka");
+      if (!mainRes.ok) return toast.error(mainData.error || "ڈیٹا لوڈ نہیں ہو سکا");
       setCommunities(mainData.communities);
       setSubClans(subData.subClans || []);
       setRequests(reqData.requests || []);
@@ -138,7 +138,7 @@ export default function AdminClansPage() {
   };
 
   const handleCreate = async () => {
-    if (!form.name.trim()) return toast.error("Naam likhein");
+    if (!form.name.trim()) return toast.error("نام لکھیں");
     setSaving(true);
     try {
       const body: Record<string, unknown> = { entity: createEntity, name: form.name, nameUrdu: form.nameUrdu || null };
@@ -150,14 +150,14 @@ export default function AdminClansPage() {
         body.description = form.description || null;
         if (!form.parentId) {
           setSaving(false);
-          return toast.error("Community chunein");
+          return toast.error("کمیونٹی منتخب کریں");
         }
       } else {
         body.clanId = form.parentId;
         body.description = form.description || null;
         if (!form.parentId) {
           setSaving(false);
-          return toast.error("Clan chunein");
+          return toast.error("کلان منتخب کریں");
         }
       }
       const res = await fetch("/api/admin/clans", {
@@ -166,8 +166,8 @@ export default function AdminClansPage() {
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Create nahi ho saka");
-      toast.success("Create ho gaya!");
+      if (!res.ok) return toast.error(data.error || "بنایا نہیں جا سکا");
+      toast.success("بنا دیا گیا!");
       setCreateOpen(false);
       fetchData();
     } catch {
@@ -182,8 +182,8 @@ export default function AdminClansPage() {
     try {
       const res = await fetch(`/api/admin/clans?entity=${deleteItem.entity}&id=${deleteItem.id}`, { method: "DELETE" });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Delete nahi ho saka");
-      toast.success("Delete ho gaya");
+      if (!res.ok) return toast.error(data.error || "ڈیلیٹ نہیں ہو سکا");
+      toast.success("ڈیلیٹ ہو گیا");
       setDeleteItem(null);
       fetchData();
     } catch {
@@ -199,7 +199,7 @@ export default function AdminClansPage() {
         body: JSON.stringify({ requestId, action }),
       });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Action nahi ho saka");
+      if (!res.ok) return toast.error(data.error || "کارروائی نہیں ہو سکی");
       toast.success(`Request ${action === "APPROVE" ? "approve" : "reject"} ho gayi`);
       fetchData();
     } catch {
@@ -212,7 +212,7 @@ export default function AdminClansPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Clans & Communities</h1>
-          <p className="text-sm text-gray-500">Communities, clans, sub-clans aur join requests</p>
+          <p className="text-sm text-gray-500">کمیونٹیز، کلانز، سب کلانز اور شمولیت کی درخواستیں</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => openCreate("community")}>
@@ -449,7 +449,7 @@ export default function AdminClansPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Naya {createEntity === "community" ? "Community" : createEntity === "clan" ? "Clan" : "Sub-Clan"} Banayein
+              Naya {createEntity === "community" ? "Community" : createEntity === "clan" ? "Clan" : "Sub-Clan"} بنائیں
             </DialogTitle>
             <DialogDescription>Details bharein aur save karein</DialogDescription>
           </DialogHeader>
@@ -477,7 +477,7 @@ export default function AdminClansPage() {
                 <Label>Community *</Label>
                 <Select value={form.parentId} onValueChange={(v) => setForm({ ...form, parentId: v })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Community chunein" />
+                    <SelectValue placeholder="کمیونٹی منتخب کریں" />
                   </SelectTrigger>
                   <SelectContent>
                     {communities.map((c) => (
@@ -494,7 +494,7 @@ export default function AdminClansPage() {
                 <Label>Clan *</Label>
                 <Select value={form.parentId} onValueChange={(v) => setForm({ ...form, parentId: v })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Clan chunein" />
+                    <SelectValue placeholder="کلان منتخب کریں" />
                   </SelectTrigger>
                   <SelectContent className="max-h-64">
                     {allClans.map((cl) => (
@@ -526,8 +526,8 @@ export default function AdminClansPage() {
             <AlertDialogTitle>Delete karein: {deleteItem?.name}?</AlertDialogTitle>
             <AlertDialogDescription>
               {deleteItem?.entity === "community"
-                ? "Community delete karne se pehle is ke clans delete karne honge."
-                : "Yeh action wapas nahi ho sakta."}
+                ? "کمیونٹی ڈیلیٹ کرنے سے پہلے اس کے کلانز ڈیلیٹ کرنے ہوں گے۔"
+                : "یہ کارروائی واپس نہیں ہو سکتی۔"}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

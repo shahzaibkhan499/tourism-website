@@ -54,7 +54,7 @@ export function RequestsInbox() {
         setReceived(json.received || []);
         setSent(json.sent || []);
       })
-      .catch(() => toast.error("Requests load nahi hui"))
+      .catch(() => toast.error("درخواستیں لوڈ نہیں ہوئیں"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -72,13 +72,13 @@ export function RequestsInbox() {
       });
       const json = await res.json();
       if (!res.ok) {
-        toast.error(json.error || "Action nahi ho saka");
+        toast.error(json.error || "کارروائی نہیں ہو سکی");
         return;
       }
       toast.success(action === "ACCEPTED" ? "Request qabool ho gayi! 🎉" : "Request reject kar di gayi");
       setReceived((prev) => prev.map((r) => (r.id === requestId ? { ...r, status: action } : r)));
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setActingId(null);
     }
@@ -108,9 +108,9 @@ export function RequestsInbox() {
         {received.length === 0 ? (
           <EmptyState
             icon={<Heart className="h-10 w-10" />}
-            title="Koi data nahi mila"
-            description="Abhi aapko koi rishta request nahi aayi. Apna profile active rakhein."
-            actionLabel="Profiles Dekhein"
+            title="کوئی ڈیٹا نہیں ملا"
+            description="ابھی آپ کو کوئی رشتہ کی درخواست نہیں آئی۔ اپنا پروفائل فعال رکھیں۔"
+            actionLabel="پروفائلز دیکھیں"
             actionHref="/rishta"
           />
         ) : (
@@ -155,7 +155,7 @@ export function RequestsInbox() {
                       </div>
                     ) : (
                       <Button size="sm" variant="ghost" asChild>
-                        <Link href={`/rishta/${s?.id}`}>Profile Dekhein</Link>
+                        <Link href={`/rishta/${s?.id}`}>پروفائل دیکھیں</Link>
                       </Button>
                     )}
                   </CardContent>
@@ -201,7 +201,7 @@ export function RequestsInbox() {
                       </div>
                     </div>
                     <Button size="sm" variant="ghost" asChild>
-                      <Link href={`/rishta/${s?.id}`}>Profile Dekhein</Link>
+                      <Link href={`/rishta/${s?.id}`}>پروفائل دیکھیں</Link>
                     </Button>
                   </CardContent>
                 </Card>

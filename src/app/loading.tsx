@@ -5,7 +5,7 @@ export default function Loading() {
     <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="flex flex-col items-center gap-3">
         <LoadingSpinner size={36} />
-        <p className="text-sm text-gray-500">Load ho raha hai...</p>
+        <p className="text-sm text-gray-500">لوڈ ہو رہا ہے...</p>
       </div>
     </div>
   );

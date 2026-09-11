@@ -9,15 +9,15 @@ import { generateToken } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
 
 const enableSchema = z.object({
-  code: z.string().length(6, "6 digits ka code likhein"),
-  password: z.string().min(1, "Password likhein"),
+  code: z.string().length(6, "6 ہندسوں کا کوڈ لکھیں"),
+  password: z.string().min(1, "پاس ورڈ لکھیں"),
 });
 const disableSchema = z.object({
-  code: z.string().length(6, "6 digits ka code likhein"),
-  password: z.string().min(1, "Password likhein"),
+  code: z.string().length(6, "6 ہندسوں کا کوڈ لکھیں"),
+  password: z.string().min(1, "پاس ورڈ لکھیں"),
 });
 const verifyLoginSchema = z.object({
-  code: z.string().min(1, "Code likhein"),
+  code: z.string().min(1, "کوڈ لکھیں"),
 });
 
 // GET: generate 2FA secret + QR code (setup step 1)
@@ -26,7 +26,7 @@ export async function GET() {
     const user = await requireUser();
     const dbUser = await prisma.user.findUnique({ where: { id: user.id }, select: { twoFactorEnabled: true } });
     if (dbUser?.twoFactorEnabled) {
-      return apiError(400, "2FA pehle se enabled hai");
+      return apiError(400, "2FA پہلے سے فعال ہے");
     }
 
     const secret = speakeasy.generateSecret({
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     if (!dbUser || !dbUser.password) throw new Error("UNAUTHORIZED");
 
     const passwordValid = await bcrypt.compare(password, dbUser.password);
-    if (!passwordValid) return apiError(400, "Password ghalat hai");
+    if (!passwordValid) return apiError(400, "پاس ورڈ غلط ہے");
 
     const verified = speakeasy.totp.verify({
       secret: providedSecret,
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
       token: code,
       window: 1,
     });
-    if (!verified) return apiError(400, "Code ghalat hai. Dobara koshish karein");
+    if (!verified) return apiError(400, "کوڈ غلط ہے۔ دوبارہ کوشش کریں");
 
     const backupCodes = Array.from({ length: 10 }, () => generateToken(8));
 
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return apiSuccess({ backupCodes, message: "2FA enabled ho gaya!" });
+    return apiSuccess({ backupCodes, message: "2FA فعال ہو گیا!" });
   } catch (error) {
     return handleApiError(error);
   }
@@ -103,7 +103,7 @@ export async function PUT(req: NextRequest) {
       select: { twoFactorSecret: true, twoFactorEnabled: true },
     });
     if (!dbUser?.twoFactorEnabled || !dbUser.twoFactorSecret) {
-      return apiError(400, "2FA enabled nahi hai");
+      return apiError(400, "2FA فعال نہیں ہے");
     }
 
     const verified = speakeasy.totp.verify({
@@ -112,7 +112,7 @@ export async function PUT(req: NextRequest) {
       token: parsed.data.code,
       window: 1,
     });
-    if (!verified) return apiError(400, "Code ghalat hai");
+    if (!verified) return apiError(400, "کوڈ غلط ہے");
 
     return apiSuccess({ verified: true });
   } catch (error) {
@@ -134,7 +134,7 @@ export async function DELETE(req: NextRequest) {
     if (!dbUser || !dbUser.password || !dbUser.twoFactorSecret) throw new Error("UNAUTHORIZED");
 
     const passwordValid = await bcrypt.compare(parsed.data.password, dbUser.password);
-    if (!passwordValid) return apiError(400, "Password ghalat hai");
+    if (!passwordValid) return apiError(400, "پاس ورڈ غلط ہے");
 
     const verified = speakeasy.totp.verify({
       secret: dbUser.twoFactorSecret,
@@ -142,14 +142,14 @@ export async function DELETE(req: NextRequest) {
       token: parsed.data.code,
       window: 1,
     });
-    if (!verified) return apiError(400, "2FA code ghalat hai");
+    if (!verified) return apiError(400, "2FA کوڈ غلط ہے");
 
     await prisma.user.update({
       where: { id: user.id },
       data: { twoFactorEnabled: false, twoFactorSecret: null },
     });
 
-    return apiSuccess({ message: "2FA disable ho gaya" });
+    return apiSuccess({ message: "2FA غیر فعال ہو گیا" });
   } catch (error) {
     return handleApiError(error);
   }

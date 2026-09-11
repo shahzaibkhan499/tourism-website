@@ -96,7 +96,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       data: { isActive: false },
     });
 
-    return apiSuccess({ message: "Rishta profile deactivate ho gaya" });
+    return apiSuccess({ message: "رشتہ پروفائل غیر فعال ہو گیا" });
   } catch (error) {
     return handleApiError(error);
   }

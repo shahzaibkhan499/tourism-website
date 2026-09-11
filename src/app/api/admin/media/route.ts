@@ -40,7 +40,7 @@ export async function DELETE(req: NextRequest) {
     const admin = await requireAdmin();
     const { searchParams } = new URL(req.url);
     const ids = searchParams.get("ids");
-    if (!ids) return apiError(400, "Media ids zaroori hain");
+    if (!ids) return apiError(400, "میڈیا آئی ڈیز ضروری ہیں");
 
     const idList = ids.split(",");
     const items = await prisma.media.findMany({ where: { id: { in: idList } } });

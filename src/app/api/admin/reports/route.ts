@@ -37,7 +37,7 @@ export async function PATCH(req: NextRequest) {
     const admin = await requireAdmin();
     const body = await req.json();
     const { id, ...rest } = body as { id: string; [key: string]: unknown };
-    if (!id) return apiError(400, "Report id zaroori hai");
+    if (!id) return apiError(400, "رپورٹ آئی ڈی ضروری ہے");
 
     const parsed = adminReportActionSchema.safeParse({ action: rest.action, adminNote: rest.adminNote });
     if (!parsed.success) return apiError(400, "ValidationError", parsed.error.flatten().fieldErrors);
@@ -75,7 +75,7 @@ export async function PATCH(req: NextRequest) {
             userId: report.reportedId,
             type: "system",
             title: "Warning!",
-            message: `Aapke khilaf report aayi hai. ${adminNote || "Bar bar aisi shikayat par account ban ho sakta hai."}`.trim(),
+            message: `Aapke khilaf report aayi hai. ${adminNote || "بار بار ایسی شکایت پر اکاؤنٹ بند ہو سکتا ہے۔"}`.trim(),
           },
         });
         break;
@@ -89,7 +89,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     await auditLog(admin.id, `ADMIN_${action.toUpperCase()}_REPORT`, "Report", id, { adminNote }, getIp(req.headers));
-    return apiSuccess({ message: "Action kamyab raha" });
+    return apiSuccess({ message: "کارروائی کامیاب رہی" });
   } catch (error) {
     return handleApiError(error);
   }

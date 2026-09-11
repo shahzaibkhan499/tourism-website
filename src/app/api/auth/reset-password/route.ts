@@ -8,9 +8,9 @@ const resetSchema = z.object({
   token: z.string().min(1),
   password: z
     .string()
-    .min(8, "Password kam az kam 8 characters ka ho")
-    .regex(/[a-zA-Z]/, "Password mein ek English harf zaroori hai")
-    .regex(/[0-9]/, "Password mein ek number zaroori hai"),
+    .min(8, "پاس ورڈ کم از کم 8 حروف کا ہو")
+    .regex(/[a-zA-Z]/, "پاس ورڈ میں ایک انگریزی حرف ضروری ہے")
+    .regex(/[0-9]/, "پاس ورڈ میں ایک نمبر ضروری ہے"),
 });
 
 export async function POST(req: NextRequest) {
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!tokenRecord || tokenRecord.expires < new Date()) {
-      return apiError(400, "Reset link expire ho gaya hai ya ghalat hai");
+      return apiError(400, "ری سیٹ لنک کی مدت ختم ہو گئی ہے یا لنک غلط ہے");
     }
 
     const userId = tokenRecord.identifier.replace("password-reset:", "");
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       prisma.verificationToken.delete({ where: { token } }),
     ]);
 
-    return apiSuccess({ message: "Password badal gaya! Ab login karein." });
+    return apiSuccess({ message: "پاس ورڈ بدل گیا! اب لاگ اِن کریں۔" });
   } catch (error) {
     return handleApiError(error);
   }

@@ -77,7 +77,7 @@ export default function EventDetailPage() {
         const session = await fetch("/api/auth/session").then((r) => r.json());
         setMyUserId(session?.user?.id || null);
       })
-      .catch(() => toast.error("Event load nahi ho saka"))
+      .catch(() => toast.error("ایونٹ لوڈ نہیں ہو سکا"))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -87,10 +87,10 @@ export default function EventDetailPage() {
       const res = await fetch(`/api/events/${id}`, { method: "DELETE" });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Delete nahi ho saka");
+        toast.error(data.error || "ڈیلیٹ نہیں ہو سکا");
         return;
       }
-      toast.success("Event delete ho gaya");
+      toast.success("ایونٹ ڈیلیٹ ہو گیا");
       router.push("/events");
     } catch {
       toast.error("Network error");
@@ -103,7 +103,7 @@ export default function EventDetailPage() {
     const url = typeof window !== "undefined" ? window.location.href : "";
     if (platform === "copy") {
       await navigator.clipboard.writeText(url);
-      toast.success("Link copy ho gaya!");
+      toast.success("لنک کاپی ہو گیا!");
     } else if (platform === "whatsapp") {
       window.open(`https://wa.me/?text=${encodeURIComponent(`${event?.title} — ${url}`)}`, "_blank");
     } else {
@@ -129,7 +129,7 @@ export default function EventDetailPage() {
   if (!event) {
     return (
       <div className="py-16 text-center">
-        <h2 className="text-xl font-semibold">Event nahi mila</h2>
+        <h2 className="text-xl font-semibold">ایونٹ نہیں ملا</h2>
         <Button className="mt-4" variant="outline" asChild>
           <Link href="/events">
             <ArrowLeft className="mr-1 h-4 w-4" />
@@ -320,7 +320,7 @@ export default function EventDetailPage() {
                 <Button variant="outline" className="w-full" asChild>
                   <Link href={`/events/create?edit=${event.id}`}>
                     <Pencil className="mr-1 h-4 w-4" />
-                    Edit Karein
+                    ترمیم کریں
                   </Link>
                 </Button>
                 <AlertDialog>

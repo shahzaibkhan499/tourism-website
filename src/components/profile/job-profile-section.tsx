@@ -59,7 +59,7 @@ interface JobProfileData {
 const AVAILABILITY_OPTIONS = [
   { value: "ACTIVE", label: "Active" },
   { value: "LOOKING", label: "Naukri ki talaash" },
-  { value: "NOT_LOOKING", label: "Filhal nahi" },
+  { value: "NOT_LOOKING", label: "فی الحال نہیں" },
 ];
 
 function toArray(value: string): string[] {
@@ -112,7 +112,7 @@ export function JobProfileSection() {
           setEducation(p.education || []);
         }
       })
-      .catch(() => toast.error("Job profile load nahi hui"))
+      .catch(() => toast.error("جاب پروفائل لوڈ نہیں ہوئی"))
       .finally(() => setLoading(false));
   };
 
@@ -123,7 +123,7 @@ export function JobProfileSection() {
 
   const save = async () => {
     if (!headline.trim()) {
-      toast.error("Headline likhein (e.g. Software Engineer)");
+      toast.error("ہیڈ لائن لکھیں (مثلاً سافٹ ویئر انجینئر)");
       return;
     }
     setSaving(true);
@@ -149,14 +149,14 @@ export function JobProfileSection() {
       });
       const json = await res.json();
       if (!res.ok) {
-        toast.error(json.error || "Job profile save nahi hui");
+        toast.error(json.error || "جاب پروفائل محفوظ نہیں ہوئی");
         return;
       }
       toast.success("Job profile save ho gayi! 🎉");
       setOpen(false);
       setData(json as JobProfileData);
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setSaving(false);
     }
@@ -187,7 +187,7 @@ export function JobProfileSection() {
           </div>
           <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
             <Pencil className="mr-1 h-3.5 w-3.5" />
-            {data ? "Edit Karein" : "Banayein"}
+            {data ? "ترمیم کریں" : "بنائیں"}
           </Button>
         </CardHeader>
         {data ? (
@@ -286,7 +286,7 @@ export function JobProfileSection() {
         ) : (
           <CardContent>
             <p className="text-sm text-gray-500">
-              Abhi job profile nahi hai. Banayein taake aap jobs par apply kar sakein.
+              Abhi job profile nahi hai. بنائیں taake aap jobs par apply kar sakein.
             </p>
           </CardContent>
         )}
@@ -295,7 +295,7 @@ export function JobProfileSection() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Job Profile {data ? "Edit Karein" : "Banayein"}</DialogTitle>
+            <DialogTitle>Job Profile {data ? "ترمیم کریں" : "بنائیں"}</DialogTitle>
             <DialogDescription>Professional details bharein — jobs par apply karne ke liye zaroori</DialogDescription>
           </DialogHeader>
 
@@ -307,7 +307,7 @@ export function JobProfileSection() {
 
             <div className="space-y-1.5">
               <Label htmlFor="jp-summary">Summary</Label>
-              <Textarea id="jp-summary" rows={3} placeholder="Apne baare mein chand satrein" value={summary} onChange={(e) => setSummary(e.target.value)} />
+              <Textarea id="jp-summary" rows={3} placeholder="اپنے بارے میں چند سطریں" value={summary} onChange={(e) => setSummary(e.target.value)} />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -425,7 +425,7 @@ export function JobProfileSection() {
             </Button>
             <Button onClick={save} disabled={saving} className="bg-emerald-600 hover:bg-emerald-700">
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {saving ? "Save ho raha hai..." : "Save Karein"}
+              {saving ? "محفوظ ہو رہا ہے..." : "محفوظ کریں"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -63,7 +63,7 @@ export default function MediaPage() {
         const res = await fetch(`/api/media?${params}`);
         const data = await res.json();
         if (!res.ok) {
-          toast.error(data.error || "Media load nahi ho saka");
+          toast.error(data.error || "میڈیا لوڈ نہیں ہو سکا");
           return;
         }
         setItems((prev) => (replace ? data.items : [...prev, ...data.items]));
@@ -72,7 +72,7 @@ export default function MediaPage() {
         setTotalSize(data.totalSize);
         setQuotaGb(data.quotaGb);
       } catch {
-        toast.error("Network error. Dobara koshish karein.");
+        toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
       } finally {
         setLoading(false);
       }
@@ -92,13 +92,13 @@ export default function MediaPage() {
       const res = await fetch("/api/media/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Upload nahi ho saka");
+        toast.error(data.error || "اپ لوڈ نہیں ہو سکا");
         return;
       }
       toast.success("File upload ho gayi");
       fetchMedia();
     } catch {
-      toast.error("Upload mein masla aa gaya");
+      toast.error("اپ لوڈ میں مسئلہ آ گیا");
     } finally {
       setUploading(false);
     }
@@ -109,10 +109,10 @@ export default function MediaPage() {
       const res = await fetch(`/api/media?ids=${encodeURIComponent(ids.join(","))}`, { method: "DELETE" });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Delete nahi ho saka");
+        toast.error(data.error || "ڈیلیٹ نہیں ہو سکا");
         return;
       }
-      toast.success(data.message || "Delete ho gaya");
+      toast.success(data.message || "ڈیلیٹ ہو گیا");
       setSelected(new Set());
       fetchMedia();
     } catch {
@@ -137,7 +137,7 @@ export default function MediaPage() {
       <PageHeader
         title="Media Library"
         titleUrdu="میڈیا"
-        description="Aapki tamam files aik jagah"
+        description="آپ کی تمام فائلیں ایک جگہ"
         actions={
           <Button
             className="bg-emerald-600 hover:bg-emerald-700"
@@ -145,7 +145,7 @@ export default function MediaPage() {
             disabled={uploading}
           >
             {uploading ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Upload className="mr-1 h-4 w-4" />}
-            Upload Karein
+            اپ لوڈ کریں
           </Button>
         }
       />
@@ -181,7 +181,7 @@ export default function MediaPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
-            placeholder="Files search karein..."
+            placeholder="فائلیں تلاش کریں..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="pl-9"
@@ -219,7 +219,7 @@ export default function MediaPage() {
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>{selected.size} file(s) delete karein?</AlertDialogTitle>
-                  <AlertDialogDescription>Yeh action wapas nahi ho sakta.</AlertDialogDescription>
+                  <AlertDialogDescription>یہ کارروائی واپس نہیں ہو سکتی۔</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -270,9 +270,9 @@ export default function MediaPage() {
           ) : items.length === 0 ? (
             <EmptyState
               icon={<Camera className="h-12 w-12" />}
-              title="Koi media nahi hai. Upload karein!"
-              description="Apni photos, videos aur documents yahan mehfooz karein"
-              actionLabel="Upload Karein"
+              title="کوئی میڈیا نہیں ہے۔ اپ لوڈ کریں!"
+              description="اپنی تصاویر، ویڈیوز اور دستاویزات یہاں محفوظ کریں"
+              actionLabel="اپ لوڈ کریں"
               onAction={() => fileInputRef.current?.click()}
             />
           ) : view === "grid" ? (
@@ -314,7 +314,7 @@ export default function MediaPage() {
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>File delete karein?</AlertDialogTitle>
-                              <AlertDialogDescription>Yeh action wapas nahi ho sakta.</AlertDialogDescription>
+                              <AlertDialogDescription>یہ کارروائی واپس نہیں ہو سکتی۔</AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>

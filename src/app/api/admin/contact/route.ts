@@ -27,7 +27,7 @@ export async function PATCH(req: NextRequest) {
     await requireAdmin();
     const body = await req.json();
     const { id, isRead } = body as { id: string; isRead: boolean };
-    if (!id) return apiError(400, "Message id zaroori hai");
+    if (!id) return apiError(400, "پیغام آئی ڈی ضروری ہے");
 
     const message = await prisma.contactMessage.update({
       where: { id },
@@ -45,10 +45,10 @@ export async function DELETE(req: NextRequest) {
     await requireAdmin();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    if (!id) return apiError(400, "Message id zaroori hai");
+    if (!id) return apiError(400, "پیغام آئی ڈی ضروری ہے");
 
     await prisma.contactMessage.delete({ where: { id } });
-    return apiSuccess({ message: "Message delete ho gaya" });
+    return apiSuccess({ message: "پیغام ڈیلیٹ ہو گیا" });
   } catch (error) {
     return handleApiError(error);
   }

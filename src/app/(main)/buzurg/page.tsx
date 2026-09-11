@@ -79,7 +79,7 @@ export default function BuzurgPage() {
                         clanData.members.slice(0, 10).map((m: { id: string; name: string }) => ({
                           id: m.id,
                           name: m.name || "Family Member",
-                          relation: "Khandaan",
+                          relation: "خاندان",
                         }))
                       );
                     }
@@ -118,7 +118,7 @@ export default function BuzurgPage() {
         try {
           const blob = new Blob(chunksRef.current, { type: "audio/webm" });
           if (blob.size === 0) {
-            toast.error("Kuch record nahi hua");
+            toast.error("کچھ ریکارڈ نہیں ہوا");
             return;
           }
           const fd = new FormData();
@@ -126,7 +126,7 @@ export default function BuzurgPage() {
           const uploadRes = await fetch("/api/media/upload", { method: "POST", body: fd });
           const uploadData = await uploadRes.json();
           if (!uploadRes.ok) {
-            toast.error(uploadData.error || "Voice note save nahi hua");
+            toast.error(uploadData.error || "وائس نوٹ محفوظ نہیں ہوا");
             return;
           }
           const memRes = await fetch("/api/memories", {
@@ -134,7 +134,7 @@ export default function BuzurgPage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               title: "آواز کا پیغام (Voice Note)",
-              description: "Buzurg Mode se record kiya gaya voice note",
+              description: "بزرگ موڈ سے ریکارڈ کیا گیا وائس نوٹ",
               date: new Date().toISOString(),
               category: "DAILY_LIFE",
               isPublic: false,
@@ -151,27 +151,27 @@ export default function BuzurgPage() {
           });
           const memData = await memRes.json();
           if (!memRes.ok) {
-            toast.error(memData.error || "Voice note save nahi hua");
+            toast.error(memData.error || "وائس نوٹ محفوظ نہیں ہوا");
             return;
           }
-          toast.success("Voice note save ho gaya! Memories mein dekhein 🎙️");
+          toast.success("وائس نوٹ محفوظ ہو گیا! یادوں میں دیکھیں 🎙️");
         } catch {
-          toast.error("Voice note save karne mein masla aa gaya");
+          toast.error("وائس نوٹ محفوظ کرنے میں مسئلہ آ گیا");
         } finally {
           setRecordingBusy(false);
         }
       };
       mr.start();
       setRecording(true);
-      toast.info("Recording shuru... Rokne ke liye dobara button dabayein", { duration: 5000 });
+      toast.info("ریکارڈنگ شروع... روکنے کے لیے دوبارہ بٹن دبائیں", { duration: 5000 });
     } catch {
-      toast.error("Microphone ki ijazat nahi mili. Browser settings check karein.");
+      toast.error("مائیکروفون کی اجازت نہیں ملی۔ براؤزر سیٹنگز چیک کریں۔");
     }
   };
 
   const addReminder = () => {
     if (!medicineName.trim()) {
-      toast.error("Dawa ka naam likhein");
+      toast.error("دوا کا نام لکھیں");
       return;
     }
     const reminder: MedicineReminder = {
@@ -184,7 +184,7 @@ export default function BuzurgPage() {
     setReminders(updated);
     localStorage.setItem("dk-medicine-reminders", JSON.stringify(updated));
     setMedicineName("");
-    toast.success("Dawa ka reminder save ho gaya!");
+    toast.success("دوا کا ریمائنڈر محفوظ ہو گیا!");
   };
 
   const removeReminder = (id: string) => {
@@ -195,7 +195,7 @@ export default function BuzurgPage() {
 
   const handleCheckIn = () => {
     setCheckInDone(true);
-    toast.success("Family ko bataya gaya: Main theek hoon! 💚");
+    toast.success("فیملی کو بتا دیا گیا: میں ٹھیک ہوں! 💚");
   };
 
   const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
@@ -203,7 +203,7 @@ export default function BuzurgPage() {
   if (!buzurgMode) {
     return (
       <div className="mx-auto max-w-lg">
-        <PageHeader title="Buzurg Mode" titleUrdu="بزرگ موڈ" description="Buzurgon ke liye aasan aur bara interface" />
+        <PageHeader title="Buzurg Mode" titleUrdu="بزرگ موڈ" description="بزرگوں کے لیے آسان اور بڑا انٹرفیس" />
         <Card className="text-center">
           <CardContent className="p-10">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
@@ -446,7 +446,7 @@ export default function BuzurgPage() {
       <Card className="border-red-300 bg-red-50">
         <CardContent className="p-6">
           <button
-            onClick={() => toast.success("Emergency number par call ja rahi hai... 📞")}
+            onClick={() => toast.success("ایمرجنسی نمبر پر کال جا رہی ہے... 📞")}
             className="flex w-full items-center justify-center gap-3 rounded-2xl bg-red-600 p-8 text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-95"
           >
             <AlertTriangle className="h-8 w-8" />

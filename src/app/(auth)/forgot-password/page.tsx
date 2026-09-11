@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error("Sahi email address likhein");
+      toast.error("درست ای میل ایڈریس لکھیں");
       return;
     }
     setLoading(true);
@@ -29,13 +29,13 @@ export default function ForgotPasswordPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Kuch ghalat ho gaya");
+        toast.error(data.error || "کچھ غلط ہو گیا");
         return;
       }
       setSent(true);
-      toast.success("Reset link bhej diya gaya hai");
+      toast.success("ری سیٹ لنک بھیج دیا گیا ہے");
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(false);
     }
@@ -81,7 +81,7 @@ export default function ForgotPasswordPage() {
             </div>
             <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? "Bheja ja raha hai..." : "Reset Link Bhejein"}
+              {loading ? "بھیجا جا رہا ہے..." : "ری سیٹ لنک بھیجیں"}
             </Button>
             <p className="text-center text-sm text-gray-600">
               Yaad aa gaya?{" "}

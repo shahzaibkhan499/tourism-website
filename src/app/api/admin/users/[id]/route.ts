@@ -56,7 +56,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const target = await prisma.user.findUnique({ where: { id } });
     if (!target) throw new Error("NOT_FOUND");
     if (target.id === admin.id && parsed.data.action === "ban") {
-      return apiError(400, "Aap apne aap ko ban nahi kar sakte");
+      return apiError(400, "آپ خود کو بند نہیں کر سکتے");
     }
 
     const { action, role, reason } = parsed.data;
@@ -69,7 +69,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         await prisma.user.update({ where: { id }, data: { isVerified: false } });
         break;
       case "role":
-        if (!role) return apiError(400, "Role chunein");
+        if (!role) return apiError(400, "کردار منتخب کریں");
         await prisma.user.update({ where: { id }, data: { role } });
         break;
       case "ban":
@@ -82,7 +82,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             userId: id,
             type: "system",
             title: "Account ban",
-            message: `Aapka account ban kar diya gaya hai. Wajah: ${reason || "community guidelines ki khilaf warzi"}`,
+            message: `آپ کا اکاؤنٹ بند کر دیا گیا ہے. Wajah: ${reason || "community guidelines ki khilaf warzi"}`,
           },
         });
         break;
@@ -96,7 +96,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         await prisma.user.delete({ where: { id } });
         break;
       default:
-        return apiError(400, "Ghalat action");
+        return apiError(400, "غلط کارروائی");
     }
 
     await auditLog(admin.id, `ADMIN_${action.toUpperCase()}_USER`, "User", id, { email: target.email, reason }, getIp(req.headers));
@@ -111,11 +111,11 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   try {
     const admin = await requireAdmin();
     const { id } = params;
-    if (id === admin.id) return apiError(400, "Aap apne aap ko delete nahi kar sakte");
+    if (id === admin.id) return apiError(400, "آپ خود کو ڈیلیٹ نہیں کر سکتے");
 
     await prisma.user.delete({ where: { id } });
     await auditLog(admin.id, "ADMIN_DELETE_USER", "User", id, {}, getIp(req.headers));
-    return apiSuccess({ message: "User delete ho gaya" });
+    return apiSuccess({ message: "صارف ڈیلیٹ ہو گیا" });
   } catch (error) {
     return handleApiError(error);
   }

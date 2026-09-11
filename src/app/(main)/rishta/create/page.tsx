@@ -68,7 +68,7 @@ export default function CreateRishtaPage() {
 
   const handleUpload = async (file: File) => {
     if (photos.length >= 5) {
-      toast.error("Ziada se ziada 5 photos upload kar sakte hain");
+      toast.error("زیادہ سے زیادہ 5 تصاویر اپ لوڈ کر سکتے ہیں");
       return;
     }
     setUploading(true);
@@ -78,13 +78,13 @@ export default function CreateRishtaPage() {
       const res = await fetch("/api/media/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Upload nahi ho saka");
+        toast.error(data.error || "اپ لوڈ نہیں ہو سکا");
         return;
       }
       setValue("photos", [...photos, data.url]);
       toast.success("Photo upload ho gayi");
     } catch {
-      toast.error("Upload mein masla aa gaya");
+      toast.error("اپ لوڈ میں مسئلہ آ گیا");
     } finally {
       setUploading(false);
     }
@@ -100,13 +100,13 @@ export default function CreateRishtaPage() {
       });
       const result = await res.json();
       if (!res.ok) {
-        toast.error(result.error || "Profile save nahi ho saki");
+        toast.error(result.error || "پروفائل محفوظ نہیں ہو سکی");
         return;
       }
-      toast.success("Rishta profile ban gaya! 💚");
+      toast.success("رشتہ پروفائل بن گیا! 💚");
       router.push(`/rishta/${result.id}`);
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(false);
     }
@@ -117,7 +117,7 @@ export default function CreateRishtaPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <PageHeader title="Rishta Profile Banayein" titleUrdu="رشتہ پروفائل" description="Apne baare mein batayein — 6 aasan steps" />
+      <PageHeader title="رشتہ پروفائل بنائیں" titleUrdu="رشتہ پروفائل" description="اپنے بارے میں بتائیں — 6 آسان مراحل" />
 
       {/* Progress */}
       <div className="mb-6">
@@ -155,7 +155,7 @@ export default function CreateRishtaPage() {
                   <Label>Complexion</Label>
                   <Select onValueChange={(v) => setValue("complexion", v)} value={watch("complexion") || undefined}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Chunein" />
+                      <SelectValue placeholder="منتخب کریں" />
                     </SelectTrigger>
                     <SelectContent>
                       {COMPLEXIONS.map((c) => (
@@ -195,7 +195,7 @@ export default function CreateRishtaPage() {
                   <Label>Education</Label>
                   <Select onValueChange={(v) => setValue("education", v)} value={watch("education") || undefined}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Chunein" />
+                      <SelectValue placeholder="منتخب کریں" />
                     </SelectTrigger>
                     <SelectContent>
                       {EDUCATION_LEVELS.map((e) => (
@@ -228,7 +228,7 @@ export default function CreateRishtaPage() {
                   <Label>Sect</Label>
                   <Select onValueChange={(v) => setValue("sect", v)} value={watch("sect") || undefined}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Chunein" />
+                      <SelectValue placeholder="منتخب کریں" />
                     </SelectTrigger>
                     <SelectContent>
                       {SECTS.map((s) => (
@@ -262,15 +262,15 @@ export default function CreateRishtaPage() {
             <div className={cn("space-y-4", step !== 3 && "hidden")}>
               <div className="space-y-1.5">
                 <Label>About Me</Label>
-                <Textarea rows={4} placeholder="Apne baare mein likhein — personality, hobbies, lifestyle..." {...register("about")} />
+                <Textarea rows={4} placeholder="اپنے بارے میں لکھیں — شخصیت، مشاغل، طرزِ زندگی..." {...register("about")} />
               </div>
               <div className="space-y-1.5">
                 <Label>Family Background</Label>
-                <Textarea rows={4} placeholder="Apne khandaan ke baare mein likhein..." {...register("familyBackground")} />
+                <Textarea rows={4} placeholder="اپنے خاندان کے بارے میں لکھیں..." {...register("familyBackground")} />
               </div>
               <div className="space-y-1.5">
                 <Label>Expectations</Label>
-                <Textarea rows={4} placeholder="Aap kaisa rishta chahte hain?" {...register("expectations")} />
+                <Textarea rows={4} placeholder="آپ کیسا رشتہ چاہتے ہیں؟" {...register("expectations")} />
               </div>
             </div>
 
@@ -323,7 +323,7 @@ export default function CreateRishtaPage() {
                 {photos.length < 5 && (
                   <label className="flex h-28 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 text-center transition-colors hover:border-pink-300 hover:bg-pink-50/40">
                     <Upload className="h-6 w-6 text-gray-400" />
-                    <span className="mt-1 text-[10px] text-gray-500">{uploading ? "Upload..." : "Photo Add Karein"}</span>
+                    <span className="mt-1 text-[10px] text-gray-500">{uploading ? "Upload..." : "تصویر شامل کریں"}</span>
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp,image/gif"
@@ -361,7 +361,7 @@ export default function CreateRishtaPage() {
               ) : (
                 <Button type="submit" className="flex-1 bg-pink-600 hover:bg-pink-700" disabled={loading || uploading}>
                   {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-1 h-4 w-4" />}
-                  {loading ? "Save ho raha hai..." : "Profile Save Karein"}
+                  {loading ? "محفوظ ہو رہا ہے..." : "پروفائل محفوظ کریں"}
                 </Button>
               )}
             </div>

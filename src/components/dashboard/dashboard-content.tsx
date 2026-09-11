@@ -56,10 +56,10 @@ interface DashboardProps {
 }
 
 const quickActions = [
-  { label: "Event Banayein", href: "/events/create", icon: CalendarPlus, color: "bg-emerald-100 text-emerald-700" },
-  { label: "Rishta Dekhein", href: "/rishta", icon: Heart, color: "bg-pink-100 text-pink-700" },
+  { label: "ایونٹ بنائیں", href: "/events/create", icon: CalendarPlus, color: "bg-emerald-100 text-emerald-700" },
+  { label: "رشتہ دیکھیں", href: "/rishta", icon: Heart, color: "bg-pink-100 text-pink-700" },
   { label: "Job Search", href: "/jobs", icon: Briefcase, color: "bg-amber-100 text-amber-700" },
-  { label: "Memory Add Karein", href: "/memories/create", icon: BookPlus, color: "bg-purple-100 text-purple-700" },
+  { label: "یاد شامل کریں", href: "/memories/create", icon: BookPlus, color: "bg-purple-100 text-purple-700" },
 ];
 
 export function DashboardContent({ user, stats, upcomingEvents, activities }: DashboardProps) {
@@ -78,10 +78,10 @@ export function DashboardContent({ user, stats, upcomingEvents, activities }: Da
   }, []);
 
   const statCards = [
-    { label: "Events Banaye", value: stats.eventsCreated, icon: CalendarDays, color: "bg-emerald-100 text-emerald-700" },
-    { label: "Clan Members", value: stats.clanMembers, icon: Users, color: "bg-blue-100 text-blue-700" },
-    { label: "Memories Saved", value: stats.memoriesCount, icon: BookOpen, color: "bg-purple-100 text-purple-700" },
-    { label: "Unread Notifications", value: stats.unreadNotifications, icon: Bell, color: "bg-red-100 text-red-700" },
+    { label: "بنائے گئے ایونٹس", value: stats.eventsCreated, icon: CalendarDays, color: "bg-emerald-100 text-emerald-700" },
+    { label: "کلان ممبران", value: stats.clanMembers, icon: Users, color: "bg-blue-100 text-blue-700" },
+    { label: "محفوظ یادیں", value: stats.memoriesCount, icon: BookOpen, color: "bg-purple-100 text-purple-700" },
+    { label: "غیر پڑھی اطلاعیں", value: stats.unreadNotifications, icon: Bell, color: "bg-red-100 text-red-700" },
   ];
 
   return (
@@ -105,13 +105,13 @@ export function DashboardContent({ user, stats, upcomingEvents, activities }: Da
                     Clan: <strong>{user.clan.name}</strong>
                   </>
                 ) : (
-                  "Abhi kisi clan se judein nahi"
+                  "ابھی کسی کلان سے نہیں جڑے"
                 )}
               </p>
             </div>
           </div>
           <Button variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20" asChild>
-            <Link href="/profile">Profile Dekhein</Link>
+            <Link href="/profile">پروفائل دیکھیں</Link>
           </Button>
         </CardContent>
       </Card>

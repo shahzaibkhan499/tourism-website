@@ -27,20 +27,20 @@ export function RSVPButton({ eventId, initialStatus, counts, onUpdate }: RSVPBut
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "RSVP save nahi ho saka");
+        toast.error(data.error || "RSVP محفوظ نہیں ہو سکا");
         return;
       }
       setStatus(newStatus);
       onUpdate?.(newStatus);
       toast.success(
         newStatus === "GOING"
-          ? "Shukriya! Aap ja rahe hain 🎉"
+          ? "شکریہ! آپ جا رہے ہیں 🎉"
           : newStatus === "MAYBE"
-            ? "Maybe mark ho gaya"
-            : "Theek hai, aap nahi aa rahe"
+            ? "شاید نشان زد ہو گیا"
+            : "ٹھیک ہے، آپ نہیں آ رہے"
       );
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(null);
     }

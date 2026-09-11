@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import { UserPlus, Users, CalendarDays, Share2 } from "lucide-react";
 
 const steps = [
-  { icon: UserPlus, title: "Register Karein", desc: "Sirf 2 minute mein free account banayein. Google se bhi sign up kar sakte hain." },
-  { icon: Users, title: "Clan Se Judein", desc: "Apni community aur clan chunein. Apne logon ko dhundein aur judein." },
-  { icon: CalendarDays, title: "Events Banayein", desc: "Shaadi, eid, aqeeqa — koi bhi event banayein aur family ko invite karein." },
-  { icon: Share2, title: "Share & Grow", desc: "Yaadein share karein, jobs dhundein, aur apna khandaan barhayein." },
+  { icon: UserPlus, title: "رجسٹر کریں", desc: "صرف 2 منٹ میں فری اکاؤنٹ بنائیں۔ گوگل سے بھی سائن اپ کر سکتے ہیں۔" },
+  { icon: Users, title: "کلان سے جڑیں", desc: "اپنی کمیونٹی اور کلان منتخب کریں۔ اپنے لوگوں کو ڈھونڈیں اور جڑیں۔" },
+  { icon: CalendarDays, title: "ایونٹس بنائیں", desc: "شادی، عید، عقیقہ — کوئی بھی ایونٹ بنائیں اور فیملی کو مدعو کریں۔" },
+  { icon: Share2, title: "Share & Grow", desc: "یادیں شیئر کریں، نوکریاں ڈھونڈیں، اور اپنا خاندان بڑھائیں۔" },
 ];
 
 export function HowItWorks() {

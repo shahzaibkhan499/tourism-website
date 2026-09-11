@@ -23,37 +23,37 @@ interface QuizQuestion {
 
 const defaultQuizQuestions: QuizQuestion[] = [
   {
-    question: "Yeh kaun hain? (Photo mein jo dikh rahe hain)",
+    question: "یہ کون ہیں؟ (تصویر میں جو نظر آ رہے ہیں)",
     emoji: "👨‍🦳",
-    options: ["Dada Abu", "Chacha", "Mamu", "Phupha"],
+    options: ["Dada Abu", "چچا", "Mamu", "Phupha"],
     correct: 0,
   },
   {
-    question: "Aapka rishta kya hai? Dada Abu ke bhai se",
+    question: "آپ کا رشتہ کیا ہے؟ دادا ابو کے بھائی سے",
     emoji: "👴",
-    options: ["Chacha", "Taya", "Mamu", "Khalu"],
+    options: ["چچا", "Taya", "Mamu", "Khalu"],
     correct: 1,
   },
   {
-    question: "Eid Milan Party kab hui thi?",
+    question: "عید ملن پارٹی کب ہوئی تھی؟",
     emoji: "🎉",
     options: ["Eid ul Fitr", "Eid ul Adha", "Pakistan Day", "Naya Saal"],
     correct: 0,
   },
   {
-    question: "Nikkah ki rasam mein kya hota hai?",
+    question: "نکاح کی رسم میں کیا ہوتا ہے؟",
     emoji: "🤝",
-    options: ["Qubool hai", "Happy Birthday", "Goal!", "Allah Hafiz"],
+    options: ["قبول ہے", "Happy Birthday", "Goal!", "Allah Hafiz"],
     correct: 0,
   },
   {
-    question: "Ammi ki Ammi aapki kya lagti hain?",
+    question: "امی کی امی آپ کی کیا لگتی ہیں؟",
     emoji: "👵",
     options: ["Nani", "Dadi", "Khala", "Phupho"],
     correct: 0,
   },
   {
-    question: "Bachon ki Eid par kya milta hai?",
+    question: "بچوں کو عید پر کیا ملتا ہے؟",
     emoji: "🧧",
     options: ["Eidi", "Salary", "Bonus", "Pocket Money"],
     correct: 0,
@@ -94,14 +94,14 @@ export default function KidsPage() {
   const toggleKidsMode = () => {
     if (!kidsMode) {
       setKidsMode(true);
-      toast.success("Kids Mode ON! Maze karo! 🎈");
+      toast.success("کڈز موڈ آن! مزے کرو! 🎈");
     } else {
       if (passwordInput === "family123") {
         setKidsMode(false);
         setPasswordInput("");
         toast.success("Kids Mode OFF");
       } else {
-        toast.error("Password ghalat hai (hint: family123)");
+        toast.error("پاس ورڈ غلط ہے (اشارہ: family123)");
       }
     }
   };
@@ -123,7 +123,7 @@ export default function KidsPage() {
         const distractors = [...others].sort(() => Math.random() - 0.5).slice(0, 3).map((o) => o.title);
         const options = [m.title, ...distractors].sort(() => Math.random() - 0.5);
         return {
-          question: "Ye photo kis yaad (memory) ki hai?",
+          question: "یہ تصویر کس یاد کی ہے؟",
           emoji: "🖼️",
           image: m.media[0].url,
           options,
@@ -143,7 +143,7 @@ export default function KidsPage() {
     if (photoQs) {
       setQuestions(photoQs);
       setPhotoQuiz(true);
-      toast.info("Photo Quiz! Apni family ki yaadein pehchano 📸");
+      toast.info("فوٹو کوئز! اپنی فیملی کی یادیں پہچانو 📸");
     } else {
       setQuestions(defaultQuizQuestions);
       setPhotoQuiz(false);
@@ -166,7 +166,7 @@ export default function KidsPage() {
       toast.success("Shabash! +10 points! ⭐");
     } else {
       setQuizScore((s) => Math.max(0, s - 5));
-      toast.error("Ghalat! -5 points");
+      toast.error("غلط! -5 پوائنٹس");
     }
 
     if (quizIndex >= questions.length - 1) {
@@ -192,13 +192,13 @@ export default function KidsPage() {
   if (!kidsMode) {
     return (
       <div className="mx-auto max-w-lg">
-        <PageHeader title="Kids Zone" titleUrdu="بچوں کی دنیا" description="Bachon ke liye mazedaar learning aur games" />
+        <PageHeader title="Kids Zone" titleUrdu="بچوں کی دنیا" description="بچوں کے لیے مزیدار سیکھنا اور کھیل" />
         <Card className="text-center">
           <CardContent className="p-10">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-yellow-100 text-4xl">🧒</div>
             <h2 className="mt-5 text-2xl font-bold">Kids Mode ON Karein?</h2>
             <p className="mx-auto mt-2 max-w-sm text-sm text-gray-600">
-              Family quiz, achievements aur points! Bachon ke liye safe aur mazedaar.
+              فیملی کوئز، کامیابیاں اور پوائنٹس! بچوں کے لیے محفوظ اور مزیدار۔
             </p>
             <Button size="xl" className="mt-8 bg-yellow-500 text-white hover:bg-yellow-600" onClick={toggleKidsMode}>
               <Baby className="mr-2 h-5 w-5" />
@@ -279,7 +279,7 @@ export default function KidsPage() {
               </p>
               <Button size="lg" className="mt-4 bg-yellow-500 text-white hover:bg-yellow-600" onClick={startQuiz} disabled={photoLoading}>
                 {photoLoading ? <Loader2 className="mr-1 h-5 w-5 animate-spin" /> : <PlayCircle className="mr-1 h-5 w-5" />}
-                {photoLoading ? "Photos load ho rahi hain..." : "Quiz Shuru Karein"}
+                {photoLoading ? "تصاویر لوڈ ہو رہی ہیں..." : "کوئز شروع کریں"}
               </Button>
               {photoQuiz && (
                 <p className="mt-2 text-xs text-gray-500">📸 Ye quiz aapki asli family photos par bana hai</p>
@@ -375,8 +375,8 @@ export default function KidsPage() {
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { action: "Family info add karna", points: "+10", emoji: "👨‍👩‍👧‍👦" },
-            { action: "Photos upload karna", points: "+5", emoji: "📸" },
+            { action: "فیملی معلومات شامل کریں", points: "+10", emoji: "👨‍👩‍👧‍👦" },
+            { action: "تصاویر اپ لوڈ کریں", points: "+5", emoji: "📸" },
             { action: "Quiz khelna", points: "+10", emoji: "🎯" },
             { action: "Daily login", points: "+2", emoji: "📅" },
           ].map((p) => (

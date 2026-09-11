@@ -11,58 +11,58 @@ const passwordMin = 8;
 // ---------- Auth ----------
 
 export const registerSchema = z.object({
-  name: z.string().min(2, "Naam kam az kam 2 huroof ka hona chahiye"),
-  email: z.string().email("Sahi email address likhein"),
+  name: z.string().min(2, "نام کم از کم 2 حروف کا ہونا چاہیے"),
+  email: z.string().email("درست ای میل ایڈریس لکھیں"),
   phone: z
     .string()
-    .regex(phoneRegex, "Sahi Pakistani mobile number likhein (03001234567)")
+    .regex(phoneRegex, "درست پاکستانی موبائل نمبر لکھیں (03001234567)")
     .optional()
     .or(z.literal("")),
-  password: z.string().min(passwordMin, "Password kam az kam 8 characters ka ho"),
+  password: z.string().min(passwordMin, "پاس ورڈ کم از کم 8 حروف کا ہو"),
   gender: z.enum(["MALE", "FEMALE", "OTHER"]).optional(),
   city: z.string().optional(),
 });
 
 export const loginSchema = z.object({
-  email: z.string().email("Sahi email address likhein"),
-  password: z.string().min(1, "Password likhein"),
+  email: z.string().email("درست ای میل ایڈریس لکھیں"),
+  password: z.string().min(1, "پاس ورڈ لکھیں"),
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email("Sahi email address likhein"),
+  email: z.string().email("درست ای میل ایڈریس لکھیں"),
 });
 
 export const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, "Maujuda password likhein"),
+  currentPassword: z.string().min(1, "موجودہ پاس ورڈ لکھیں"),
   newPassword: z
     .string()
-    .min(passwordMin, "Naya password kam az kam 8 characters ka ho")
-    .regex(/[a-zA-Z]/, "Password mein ek English harf zaroori hai")
-    .regex(/[0-9]/, "Password mein ek number zaroori hai"),
+    .min(passwordMin, "نیا پاس ورڈ کم از کم 8 حروف کا ہو")
+    .regex(/[a-zA-Z]/, "پاس ورڈ میں ایک انگریزی حرف ضروری ہے")
+    .regex(/[0-9]/, "پاس ورڈ میں ایک نمبر ضروری ہے"),
 });
 
 export const twoFactorVerifySchema = z.object({
-  code: z.string().length(6, "6 digits ka code likhein"),
+  code: z.string().length(6, "6 ہندسوں کا کوڈ لکھیں"),
 });
 
 export const twoFactorEnableSchema = z.object({
-  code: z.string().length(6, "6 digits ka code likhein"),
+  code: z.string().length(6, "6 ہندسوں کا کوڈ لکھیں"),
 });
 
 // ---------- Profile ----------
 
 export const profileSchema = z.object({
-  name: z.string().min(2, "Naam kam az kam 2 huroof ka hona chahiye"),
+  name: z.string().min(2, "نام کم از کم 2 حروف کا ہونا چاہیے"),
   phone: z
     .string()
-    .regex(phoneRegex, "Sahi Pakistani mobile number likhein")
+    .regex(phoneRegex, "درست پاکستانی موبائل نمبر لکھیں")
     .optional()
     .or(z.literal("")),
   gender: z.enum(["MALE", "FEMALE", "OTHER"]).optional().nullable(),
   dateOfBirth: z.string().optional().nullable(),
   city: z.string().optional().nullable(),
   province: z.string().optional().nullable(),
-  bio: z.string().max(500, "Bio 500 characters se zyada nahi ho sakta").optional().nullable(),
+  bio: z.string().max(500, "تعارف 500 حروف سے زیادہ نہیں ہو سکتا").optional().nullable(),
   bloodGroup: z.string().optional().nullable(),
   occupation: z.string().optional().nullable(),
   education: z.string().optional().nullable(),
@@ -75,7 +75,7 @@ export const profileSchema = z.object({
 export const eventSchema = z.object({
   title: z.string().min(2, "Title kam az kam 2 huroof ka ho"),
   type: z.string().min(1, "Event type chunein"),
-  date: z.string().min(1, "Date chunein"),
+  date: z.string().min(1, "تاریخ منتخب کریں"),
   endDate: z.string().optional().nullable(),
   time: z.string().optional().nullable(),
   location: z.string().optional().nullable(),
@@ -108,7 +108,7 @@ export const eventQuerySchema = z.object({
 // ---------- Community ----------
 
 export const joinClanSchema = z.object({
-  clanId: z.string().min(1, "Clan chunein"),
+  clanId: z.string().min(1, "کلان منتخب کریں"),
   subClanId: z.string().optional().nullable(),
   subClanName: z.string().optional().nullable(),
 });
@@ -118,7 +118,7 @@ export const clanSchema = z.object({
   nameUrdu: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   history: z.string().optional().nullable(),
-  communityId: z.string().min(1, "Community chunein"),
+  communityId: z.string().min(1, "کمیونٹی منتخب کریں"),
   logo: z.string().optional().nullable(),
 });
 
@@ -126,7 +126,7 @@ export const subClanSchema = z.object({
   name: z.string().min(2, "Naam kam az kam 2 huroof ka ho"),
   nameUrdu: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
-  clanId: z.string().min(1, "Clan chunein"),
+  clanId: z.string().min(1, "کلان منتخب کریں"),
 });
 
 export const communitySchema = z.object({
@@ -140,7 +140,7 @@ export const communitySchema = z.object({
 // ---------- Rishta ----------
 
 export const rishtaProfileSchema = z.object({
-  age: z.coerce.number().int().min(18, "Umar kam az kam 18 ho").max(80, "Umar 80 se zyada nahi ho sakti"),
+  age: z.coerce.number().int().min(18, "Umar kam az kam 18 ho").max(80, "عمر 80 سے زیادہ نہیں ہو سکتی"),
   height: z.string().optional().nullable(),
   weight: z.string().optional().nullable(),
   complexion: z.string().optional().nullable(),
@@ -158,7 +158,7 @@ export const rishtaProfileSchema = z.object({
   about: z.string().max(2000).optional().nullable(),
   familyBackground: z.string().max(2000).optional().nullable(),
   expectations: z.string().max(2000).optional().nullable(),
-  photos: z.array(z.string()).max(5, "Ziada se ziada 5 photos upload kar sakte hain").default([]),
+  photos: z.array(z.string()).max(5, "زیادہ سے زیادہ 5 تصاویر اپ لوڈ کر سکتے ہیں").default([]),
   isGuardianMode: z.boolean().default(false),
   guardianName: z.string().optional().nullable(),
   guardianRelation: z.string().optional().nullable(),
@@ -166,8 +166,8 @@ export const rishtaProfileSchema = z.object({
 });
 
 export const rishtaRequestSchema = z.object({
-  receiverId: z.string().min(1, "Profile chunein"),
-  message: z.string().max(1000, "Message 1000 characters se zyada nahi ho sakta").optional().nullable(),
+  receiverId: z.string().min(1, "پروفائل منتخب کریں"),
+  message: z.string().max(1000, "پیغام 1000 حروف سے زیادہ نہیں ہو سکتا").optional().nullable(),
 });
 
 export const rishtaRequestActionSchema = z.object({
@@ -267,7 +267,7 @@ export const businessSchema = z.object({
   coverImage: z.string().optional().nullable(),
   website: z.string().optional().nullable(),
   phone: z.string().optional().nullable(),
-  email: z.string().email("Sahi email likhein").optional().nullable().or(z.literal("")),
+  email: z.string().email("درست ای میل لکھیں").optional().nullable().or(z.literal("")),
   address: z.string().optional().nullable(),
   city: z.string().optional().nullable(),
   province: z.string().optional().nullable(),
@@ -340,15 +340,15 @@ export const notificationQuerySchema = z.object({
 // ---------- Reports & Contact ----------
 
 export const reportSchema = z.object({
-  reportedId: z.string().min(1, "User chunein"),
+  reportedId: z.string().min(1, "صارف منتخب کریں"),
   type: z.string().min(1, "Report type chunein"),
-  reason: z.string().min(10, "Wajah kam az kam 10 characters mein likhein").max(2000),
+  reason: z.string().min(10, "وجہ کم از کم 10 حروف میں لکھیں").max(2000),
 });
 
 export const contactSchema = z.object({
-  name: z.string().min(2, "Naam likhein"),
-  email: z.string().email("Sahi email address likhein"),
-  subject: z.string().min(2, "Subject likhein"),
+  name: z.string().min(2, "نام لکھیں"),
+  email: z.string().email("درست ای میل ایڈریس لکھیں"),
+  subject: z.string().min(2, "موضوع لکھیں"),
   message: z.string().min(10, "Message kam az kam 10 characters ka ho").max(5000),
 });
 

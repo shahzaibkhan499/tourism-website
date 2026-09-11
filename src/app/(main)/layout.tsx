@@ -41,7 +41,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         </header>
 
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          <div className="mx-auto max-w-6xl">{children}</div>
+          <div dir="auto" className="mx-auto max-w-6xl">{children}</div>
         </main>
       </div>
     </div>

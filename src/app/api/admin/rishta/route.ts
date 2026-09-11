@@ -40,10 +40,10 @@ export async function PATCH(req: NextRequest) {
     const admin = await requireAdmin();
     const body = await req.json();
     const { id, ...rest } = body as { id: string; [key: string]: unknown };
-    if (!id) return apiError(400, "Profile id zaroori hai");
+    if (!id) return apiError(400, "پروفائل آئی ڈی ضروری ہے");
 
     const parsed = adminRishtaActionSchema.safeParse({ action: rest.action });
-    if (!parsed.success) return apiError(400, "Ghalat action");
+    if (!parsed.success) return apiError(400, "غلط کارروائی");
 
     const profile = await prisma.rishtaProfile.findUnique({ where: { id } });
     if (!profile) throw new Error("NOT_FOUND");
@@ -67,7 +67,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     await auditLog(admin.id, `ADMIN_${parsed.data.action.toUpperCase()}_RISHTA`, "RishtaProfile", id, {}, getIp(req.headers));
-    return apiSuccess({ message: "Action kamyab raha" });
+    return apiSuccess({ message: "کارروائی کامیاب رہی" });
   } catch (error) {
     return handleApiError(error);
   }

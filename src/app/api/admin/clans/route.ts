@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
       return apiSuccess(item, 201);
     }
 
-    return apiError(400, "Ghalat entity");
+    return apiError(400, "غلط اندراج");
   } catch (error) {
     return handleApiError(error);
   }
@@ -171,7 +171,7 @@ export async function PATCH(req: NextRequest) {
       return apiSuccess(updated);
     }
 
-    return apiError(400, "Ghalat entity");
+    return apiError(400, "غلط اندراج");
   } catch (error) {
     return handleApiError(error);
   }
@@ -183,24 +183,24 @@ export async function DELETE(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const entity = searchParams.get("entity");
     const id = searchParams.get("id");
-    if (!entity || !id) return apiError(400, "Entity aur id zaroori hain");
+    if (!entity || !id) return apiError(400, "اندراج اور آئی ڈی ضروری ہیں");
 
     if (entity === "community") {
       const count = await prisma.clan.count({ where: { communityId: id } });
-      if (count > 0) return apiError(400, "Is community mein clans mojood hain, pehle unhein delete karein");
+      if (count > 0) return apiError(400, "اس کمیونٹی میں کلانز موجود ہیں، پہلے انہیں ڈیلیٹ کریں");
       await prisma.community.delete({ where: { id } });
     } else if (entity === "clan") {
       const count = await prisma.subClan.count({ where: { clanId: id } });
-      if (count > 0) return apiError(400, "Is clan mein sub-clans mojood hain, pehle unhein delete karein");
+      if (count > 0) return apiError(400, "اس کلان میں سب کلانز موجود ہیں، پہلے انہیں ڈیلیٹ کریں");
       await prisma.clan.delete({ where: { id } });
     } else if (entity === "subclan") {
       await prisma.subClan.delete({ where: { id } });
     } else {
-      return apiError(400, "Ghalat entity");
+      return apiError(400, "غلط اندراج");
     }
 
     await auditLog(admin.id, `ADMIN_DELETE_${entity.toUpperCase()}`, entity, id, {}, getIp(req.headers));
-    return apiSuccess({ message: "Delete ho gaya" });
+    return apiSuccess({ message: "ڈیلیٹ ہو گیا" });
   } catch (error) {
     return handleApiError(error);
   }

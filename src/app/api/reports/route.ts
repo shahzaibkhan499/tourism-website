@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     const { reportedId, type, reason } = parsed.data;
 
     if (reportedId === user.id) {
-      return apiError(400, "Apne aap ko report nahi kar sakte");
+      return apiError(400, "خود کو رپورٹ نہیں کر سکتے");
     }
 
     const reported = await prisma.user.findUnique({ where: { id: reportedId } });
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       },
     });
     if (existing) {
-      return apiError(400, "Aap is user ko pehle se report kar chuke hain");
+      return apiError(400, "آپ اس صارف کو پہلے ہی رپورٹ کر چکے ہیں");
     }
 
     const report = await prisma.report.create({

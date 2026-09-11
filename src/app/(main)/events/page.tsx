@@ -25,9 +25,9 @@ import type { EventItem } from "@/types";
 export default function EventsPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [type, setType] = useState("");
+  const [type, setType] = useState("all");
   const [location, setLocation] = useState("");
-  const [visibility, setVisibility] = useState("");
+  const [visibility, setVisibility] = useState("all");
   const [hasMore, setHasMore] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const debouncedLocation = useDebounce(location);
@@ -37,22 +37,22 @@ export default function EventsPage() {
       setLoading(true);
       try {
         const params = new URLSearchParams({ limit: "12" });
-        if (type) params.set("type", type);
+        if (type !== "all") params.set("type", type);
         if (debouncedLocation) params.set("location", debouncedLocation);
-        if (visibility) params.set("isPublic", visibility);
+        if (visibility !== "all") params.set("isPublic", visibility);
         if (cursor) params.set("cursor", cursor);
 
         const res = await fetch(`/api/events?${params}`);
         const data = await res.json();
         if (!res.ok) {
-          toast.error(data.error || "Events load nahi ho sake");
+          toast.error(data.error || "ایونٹس لوڈ نہیں ہو سکے");
           return;
         }
         setEvents((prev) => (replace ? data.items : [...prev, ...data.items]));
         setHasMore(data.hasMore);
         setNextCursor(data.nextCursor);
       } catch {
-        toast.error("Network error. Dobara koshish karein.");
+        toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
       } finally {
         setLoading(false);
       }
@@ -69,12 +69,12 @@ export default function EventsPage() {
       <PageHeader
         title="Events"
         titleUrdu="تقریبات"
-        description="Family events banayein, dekhein aur RSVP karein"
+        description="فیملی ایونٹس بنائیں، دیکھیں اور RSVP کریں"
         actions={
           <Button className="bg-emerald-600 hover:bg-emerald-700" asChild>
             <Link href="/events/create">
               <Plus className="mr-1 h-4 w-4" />
-              Naya Event Banayein
+              نیا ایونٹ بنائیں
             </Link>
           </Button>
         }
@@ -88,7 +88,7 @@ export default function EventsPage() {
             <SelectValue placeholder="Event type" />
           </SelectTrigger>
           <SelectContent className="max-h-72">
-            <SelectItem value="">Sab types</SelectItem>
+            <SelectItem value="all">تمام اقسام</SelectItem>
             {EVENT_TYPES.map((t) => (
               <SelectItem key={t.value} value={t.value}>
                 {t.emoji} {t.label} — {t.labelUrdu}
@@ -100,7 +100,7 @@ export default function EventsPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
-            placeholder="Location search karein..."
+            placeholder="مقام تلاش کریں..."
             className="pl-9"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
@@ -112,7 +112,7 @@ export default function EventsPage() {
             <SelectValue placeholder="Visibility" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab</SelectItem>
+            <SelectItem value="all">Sab</SelectItem>
             <SelectItem value="true">Public</SelectItem>
             <SelectItem value="false">Private</SelectItem>
           </SelectContent>
@@ -136,9 +136,9 @@ export default function EventsPage() {
       ) : events.length === 0 ? (
         <EmptyState
           icon={<CalendarDays className="h-12 w-12" />}
-          title="Koi data nahi mila"
-          description="Abhi koi event nahi hai. Pehla event banayein!"
-          actionLabel="Event Banayein"
+          title="کوئی ڈیٹا نہیں ملا"
+          description="ابھی کوئی ایونٹ نہیں ہے۔ پہلا ایونٹ بنائیں!"
+          actionLabel="ایونٹ بنائیں"
           actionHref="/events/create"
         />
       ) : (

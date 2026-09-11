@@ -56,13 +56,13 @@ export default function CreateBusinessPage() {
       const res = await fetch("/api/media/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Upload nahi ho saka");
+        toast.error(data.error || "اپ لوڈ نہیں ہو سکا");
         return;
       }
       setValue(field, data.url);
       toast.success("Image upload ho gayi");
     } catch {
-      toast.error("Upload mein masla aa gaya");
+      toast.error("اپ لوڈ میں مسئلہ آ گیا");
     }
   };
 
@@ -76,13 +76,13 @@ export default function CreateBusinessPage() {
       });
       const result = await res.json();
       if (!res.ok) {
-        toast.error(result.error || "Business register nahi ho saka");
+        toast.error(result.error || "بزنس رجسٹر نہیں ہو سکا");
         return;
       }
-      toast.success("Business register ho gaya! 🎉");
+      toast.success("بزنس رجسٹر ہو گیا! 🎉");
       router.push(`/business/${result.id}`);
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(false);
     }
@@ -90,7 +90,7 @@ export default function CreateBusinessPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <PageHeader title="Business Register Karein" titleUrdu="کاروبار" description="Apna business directory mein shamil karein" />
+      <PageHeader title="بزنس رجسٹر کریں" titleUrdu="کاروبار" description="اپنا بزنس ڈائریکٹری میں شامل کریں" />
 
       <Card>
         <CardContent className="p-6">
@@ -103,7 +103,7 @@ export default function CreateBusinessPage() {
 
             <div className="space-y-1.5">
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" rows={4} placeholder="Business ke baare mein likhein..." {...register("description")} />
+              <Textarea id="description" rows={4} placeholder="بزنس کے بارے میں لکھیں..." {...register("description")} />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -111,7 +111,7 @@ export default function CreateBusinessPage() {
                 <Label>Industry</Label>
                 <Select onValueChange={(v) => setValue("industry", v)} value={watch("industry") || undefined}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Chunein" />
+                    <SelectValue placeholder="منتخب کریں" />
                   </SelectTrigger>
                   <SelectContent>
                     {INDUSTRIES.map((i) => (
@@ -146,7 +146,7 @@ export default function CreateBusinessPage() {
                 <Label>City</Label>
                 <Select onValueChange={(v) => setValue("city", v)} value={watch("city") || undefined}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Chunein" />
+                    <SelectValue placeholder="منتخب کریں" />
                   </SelectTrigger>
                   <SelectContent className="max-h-64">
                     {PAKISTANI_CITIES.map((c) => (
@@ -161,7 +161,7 @@ export default function CreateBusinessPage() {
                 <Label>Province</Label>
                 <Select onValueChange={(v) => setValue("province", v)} value={watch("province") || undefined}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Chunein" />
+                    <SelectValue placeholder="منتخب کریں" />
                   </SelectTrigger>
                   <SelectContent>
                     {PAKISTANI_PROVINCES.map((p) => (
@@ -299,7 +299,7 @@ export default function CreateBusinessPage() {
               </Button>
               <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {loading ? "Register ho raha hai..." : "Business Register Karein"}
+                {loading ? "رجسٹر ہو رہا ہے..." : "بزنس رجسٹر کریں"}
               </Button>
             </div>
           </form>

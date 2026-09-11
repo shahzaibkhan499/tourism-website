@@ -28,7 +28,7 @@ export default function JobsPage() {
   const [jobs, setJobs] = useState<JobPostingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState("all");
   const [location, setLocation] = useState("");
   const [hasMore, setHasMore] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -40,21 +40,21 @@ export default function JobsPage() {
       try {
         const params = new URLSearchParams({ limit: "10" });
         if (debouncedQ) params.set("q", debouncedQ);
-        if (type) params.set("type", type);
+        if (type !== "all") params.set("type", type);
         if (location) params.set("location", location);
         if (cursor) params.set("cursor", cursor);
 
         const res = await fetch(`/api/jobs?${params}`);
         const data = await res.json();
         if (!res.ok) {
-          toast.error(data.error || "Jobs load nahi ho sakin");
+          toast.error(data.error || "نوکریاں لوڈ نہیں ہو سکیں");
           return;
         }
         setJobs((prev) => (replace ? data.items : [...prev, ...data.items]));
         setHasMore(data.hasMore);
         setNextCursor(data.nextCursor);
       } catch {
-        toast.error("Network error. Dobara koshish karein.");
+        toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
       } finally {
         setLoading(false);
       }
@@ -71,12 +71,12 @@ export default function JobsPage() {
       <PageHeader
         title="Jobs"
         titleUrdu="نوکریاں"
-        description="Family businesses ki trusted jobs"
+        description="فیملی بزنسز کی قابلِ اعتماد نوکریاں"
         actions={
           <Button className="bg-emerald-600 hover:bg-emerald-700" asChild>
             <Link href="/jobs/post">
               <Plus className="mr-1 h-4 w-4" />
-              Job Post Karein
+              نوکری پوسٹ کریں
             </Link>
           </Button>
         }
@@ -86,7 +86,7 @@ export default function JobsPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
-            placeholder="Job title ya company dhundein..."
+            placeholder="نوکری کا عنوان یا کمپنی تلاش کریں..."
             className="pl-9"
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -97,7 +97,7 @@ export default function JobsPage() {
             <SelectValue placeholder="Job type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab types</SelectItem>
+            <SelectItem value="all">تمام اقسام</SelectItem>
             {JOB_TYPES.map((t) => (
               <SelectItem key={t.value} value={t.value}>
                 {t.label} — {t.labelUrdu}
@@ -120,9 +120,9 @@ export default function JobsPage() {
       ) : jobs.length === 0 ? (
         <EmptyState
           icon={<Briefcase className="h-12 w-12" />}
-          title="Koi data nahi mila"
-          description="Abhi koi job nahi hai. Business owners job post kar sakte hain."
-          actionLabel="Job Post Karein"
+          title="کوئی ڈیٹا نہیں ملا"
+          description="ابھی کوئی نوکری نہیں ہے۔ بزنس مالکان نوکری پوسٹ کر سکتے ہیں۔"
+          actionLabel="نوکری پوسٹ کریں"
           actionHref="/jobs/post"
         />
       ) : (

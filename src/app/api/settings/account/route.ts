@@ -6,7 +6,7 @@ export async function DELETE(_req: NextRequest) {
   try {
     const user = await requireUser();
     await prisma.user.delete({ where: { id: user.id } });
-    return apiSuccess({ message: "Account delete ho gaya" });
+    return apiSuccess({ message: "اکاؤنٹ ڈیلیٹ ہو گیا" });
   } catch (error) {
     return handleApiError(error);
   }

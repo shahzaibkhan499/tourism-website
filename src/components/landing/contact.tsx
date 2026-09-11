@@ -23,13 +23,13 @@ export function ContactSection() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Kuch ghalat ho gaya");
+        toast.error(data.error || "کچھ غلط ہو گیا");
         return;
       }
-      toast.success(data.message || "Message bhej diya gaya!");
+      toast.success(data.message || "پیغام بھیج دیا گیا!");
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,7 @@ export function ContactSection() {
               <Label htmlFor="contact-name">Naam</Label>
               <Input
                 id="contact-name"
-                placeholder="Aapka naam"
+                placeholder="آپ کا نام"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
@@ -87,7 +87,7 @@ export function ContactSection() {
             <Label htmlFor="contact-subject">Subject</Label>
             <Input
               id="contact-subject"
-              placeholder="Kis bare mein baat karni hai?"
+              placeholder="کس بارے میں بات کرنی ہے؟"
               value={form.subject}
               onChange={(e) => setForm({ ...form, subject: e.target.value })}
               required
@@ -99,7 +99,7 @@ export function ContactSection() {
             <Textarea
               id="contact-message"
               rows={5}
-              placeholder="Apna message yahan likhein..."
+              placeholder="اپنا پیغام یہاں لکھیں..."
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
               required
@@ -108,7 +108,7 @@ export function ContactSection() {
           </div>
           <Button type="submit" className="mt-5 w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
             <Send className="mr-1 h-4 w-4" />
-            {loading ? "Bheja ja raha hai..." : "Message Bhejein"}
+            {loading ? "بھیجا جا رہا ہے..." : "پیغام بھیجیں"}
           </Button>
         </form>
       </div>

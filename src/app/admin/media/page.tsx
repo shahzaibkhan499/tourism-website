@@ -56,7 +56,7 @@ export default function AdminMediaPage() {
       if (type) params.set("type", type);
       const res = await fetch(`/api/admin/media?${params}`);
       const json = await res.json();
-      if (!res.ok) return toast.error(json.error || "Media load nahi ho saka");
+      if (!res.ok) return toast.error(json.error || "میڈیا لوڈ نہیں ہو سکا");
       setData(json);
     } catch {
       toast.error("Network error");
@@ -74,8 +74,8 @@ export default function AdminMediaPage() {
     try {
       const res = await fetch(`/api/admin/media?ids=${encodeURIComponent(ids.join(","))}`, { method: "DELETE" });
       const json = await res.json();
-      if (!res.ok) return toast.error(json.error || "Delete nahi ho saka");
-      toast.success(json.message || "Delete ho gaya");
+      if (!res.ok) return toast.error(json.error || "ڈیلیٹ نہیں ہو سکا");
+      toast.success(json.message || "ڈیلیٹ ہو گیا");
       fetchMedia();
     } catch {
       toast.error("Network error");
@@ -91,7 +91,7 @@ export default function AdminMediaPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Media</h1>
-        <p className="text-sm text-gray-500">Platform ki tamam uploaded files</p>
+        <p className="text-sm text-gray-500">پلیٹ فارم کی تمام اپ لوڈ شدہ فائلیں</p>
       </div>
 
       {/* Storage stats */}
@@ -133,7 +133,7 @@ export default function AdminMediaPage() {
             <SelectValue placeholder="Type filter" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab types</SelectItem>
+            <SelectItem value="all">تمام اقسام</SelectItem>
             <SelectItem value="IMAGE">Images</SelectItem>
             <SelectItem value="VIDEO">Videos</SelectItem>
             <SelectItem value="AUDIO">Audio</SelectItem>

@@ -27,7 +27,7 @@ export default function BusinessPage() {
   const [businesses, setBusinesses] = useState<BusinessItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const [industry, setIndustry] = useState("");
+  const [industry, setIndustry] = useState("all");
   const [city, setCity] = useState("");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [familyOnly, setFamilyOnly] = useState(false);
@@ -42,7 +42,7 @@ export default function BusinessPage() {
       try {
         const params = new URLSearchParams({ limit: "12" });
         if (debouncedQ) params.set("q", debouncedQ);
-        if (industry) params.set("industry", industry);
+        if (industry !== "all") params.set("industry", industry);
         if (debouncedCity) params.set("city", debouncedCity);
         if (verifiedOnly) params.set("verified", "true");
         if (familyOnly) params.set("familyOwned", "true");
@@ -51,14 +51,14 @@ export default function BusinessPage() {
         const res = await fetch(`/api/business?${params}`);
         const data = await res.json();
         if (!res.ok) {
-          toast.error(data.error || "Businesses load nahi ho sake");
+          toast.error(data.error || "بزنسز لوڈ نہیں ہو سکے");
           return;
         }
         setBusinesses((prev) => (replace ? data.items : [...prev, ...data.items]));
         setHasMore(data.hasMore);
         setNextCursor(data.nextCursor);
       } catch {
-        toast.error("Network error. Dobara koshish karein.");
+        toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
       } finally {
         setLoading(false);
       }
@@ -75,12 +75,12 @@ export default function BusinessPage() {
       <PageHeader
         title="Business Directory"
         titleUrdu="کاروباری ڈائریکٹری"
-        description="Family businesses discover karein"
+        description="فیملی بزنسز دریافت کریں"
         actions={
           <Button className="bg-emerald-600 hover:bg-emerald-700" asChild>
             <Link href="/business/create">
               <Plus className="mr-1 h-4 w-4" />
-              Business Register Karein
+              بزنس رجسٹر کریں
             </Link>
           </Button>
         }
@@ -90,7 +90,7 @@ export default function BusinessPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
-            placeholder="Business dhundein..."
+            placeholder="بزنس تلاش کریں..."
             className="pl-9"
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -101,7 +101,7 @@ export default function BusinessPage() {
             <SelectValue placeholder="Industry" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab industries</SelectItem>
+            <SelectItem value="all">تمام صنعتیں</SelectItem>
             {INDUSTRIES.map((i) => (
               <SelectItem key={i} value={i}>
                 {i}
@@ -142,9 +142,9 @@ export default function BusinessPage() {
       ) : businesses.length === 0 ? (
         <EmptyState
           icon={<Building2 className="h-12 w-12" />}
-          title="Koi data nahi mila"
-          description="Abhi koi business listed nahi hai. Pehla business register karein!"
-          actionLabel="Business Register Karein"
+          title="کوئی ڈیٹا نہیں ملا"
+          description="ابھی کوئی بزنس درج نہیں ہے۔ پہلا بزنس رجسٹر کریں!"
+          actionLabel="بزنس رجسٹر کریں"
           actionHref="/business/create"
         />
       ) : (

@@ -57,7 +57,7 @@ export default function AdminAuditPage() {
       if (debouncedAction) params.set("action", debouncedAction);
       const res = await fetch(`/api/admin/audit?${params}`);
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Audit log load nahi ho saka");
+      if (!res.ok) return toast.error(data.error || "آڈٹ لاگ لوڈ نہیں ہو سکا");
       setLogs(data.logs);
       setTotal(data.total);
       setTotalPages(data.totalPages);
@@ -76,7 +76,7 @@ export default function AdminAuditPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Audit Log</h1>
-        <p className="text-sm text-gray-500">Admin actions ka mukammal record ({total} entries)</p>
+        <p className="text-sm text-gray-500">ایڈمن کارروائیوں کا مکمل ریکارڈ ({total} entries)</p>
       </div>
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">

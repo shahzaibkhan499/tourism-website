@@ -191,8 +191,8 @@ export const DEFAULT_COMMUNITIES = [
 
 export const NOTIFICATION_TYPES = {
   event_reminder: { label: "Event Reminder", labelUrdu: "ایونٹ یاد دہانی", icon: "Calendar" },
-  rishta_request: { label: "Rishta Request", labelUrdu: "رشتہ کی درخواست", icon: "Heart" },
-  rishta_accepted: { label: "Rishta Accepted", labelUrdu: "رشتہ قبول ہوا", icon: "HeartHandshake" },
+  rishta_request: { label: "رشتہ کی درخواست", labelUrdu: "رشتہ کی درخواست", icon: "Heart" },
+  rishta_accepted: { label: "رشتہ منظور", labelUrdu: "رشتہ قبول ہوا", icon: "HeartHandshake" },
   job_application: { label: "Job Application", labelUrdu: "نوکری کی درخواست", icon: "Briefcase" },
   clan_update: { label: "Clan Update", labelUrdu: "برادری کی خبر", icon: "Users" },
   memory_tag: { label: "Memory Tag", labelUrdu: "یاد میں ٹیگ", icon: "BookOpen" },

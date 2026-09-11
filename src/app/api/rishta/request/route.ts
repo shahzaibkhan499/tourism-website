@@ -57,18 +57,18 @@ export async function POST(req: NextRequest) {
 
     const myProfile = await prisma.rishtaProfile.findUnique({ where: { userId: user.id } });
     if (!myProfile) {
-      return apiError(400, "Pehle apna rishta profile banayein");
+      return apiError(400, "پہلے اپنا رشتہ پروفائل بنائیں");
     }
 
     const receiver = await prisma.rishtaProfile.findUnique({ where: { id: receiverId } });
     if (!receiver || !receiver.isActive) throw new Error("NOT_FOUND");
-    if (receiver.userId === user.id) return apiError(400, "Apne aap ko request nahi bhej sakte");
+    if (receiver.userId === user.id) return apiError(400, "خود کو درخواست نہیں بھیج سکتے");
 
     const existing = await prisma.rishtaRequest.findFirst({
       where: { senderId: myProfile.id, receiverId },
     });
     if (existing) {
-      return apiError(400, "Aap pehle se request bhej chuke hain");
+      return apiError(400, "آپ پہلے سے درخواست بھیج چکے ہیں");
     }
 
     const request = await prisma.rishtaRequest.create({
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
       data: {
         userId: receiver.userId,
         type: "rishta_request",
-        title: "Nayi rishta request!",
+        title: "نئی رشتہ کی درخواست!",
         message: `${user.name || "Kisi"} ne aapko rishta request bheji hai`,
         link: `/rishta/${receiver.id}`,
       },
@@ -102,7 +102,7 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const parsed = z
       .object({
-        requestId: z.string().min(1, "Request id chahiye"),
+        requestId: z.string().min(1, "درخواست آئی ڈی درکار ہے"),
         action: z.enum(["ACCEPTED", "REJECTED"]),
       })
       .safeParse(body);
@@ -114,7 +114,7 @@ export async function PATCH(req: NextRequest) {
 
     const myProfile = await prisma.rishtaProfile.findUnique({ where: { userId: user.id } });
     if (!myProfile) {
-      return apiError(400, "Pehle apna rishta profile banayein");
+      return apiError(400, "پہلے اپنا رشتہ پروفائل بنائیں");
     }
 
     const request = await prisma.rishtaRequest.findUnique({
@@ -124,7 +124,7 @@ export async function PATCH(req: NextRequest) {
     if (!request) throw new Error("NOT_FOUND");
     if (request.receiverId !== myProfile.id) throw new Error("FORBIDDEN");
     if (request.status !== "PENDING") {
-      return apiError(400, "Is request par pehle se action liya ja chuka hai");
+      return apiError(400, "اس درخواست پر پہلے ہی کارروائی ہو چکی ہے");
     }
 
     const updated = await prisma.rishtaRequest.update({
@@ -136,7 +136,7 @@ export async function PATCH(req: NextRequest) {
       data: {
         userId: request.sender.userId,
         type: "rishta_response",
-        title: action === "ACCEPTED" ? "Rishta request qabool ho gayi! 🎉" : "Rishta request par jawab",
+        title: action === "ACCEPTED" ? "رشتہ کی درخواست قبول ہو گئی! 🎉" : "رشتہ کی درخواست پر جواب",
         message:
           action === "ACCEPTED"
             ? `${user.name || "Kisi"} ne aapki rishta request qabool kar li hai`

@@ -48,7 +48,7 @@ export default function AdminContactPage() {
     try {
       const res = await fetch(`/api/admin/contact?unread=${unreadOnly}`);
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Messages load nahi ho sake");
+      if (!res.ok) return toast.error(data.error || "پیغامات لوڈ نہیں ہو سکے");
       setMessages(data.messages);
     } catch {
       toast.error("Network error");
@@ -69,7 +69,7 @@ export default function AdminContactPage() {
         body: JSON.stringify({ id: m.id, isRead: !m.isRead }),
       });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Update nahi ho saka");
+      if (!res.ok) return toast.error(data.error || "اپ ڈیٹ نہیں ہو سکا");
       fetchMessages();
       setViewMessage((v) => (v?.id === m.id ? { ...v, isRead: !v.isRead } : v));
     } catch {
@@ -81,8 +81,8 @@ export default function AdminContactPage() {
     try {
       const res = await fetch(`/api/admin/contact?id=${id}`, { method: "DELETE" });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Delete nahi ho saka");
-      toast.success("Message delete ho gaya");
+      if (!res.ok) return toast.error(data.error || "ڈیلیٹ نہیں ہو سکا");
+      toast.success("پیغام ڈیلیٹ ہو گیا");
       fetchMessages();
     } catch {
       toast.error("Network error");
@@ -101,7 +101,7 @@ export default function AdminContactPage() {
           </p>
         </div>
         <Button variant={unreadOnly ? "default" : "outline"} onClick={() => setUnreadOnly(!unreadOnly)}>
-          {unreadOnly ? "Sab Dekhein" : "Sirf Unread"}
+          {unreadOnly ? "سب دیکھیں" : "صرف غیر پڑھے"}
         </Button>
       </div>
 
@@ -146,7 +146,7 @@ export default function AdminContactPage() {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Message delete karein?</AlertDialogTitle>
-                        <AlertDialogDescription>Yeh action wapas nahi ho sakta.</AlertDialogDescription>
+                        <AlertDialogDescription>یہ کارروائی واپس نہیں ہو سکتی۔</AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -185,7 +185,7 @@ export default function AdminContactPage() {
                   variant="outline"
                   onClick={() => viewMessage && toggleRead(viewMessage)}
                 >
-                  {viewMessage.isRead ? "Unread Mark Karein" : "Read Mark Karein"}
+                  {viewMessage.isRead ? "غیر پڑھا نشان زد کریں" : "پڑھا ہوا نشان زد کریں"}
                 </Button>
               </div>
             </div>

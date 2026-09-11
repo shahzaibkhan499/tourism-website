@@ -35,7 +35,7 @@ export default function AdminSettingsPage() {
         for (const s of json.settings as SiteSetting[]) map[s.key] = s.value;
         setSettings(map);
       })
-      .catch(() => toast.error("Settings load nahi ho sakin"))
+      .catch(() => toast.error("سیٹنگز لوڈ نہیں ہو سکیں"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -52,7 +52,7 @@ export default function AdminSettingsPage() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Save nahi ho saka");
+      if (!res.ok) return toast.error(data.error || "محفوظ نہیں ہو سکا");
       toast.success("Settings save ho gayin!");
     } catch {
       toast.error("Network error");
@@ -79,17 +79,17 @@ export default function AdminSettingsPage() {
   ];
   const contentKeys = ["about_us", "terms_of_service", "privacy_policy"];
   const emailTemplateKeys = [
-    { key: "welcome_email_template", label: "Welcome Email", desc: "Naye user ko account banane par" },
+    { key: "welcome_email_template", label: "Welcome Email", desc: "نئے صارف کے اکاؤنٹ بننے پر" },
     { key: "event_reminder_template", label: "Event Reminder", desc: "Event se pehle reminder" },
-    { key: "password_reset_template", label: "Password Reset", desc: "Password reset ke waqt" },
-    { key: "report_notification_template", label: "Report Notification", desc: "Report status update par" },
+    { key: "password_reset_template", label: "Password Reset", desc: "پاس ورڈ ری سیٹ کے وقت" },
+    { key: "report_notification_template", label: "Report Notification", desc: "رپورٹ کی صورتحال اپ ڈیٹ ہونے پر" },
   ];
 
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Site Settings</h1>
-        <p className="text-sm text-gray-500">Platform configuration aur email templates</p>
+        <p className="text-sm text-gray-500">پلیٹ فارم کی ترتیب اور ای میل ٹیمپلیٹس</p>
       </div>
 
       <Tabs defaultValue="general">
@@ -158,7 +158,7 @@ export default function AdminSettingsPage() {
                 }
               >
                 {saving ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Save className="mr-1 h-4 w-4" />}
-                Save Karein
+                محفوظ کریں
               </Button>
             </CardContent>
           </Card>
@@ -185,7 +185,7 @@ export default function AdminSettingsPage() {
               </div>
               <Button className="bg-emerald-600 hover:bg-emerald-700" disabled={saving} onClick={() => saveKeys(contentKeys)}>
                 {saving ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Save className="mr-1 h-4 w-4" />}
-                Save Karein
+                محفوظ کریں
               </Button>
             </CardContent>
           </Card>
@@ -220,7 +220,7 @@ export default function AdminSettingsPage() {
             onClick={() => saveKeys(emailTemplateKeys.map((t) => t.key))}
           >
             {saving ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Save className="mr-1 h-4 w-4" />}
-            Email Templates Save Karein
+            Email Templates محفوظ کریں
           </Button>
         </TabsContent>
       </Tabs>

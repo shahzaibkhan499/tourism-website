@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
 
     const existing = await prisma.business.findFirst({ where: { userId: user.id } });
     if (existing) {
-      return apiError(400, "Aap ke paas pehle se aik business hai. Edit karein ya purana delete karein.");
+      return apiError(400, "آپ کے پاس پہلے سے ایک بزنس ہے۔ ترمیم کریں یا پرانا ڈیلیٹ کریں۔");
     }
 
     const business = await prisma.business.create({

@@ -98,7 +98,7 @@ export default function BusinessDetailPage() {
         }
         setBusiness(json);
       })
-      .catch(() => toast.error("Business load nahi ho saka"))
+      .catch(() => toast.error("بزنس لوڈ نہیں ہو سکا"))
       .finally(() => setLoading(false));
   };
 
@@ -117,7 +117,7 @@ export default function BusinessDetailPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Review submit nahi ho saki");
+        toast.error(data.error || "جائزہ جمع نہیں ہو سکا");
         return;
       }
       toast.success("Review submit ho gayi! ⭐");
@@ -210,7 +210,7 @@ export default function BusinessDetailPage() {
             </CardHeader>
             <CardContent>
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600">
-                {business.description || "Koi description nahi hai."}
+                {business.description || "کوئی تفصیل نہیں ہے۔"}
               </p>
             </CardContent>
           </Card>
@@ -250,7 +250,7 @@ export default function BusinessDetailPage() {
                       </div>
                       <Textarea
                         rows={3}
-                        placeholder="Apna tajurba share karein..."
+                        placeholder="اپنا تجربہ شیئر کریں..."
                         className="mt-3"
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
@@ -395,10 +395,10 @@ export default function BusinessDetailPage() {
             className="w-full"
             onClick={() => {
               setFollowed(!followed);
-              toast.success(followed ? "Unfollow ho gaya" : "Follow kar liya! Updates milti rahengi");
+              toast.success(followed ? "ان فالو ہو گیا" : "Follow kar liya! Updates milti rahengi");
             }}
           >
-            {followed ? "Following ✓" : "+ Follow Karein"}
+            {followed ? "Following ✓" : "+ فالو کریں"}
           </Button>
         </div>
       </div>

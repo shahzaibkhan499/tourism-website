@@ -62,7 +62,7 @@ export default function NotificationsPage() {
         const res = await fetch(`/api/notifications?${params}`);
         const data = await res.json();
         if (!res.ok) {
-          toast.error(data.error || "Notifications load nahi ho sakin");
+          toast.error(data.error || "اطلاعات لوڈ نہیں ہو سکیں");
           return;
         }
         setItems((prev) => (replace ? data.notifications : [...prev, ...data.notifications]));
@@ -89,7 +89,7 @@ export default function NotificationsPage() {
         body: JSON.stringify({}),
       });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Action nahi ho saka");
+      if (!res.ok) return toast.error(data.error || "کارروائی نہیں ہو سکی");
       toast.success("Sab notifications read ho gayin");
       fetchNotifications();
     } catch {
@@ -101,7 +101,7 @@ export default function NotificationsPage() {
     try {
       const res = await fetch("/api/notifications", { method: "DELETE" });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Action nahi ho saka");
+      if (!res.ok) return toast.error(data.error || "کارروائی نہیں ہو سکی");
       toast.success("Sab notifications delete ho gayin");
       fetchNotifications();
     } catch {
@@ -127,7 +127,7 @@ export default function NotificationsPage() {
       <PageHeader
         title="Notifications"
         titleUrdu="اطلاعات"
-        description="Aapki tamam updates"
+        description="آپ کی تمام اپ ڈیٹس"
         actions={
           <>
             <Button variant="outline" onClick={markAllRead}>
@@ -144,7 +144,7 @@ export default function NotificationsPage() {
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Sab notifications delete karein?</AlertDialogTitle>
-                  <AlertDialogDescription>Yeh action wapas nahi ho sakta.</AlertDialogDescription>
+                  <AlertDialogDescription>یہ کارروائی واپس نہیں ہو سکتی۔</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -176,7 +176,7 @@ export default function NotificationsPage() {
               ))}
             </div>
           ) : items.length === 0 ? (
-            <EmptyState icon={<Bell className="h-12 w-12" />} title="Koi notification nahi hai 🔔" description="Naye updates yahan aayenge" />
+            <EmptyState icon={<Bell className="h-12 w-12" />} title="کوئی اطلاع نہیں ہے 🔔" description="Naye updates yahan aayenge" />
           ) : (
             <>
               <Card>

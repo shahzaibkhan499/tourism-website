@@ -101,7 +101,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
     await auditLog(user.id, "DELETE_EVENT", "Event", id, { title: event.title }, getIp(req.headers));
 
-    return apiSuccess({ message: "Event delete ho gaya" });
+    return apiSuccess({ message: "ایونٹ ڈیلیٹ ہو گیا" });
   } catch (error) {
     return handleApiError(error);
   }

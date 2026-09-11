@@ -29,7 +29,7 @@ const items = [
   { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/reports", label: "Reports", icon: Flag },
   { href: "/admin/businesses", label: "Businesses", icon: Building2 },
-  { href: "/admin/rishta", label: "Rishta", icon: Heart },
+  { href: "/admin/rishta", label: "رشتہ", icon: Heart },
   { href: "/admin/jobs", label: "Jobs", icon: Briefcase },
   { href: "/admin/media", label: "Media", icon: Camera },
   { href: "/admin/settings", label: "Settings", icon: Settings },

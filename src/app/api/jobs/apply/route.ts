@@ -6,7 +6,7 @@ import { apiError, apiSuccess, handleApiError, requireUser } from "@/lib/api";
 import { sanitizeInput } from "@/lib/utils";
 
 const applySchema = jobApplicationSchema.extend({
-  jobPostingId: z.string().min(1, "Job chunein"),
+  jobPostingId: z.string().min(1, "نوکری منتخب کریں"),
 });
 
 export async function GET(_req: NextRequest) {
@@ -50,14 +50,14 @@ export async function POST(req: NextRequest) {
 
     const profile = await prisma.jobProfile.findUnique({ where: { userId: user.id } });
     if (!profile) {
-      return apiError(400, "Pehle apna job profile banayein (Profile > Job Profile)");
+      return apiError(400, "پہلے اپنا جاب پروفائل بنائیں (پروفائل > جاب پروفائل)");
     }
 
     const existing = await prisma.jobApplication.findUnique({
       where: { jobPostingId_applicantId: { jobPostingId, applicantId: user.id } },
     });
     if (existing) {
-      return apiError(400, "Aap is job ke liye pehle se apply kar chuke hain");
+      return apiError(400, "آپ اس نوکری کے لیے پہلے ہی درخواست دے چکے ہیں");
     }
 
     const application = await prisma.jobApplication.create({

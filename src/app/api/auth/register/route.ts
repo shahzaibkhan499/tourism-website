@@ -18,13 +18,13 @@ export async function POST(req: NextRequest) {
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
-      return apiError(400, "Yeh email pehle se register hai");
+      return apiError(400, "یہ ای میل پہلے سے رجسٹرڈ ہے");
     }
 
     if (phone) {
       const existingPhone = await prisma.user.findUnique({ where: { phone } });
       if (existingPhone) {
-        return apiError(400, "Yeh phone number pehle se register hai");
+        return apiError(400, "یہ فون نمبر پہلے سے رجسٹرڈ ہے");
       }
     }
 
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     sendWelcomeEmail(email, name).catch(() => {});
 
     console.log(`[REGISTER] New user: ${email} (${getIp(req.headers)})`);
-    return apiSuccess({ message: "Account ban gaya! Login karein.", user }, 201);
+    return apiSuccess({ message: "اکاؤنٹ بن گیا! لاگ اِن کریں۔", user }, 201);
   } catch (error) {
     return handleApiError(error);
   }

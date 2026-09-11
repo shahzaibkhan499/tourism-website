@@ -57,13 +57,13 @@ export default function PostJobPage() {
       });
       const result = await res.json();
       if (!res.ok) {
-        toast.error(result.error || "Job post nahi ho saki");
+        toast.error(result.error || "نوکری پوسٹ نہیں ہو سکی");
         return;
       }
       toast.success("Job post ho gayi! 🎉");
       router.push(`/jobs/${result.id}`);
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(false);
     }
@@ -72,9 +72,9 @@ export default function PostJobPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <PageHeader
-        title="Job Post Karein"
+        title="نوکری پوسٹ کریں"
         titleUrdu="نوکری کا اشتہار"
-        description="Apne business ke liye job post karein (Business profile zaroori hai)"
+        description="اپنے بزنس کے لیے نوکری پوسٹ کریں (بزنس پروفائل ضروری ہے)"
       />
 
       <div className="mb-4 flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
@@ -100,7 +100,7 @@ export default function PostJobPage() {
               <Textarea
                 id="description"
                 rows={5}
-                placeholder="Job ki mukammal tafseel likhein..."
+                placeholder="نوکری کی مکمل تفصیل لکھیں..."
                 {...register("description")}
               />
               {errors.description && <p className="text-xs text-red-600">{errors.description.message}</p>}
@@ -171,7 +171,7 @@ export default function PostJobPage() {
               </Button>
               <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {loading ? "Post ho rahi hai..." : "Job Post Karein"}
+                {loading ? "پوسٹ ہو رہی ہے..." : "نوکری پوسٹ کریں"}
               </Button>
             </div>
           </form>

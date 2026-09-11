@@ -26,14 +26,14 @@ export function handleApiError(error: unknown) {
   }
   if (error instanceof Error) {
     const msg = error.message;
-    if (msg === "UNAUTHORIZED") return apiError(401, "Login karna zaroori hai");
-    if (msg === "FORBIDDEN") return apiError(403, "Aapko is action ki ijazat nahi hai");
-    if (msg === "NOT_FOUND") return apiError(404, "Koi data nahi mila");
-    if (msg === "BAD_REQUEST") return apiError(400, "Ghalat request");
-    if (msg === "RATE_LIMITED") return apiError(429, "Bohat zyada koshishein. Thori der baad dobara koshish karein");
+    if (msg === "UNAUTHORIZED") return apiError(401, "لاگ اِن کرنا ضروری ہے");
+    if (msg === "FORBIDDEN") return apiError(403, "آپ کو اس کارروائی کی اجازت نہیں ہے");
+    if (msg === "NOT_FOUND") return apiError(404, "کوئی ڈیٹا نہیں ملا");
+    if (msg === "BAD_REQUEST") return apiError(400, "غلط درخواست");
+    if (msg === "RATE_LIMITED") return apiError(429, "بہت زیادہ کوششیں۔ تھوڑی دیر بعد دوبارہ کوشش کریں");
     return apiError(500, error.message);
   }
-  return apiError(500, "Kuch ghalat ho gaya. Dobara koshish karein.");
+  return apiError(500, "کچھ غلط ہو گیا۔ دوبارہ کوشش کریں۔");
 }
 
 export async function requireUser() {

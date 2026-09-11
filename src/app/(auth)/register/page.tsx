@@ -40,10 +40,10 @@ export default function RegisterPage() {
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
-    if (form.name.trim().length < 2) errs.name = "Naam kam az kam 2 huroof ka hona chahiye";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Sahi email address likhein";
-    if (form.phone && !/^03\d{9}$/.test(form.phone)) errs.phone = "Sahi Pakistani number likhein (03001234567)";
-    if (form.password.length < 8) errs.password = "Password kam az kam 8 characters ka ho";
+    if (form.name.trim().length < 2) errs.name = "نام کم از کم 2 حروف کا ہونا چاہیے";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "درست ای میل ایڈریس لکھیں";
+    if (form.phone && !/^03\d{9}$/.test(form.phone)) errs.phone = "درست پاکستانی نمبر لکھیں (03001234567)";
+    if (form.password.length < 8) errs.password = "پاس ورڈ کم از کم 8 حروف کا ہو";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -67,13 +67,13 @@ export default function RegisterPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Registration nahi ho saki");
+        toast.error(data.error || "رجسٹریشن نہیں ہو سکی");
         return;
       }
-      toast.success("Account ban gaya! Ab login karein.");
+      toast.success("اکاؤنٹ بن گیا! اب لاگ اِن کریں۔");
       router.push("/login");
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(false);
     }
@@ -85,14 +85,14 @@ export default function RegisterPage() {
       await signIn("google", { callbackUrl: "/dashboard" });
     } catch {
       setGoogleLoading(false);
-      toast.error("Google login nahi ho saka. (Google OAuth credentials configure karein)");
+      toast.error("گوگل لاگ اِن نہیں ہو سکا۔ (گوگل OAuth کریڈینشلز کنفیگر کریں)");
     }
   };
 
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Account Banayein</CardTitle>
+        <CardTitle className="text-2xl">Account بنائیں</CardTitle>
         <CardDescription>Apne khandaan ko digital banane ka pehla qadam</CardDescription>
       </CardHeader>
       <CardContent>
@@ -138,7 +138,7 @@ export default function RegisterPage() {
               <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
                 id="name"
-                placeholder="Aapka poora naam"
+                placeholder="آپ کا پورا نام"
                 className={cn("pl-9", errors.name && "border-red-400")}
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -221,7 +221,7 @@ export default function RegisterPage() {
               <Label>Gender</Label>
               <Select value={form.gender} onValueChange={(v) => setForm({ ...form, gender: v })}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Chunein" />
+                  <SelectValue placeholder="منتخب کریں" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="MALE">Male</SelectItem>
@@ -234,7 +234,7 @@ export default function RegisterPage() {
               <Label>City</Label>
               <Select value={form.city} onValueChange={(v) => setForm({ ...form, city: v })}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Chunein" />
+                  <SelectValue placeholder="منتخب کریں" />
                 </SelectTrigger>
                 <SelectContent className="max-h-64">
                   {PAKISTANI_CITIES.map((city) => (
@@ -249,7 +249,7 @@ export default function RegisterPage() {
 
           <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Account ban raha hai..." : "Register Karein"}
+            {loading ? "اکاؤنٹ بن رہا ہے..." : "رجسٹر کریں"}
           </Button>
         </form>
 

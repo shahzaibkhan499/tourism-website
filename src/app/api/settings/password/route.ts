@@ -15,18 +15,18 @@ export async function POST(req: NextRequest) {
 
     const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
     if (!dbUser || !dbUser.password) {
-      return apiError(400, "Google login walay users ka password nahi hota");
+      return apiError(400, "گوگل لاگ اِن والے صارفین کا پاس ورڈ نہیں ہوتا");
     }
 
     const valid = await bcrypt.compare(parsed.data.currentPassword, dbUser.password);
     if (!valid) {
-      return apiError(400, "Maujuda password ghalat hai");
+      return apiError(400, "موجودہ پاس ورڈ غلط ہے");
     }
 
     const hashed = await bcrypt.hash(parsed.data.newPassword, 12);
     await prisma.user.update({ where: { id: user.id }, data: { password: hashed } });
 
-    return apiSuccess({ message: "Password badal gaya!" });
+    return apiSuccess({ message: "پاس ورڈ بدل گیا!" });
   } catch (error) {
     return handleApiError(error);
   }

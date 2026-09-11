@@ -29,7 +29,7 @@ export function AdminStats({ stats, changes }: AdminStatsProps) {
     { label: "Total Events", value: stats.totalEvents, change: changes.events, icon: CalendarDays, color: "bg-emerald-100 text-emerald-700" },
     { label: "Total Clans", value: stats.totalClans, change: changes.clans, icon: Network, color: "bg-purple-100 text-purple-700" },
     { label: "Businesses", value: stats.totalBusinesses, change: changes.businesses, icon: Building2, color: "bg-amber-100 text-amber-700" },
-    { label: "Rishta Profiles", value: stats.totalRishtaProfiles, change: changes.rishtaProfiles, icon: Heart, color: "bg-pink-100 text-pink-700" },
+    { label: "رشتہ پروفائلز", value: stats.totalRishtaProfiles, change: changes.rishtaProfiles, icon: Heart, color: "bg-pink-100 text-pink-700" },
     { label: "Pending Reports", value: stats.pendingReports, change: changes.reports, icon: Flag, color: "bg-red-100 text-red-700" },
   ];
 

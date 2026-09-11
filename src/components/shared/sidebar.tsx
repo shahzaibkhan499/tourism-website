@@ -35,7 +35,7 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/events", label: "Events", icon: CalendarDays },
   { href: "/community", label: "Community", icon: Users },
-  { href: "/rishta", label: "Rishta", icon: Heart },
+  { href: "/rishta", label: "رشتہ", icon: Heart },
   { href: "/jobs", label: "Jobs", icon: Briefcase },
   { href: "/business", label: "Business", icon: Building2 },
   { href: "/memories", label: "Memories", icon: BookOpen },

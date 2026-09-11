@@ -66,7 +66,7 @@ export default function AdminJobsPage() {
       if (isActive) params.set("isActive", isActive);
       const res = await fetch(`/api/admin/jobs?${params}`);
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Jobs load nahi ho sakin");
+      if (!res.ok) return toast.error(data.error || "نوکریاں لوڈ نہیں ہو سکیں");
       setJobs(data.jobs);
     } catch {
       toast.error("Network error");
@@ -87,8 +87,8 @@ export default function AdminJobsPage() {
         body: JSON.stringify({ id, action }),
       });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Action nahi ho saka");
-      toast.success("Action kamyab raha");
+      if (!res.ok) return toast.error(data.error || "کارروائی نہیں ہو سکی");
+      toast.success("کارروائی کامیاب رہی");
       fetchJobs();
     } catch {
       toast.error("Network error");
@@ -99,7 +99,7 @@ export default function AdminJobsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Jobs</h1>
-        <p className="text-sm text-gray-500">Platform ke tamam job postings</p>
+        <p className="text-sm text-gray-500">پلیٹ فارم کی تمام نوکریاں</p>
       </div>
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
@@ -108,7 +108,7 @@ export default function AdminJobsPage() {
             <SelectValue placeholder="Job type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab types</SelectItem>
+            <SelectItem value="all">تمام اقسام</SelectItem>
             {JOB_TYPES.map((t) => (
               <SelectItem key={t.value} value={t.value}>
                 {t.label}
@@ -121,7 +121,7 @@ export default function AdminJobsPage() {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab</SelectItem>
+            <SelectItem value="all">تمام</SelectItem>
             <SelectItem value="true">Active</SelectItem>
             <SelectItem value="false">Inactive</SelectItem>
           </SelectContent>
@@ -155,7 +155,7 @@ export default function AdminJobsPage() {
                 {jobs.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={9} className="py-10 text-center text-gray-500">
-                      Koi data nahi mila
+                      کوئی ڈیٹا نہیں ملا
                     </TableCell>
                   </TableRow>
                 ) : (

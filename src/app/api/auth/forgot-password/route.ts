@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       await sendResetPasswordEmail(email, token);
     }
 
-    return apiSuccess({ message: "Agar email mojood hai to reset link bhej diya gaya hai. Email check karein." });
+    return apiSuccess({ message: "اگر ای میل موجود ہے تو ری سیٹ لنک بھیج دیا گیا ہے۔ ای میل چیک کریں۔" });
   } catch (error) {
     return handleApiError(error);
   }

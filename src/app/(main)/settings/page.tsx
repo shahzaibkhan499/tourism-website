@@ -47,7 +47,7 @@ export default function SettingsPage() {
 
   const requestOtp = async (type: "email" | "phone", value: string) => {
     if (!value.trim()) {
-      toast.error(type === "email" ? "Naya email likhein" : "Naya phone number likhein");
+      toast.error(type === "email" ? "نیا ای میل لکھیں" : "نیا فون نمبر لکھیں");
       return;
     }
     setOtpBusy(true);
@@ -59,21 +59,21 @@ export default function SettingsPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "OTP nahi bheja ja saka");
+        toast.error(data.error || "OTP نہیں بھیجا جا سکا");
         return;
       }
       setOtpSent(type);
       setOtpValue("");
       toast.success(
         type === "email"
-          ? "OTP aapke naye email par bhej diya gaya hai (10 minute valid)"
-          : "OTP aapke registered email par bhej diya gaya hai (10 minute valid)"
+          ? "OTP آپ کی نئی ای میل پر بھیج دیا گیا ہے (10 منٹ تک درست)"
+          : "OTP آپ کی رجسٹرڈ ای میل پر بھیج دیا گیا ہے (10 منٹ تک درست)"
       );
       if (data.devOtp) {
         toast.info(`Development mode — OTP: ${data.devOtp}`, { duration: 30000 });
       }
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setOtpBusy(false);
     }
@@ -81,7 +81,7 @@ export default function SettingsPage() {
 
   const verifyOtp = async (type: "email" | "phone", value: string) => {
     if (otpValue.length !== 6) {
-      toast.error("6 digit ka OTP likhein");
+      toast.error("6 ہندسوں کا OTP لکھیں");
       return;
     }
     setOtpBusy(true);
@@ -93,10 +93,10 @@ export default function SettingsPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "OTP ghalat hai");
+        toast.error(data.error || "OTP غلط ہے");
         return;
       }
-      toast.success(data.message || "Update ho gaya!");
+      toast.success(data.message || "اپ ڈیٹ ہو گیا!");
       setOtpSent("none");
       setOtpValue("");
       if (type === "email") setNewEmail("");
@@ -111,7 +111,7 @@ export default function SettingsPage() {
         })
         .catch(() => undefined);
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setOtpBusy(false);
     }
@@ -191,8 +191,8 @@ export default function SettingsPage() {
   const strength = passwordStrength(newPassword);
 
   const handleChangePassword = async () => {
-    if (newPassword.length < 8) return toast.error("Naya password kam az kam 8 characters ka ho");
-    if (newPassword !== confirmPassword) return toast.error("Dono passwords match nahi karte");
+    if (newPassword.length < 8) return toast.error("نیا پاس ورڈ کم از کم 8 حروف کا ہو");
+    if (newPassword !== confirmPassword) return toast.error("دونوں پاس ورڈز مماثل نہیں ہیں");
     try {
       const res = await fetch("/api/settings/password", {
         method: "POST",
@@ -201,10 +201,10 @@ export default function SettingsPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Password nahi badla");
+        toast.error(data.error || "پاس ورڈ نہیں بدلا");
         return;
       }
-      toast.success("Password badal gaya!");
+      toast.success("پاس ورڈ بدل گیا!");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -218,10 +218,10 @@ export default function SettingsPage() {
       const res = await fetch("/api/settings/account", { method: "DELETE" });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Account delete nahi ho saka");
+        toast.error(data.error || "اکاؤنٹ ڈیلیٹ نہیں ہو سکا");
         return;
       }
-      toast.success("Account delete ho gaya. Allah Hafiz! 👋");
+      toast.success("اکاؤنٹ ڈیلیٹ ہو گیا۔ اللہ حافظ! 👋");
       window.location.href = "/";
     } catch {
       toast.error("Network error");
@@ -233,7 +233,7 @@ export default function SettingsPage() {
       const res = await fetch("/api/settings/2fa");
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "2FA setup start nahi ho saka");
+        toast.error(data.error || "2FA سیٹ اپ شروع نہیں ہو سکا");
         return;
       }
       setTwoFaSecret(data.secret);
@@ -253,13 +253,13 @@ export default function SettingsPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "2FA verify nahi ho saka");
+        toast.error(data.error || "2FA تصدیق نہیں ہو سکی");
         return;
       }
       setBackupCodes(data.backupCodes);
       setTwoFaStep("done");
       setProfile((p) => (p ? { ...p, twoFactorEnabled: true } : p));
-      toast.success("2FA enabled ho gaya! 🔐");
+      toast.success("2FA فعال ہو گیا! 🔐");
     } catch {
       toast.error("Network error");
     }
@@ -274,10 +274,10 @@ export default function SettingsPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "2FA disable nahi ho saka");
+        toast.error(data.error || "2FA غیر فعال نہیں ہو سکا");
         return;
       }
-      toast.success("2FA disable ho gaya");
+      toast.success("2FA غیر فعال ہو گیا");
       setTwoFaStep("idle");
       setTwoFaCode("");
       setTwoFaPassword("");
@@ -298,7 +298,7 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <PageHeader title="Settings" titleUrdu="ترتیبات" description="Apna account aur preferences manage karein" />
+      <PageHeader title="Settings" titleUrdu="ترتیبات" description="اپنا اکاؤنٹ اور ترجیحات منظم کریں" />
 
       <Tabs defaultValue="account" className="flex flex-col gap-6 lg:flex-row">
         <TabsList className="h-auto flex-col items-stretch lg:w-52 lg:flex">
@@ -328,7 +328,7 @@ export default function SettingsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">Change Email</CardTitle>
-                <CardDescription>Maujuda email: {profile?.email}</CardDescription>
+                <CardDescription>موجودہ ای میل: {profile?.email}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex gap-3">
@@ -369,7 +369,7 @@ export default function SettingsPage() {
               <CardHeader>
                 <CardTitle className="text-base">Change Phone</CardTitle>
                 <CardDescription>
-                  Maujuda phone: {profile?.phone || "nahi hai"} — OTP aapke registered email par jayega
+                  موجودہ فون: {profile?.phone || "nahi hai"} — OTP آپ کی رجسٹرڈ ای میل پر جائے گا
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -507,12 +507,12 @@ export default function SettingsPage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Kya aap bilkul yaqeeni hain?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Aapka account, data, memories, sab kuch permanently delete ho jayega. Yeh action wapas nahi ho sakta.
+                        Aapka account, data, memories, sab kuch permanently delete ho jayega. یہ کارروائی واپس نہیں ہو سکتی۔
                         Confirm karne ke liye <strong>DELETE</strong> type karein.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <Input
-                      placeholder="DELETE type karein"
+                      placeholder="DELETE لکھیں"
                       value={deleteConfirm}
                       onChange={(e) => setDeleteConfirm(e.target.value)}
                     />
@@ -554,7 +554,7 @@ export default function SettingsPage() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Rishta Profile Visibility</CardTitle>
+                <CardTitle className="text-base">رشتہ پروفائل Visibility</CardTitle>
               </CardHeader>
               <CardContent>
                 <RadioGroup defaultValue="verified">
@@ -597,10 +597,10 @@ export default function SettingsPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {[
-                  { key: "eventReminders" as const, label: "Event reminders", desc: "Event se pehle yaad dila dein" },
-                  { key: "rishtaRequests" as const, label: "Rishta requests", desc: "Jab koi interest bheje" },
+                  { key: "eventReminders" as const, label: "Event reminders", desc: "ایونٹ سے پہلے یاد دلا دیں" },
+                  { key: "rishtaRequests" as const, label: "رشتہ کی درخواستیں", desc: "جب کوئی دلچسپی بھیجے" },
                   { key: "jobUpdates" as const, label: "Job updates", desc: "Application status changes" },
-                  { key: "weeklyDigest" as const, label: "Weekly digest", desc: "Hafte ki family activities" },
+                  { key: "weeklyDigest" as const, label: "Weekly digest", desc: "ہفتے کی فیملی سرگرمیاں" },
                 ].map((n) => (
                   <div key={n.key} className="flex items-center justify-between">
                     <div>
@@ -812,7 +812,7 @@ export default function SettingsPage() {
                       />
                       <Input
                         type="password"
-                        placeholder="Apna password (confirm ke liye)"
+                        placeholder="اپنا پاس ورڈ (تصدیق کے لیے)"
                         value={twoFaPassword}
                         onChange={(e) => setTwoFaPassword(e.target.value)}
                       />

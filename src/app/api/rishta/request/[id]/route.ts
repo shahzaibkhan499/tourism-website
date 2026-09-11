@@ -36,8 +36,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         data: {
           userId: request.sender.userId,
           type: "rishta_accepted",
-          title: "Rishta request accept!",
-          message: "Aapki rishta request accept kar li gayi hai",
+          title: "رشتہ کی درخواست منظور!",
+          message: "آپ کی رشتہ کی درخواست قبول کر لی گئی ہے",
           link: "/rishta",
         },
       });

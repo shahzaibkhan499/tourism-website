@@ -82,7 +82,7 @@ export default function ProfilePage() {
           education: json.education || "",
         });
       })
-      .catch(() => toast.error("Profile load nahi ho saki"))
+      .catch(() => toast.error("پروفائل لوڈ نہیں ہو سکی"))
       .finally(() => setLoading(false));
   };
 
@@ -100,7 +100,7 @@ export default function ProfilePage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Profile save nahi ho saki");
+        toast.error(data.error || "پروفائل محفوظ نہیں ہو سکی");
         return;
       }
       toast.success("Profile update ho gayi!");
@@ -121,7 +121,7 @@ export default function ProfilePage() {
       const res = await fetch("/api/media/upload", { method: "POST", body: fd });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Photo upload nahi ho saki");
+        toast.error(data.error || "تصویر اپ لوڈ نہیں ہو سکی");
         return;
       }
       const updateRes = await fetch("/api/profile", {
@@ -130,13 +130,13 @@ export default function ProfilePage() {
         body: JSON.stringify({ image: data.url }),
       });
       if (!updateRes.ok) {
-        toast.error("Profile photo set nahi ho saki");
+        toast.error("پروفائل فوٹو سیٹ نہیں ہو سکی");
         return;
       }
       toast.success("Profile photo update ho gayi!");
       loadProfile();
     } catch {
-      toast.error("Upload mein masla aa gaya");
+      toast.error("اپ لوڈ میں مسئلہ آ گیا");
     } finally {
       setUploading(false);
     }
@@ -170,7 +170,7 @@ export default function ProfilePage() {
             </DialogTrigger>
             <DialogContent className="max-w-xl">
               <DialogHeader>
-                <DialogTitle>Profile Edit Karein</DialogTitle>
+                <DialogTitle>Profile ترمیم کریں</DialogTitle>
                 <DialogDescription>Apni maloomat update karein</DialogDescription>
               </DialogHeader>
               <div className="grid max-h-[60vh] gap-4 overflow-y-auto p-1 sm:grid-cols-2">
@@ -186,7 +186,7 @@ export default function ProfilePage() {
                   <Label>Gender</Label>
                   <Select value={form.gender || undefined} onValueChange={(v) => setForm({ ...form, gender: v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Chunein" />
+                      <SelectValue placeholder="منتخب کریں" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="MALE">Male</SelectItem>
@@ -203,7 +203,7 @@ export default function ProfilePage() {
                   <Label>City</Label>
                   <Select value={form.city || undefined} onValueChange={(v) => setForm({ ...form, city: v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Chunein" />
+                      <SelectValue placeholder="منتخب کریں" />
                     </SelectTrigger>
                     <SelectContent className="max-h-64">
                       {PAKISTANI_CITIES.map((c) => (
@@ -218,7 +218,7 @@ export default function ProfilePage() {
                   <Label>Province</Label>
                   <Select value={form.province || undefined} onValueChange={(v) => setForm({ ...form, province: v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Chunein" />
+                      <SelectValue placeholder="منتخب کریں" />
                     </SelectTrigger>
                     <SelectContent>
                       {PAKISTANI_PROVINCES.map((p) => (
@@ -233,7 +233,7 @@ export default function ProfilePage() {
                   <Label>Blood Group</Label>
                   <Select value={form.bloodGroup || undefined} onValueChange={(v) => setForm({ ...form, bloodGroup: v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Chunein" />
+                      <SelectValue placeholder="منتخب کریں" />
                     </SelectTrigger>
                     <SelectContent>
                       {BLOOD_GROUPS.map((b) => (
@@ -248,7 +248,7 @@ export default function ProfilePage() {
                   <Label>Education</Label>
                   <Select value={form.education || undefined} onValueChange={(v) => setForm({ ...form, education: v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Chunein" />
+                      <SelectValue placeholder="منتخب کریں" />
                     </SelectTrigger>
                     <SelectContent>
                       {EDUCATION_LEVELS.map((e) => (
@@ -276,7 +276,7 @@ export default function ProfilePage() {
               </div>
               <Button onClick={handleSave} disabled={saving} className="bg-emerald-600 hover:bg-emerald-700">
                 {saving ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Save className="mr-1 h-4 w-4" />}
-                Save Karein
+                محفوظ کریں
               </Button>
             </DialogContent>
           </Dialog>
@@ -346,7 +346,7 @@ export default function ProfilePage() {
           <CardContent className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
             <div>
               <div className="text-xs font-semibold uppercase text-gray-400">Bio</div>
-              <p className="mt-1 text-sm text-gray-700">{profile.bio || "Koi bio nahi hai"}</p>
+              <p className="mt-1 text-sm text-gray-700">{profile.bio || "کوئی تعارف نہیں ہے"}</p>
             </div>
             <div>
               <div className="text-xs font-semibold uppercase text-gray-400">Date of Birth</div>
@@ -397,19 +397,19 @@ export default function ProfilePage() {
               <div>
                 <div className="flex items-center gap-2 font-semibold">
                   <Heart className="h-4 w-4 text-pink-600" />
-                  Rishta Profile
+                  رشتہ پروفائل
                 </div>
                 <p className="mt-0.5 text-xs text-gray-500">
                   {profile.rishtaProfile
                     ? profile.rishtaProfile.isActive
-                      ? "Active hai ✓"
-                      : "Deactivate hai"
-                    : "Abhi nahi banaya"}
+                      ? "فعال ہے ✓"
+                      : "غیر فعال ہے"
+                    : "ابھی نہیں بنایا"}
                 </p>
               </div>
               <Button size="sm" variant="outline" asChild>
                 <a href={profile.rishtaProfile ? `/rishta/${profile.rishtaProfile.id}` : "/rishta/create"}>
-                  {profile.rishtaProfile ? "Dekhein" : "Banayein"}
+                  {profile.rishtaProfile ? "دیکھیں" : "بنائیں"}
                 </a>
               </Button>
             </CardContent>
@@ -422,7 +422,7 @@ export default function ProfilePage() {
                   Job Profile
                 </div>
                 <p className="mt-0.5 text-xs text-gray-500">
-                  {profile.jobProfile ? "Bana hua hai ✓" : "Abhi nahi banaya"}
+                  {profile.jobProfile ? "بنا ہوا ہے ✓" : "ابھی نہیں بنایا"}
                 </p>
               </div>
               <Button size="sm" variant="outline" asChild>

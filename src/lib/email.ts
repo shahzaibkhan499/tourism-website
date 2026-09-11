@@ -105,7 +105,7 @@ export async function sendEventReminderEmail(to: string, eventTitle: string, eve
         <strong>${eventTitle}</strong><br/>
         Date: ${eventDate}
       </p>
-      <a href="${eventUrl}" style="display: inline-block; background: #059669; color: #ffffff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">Event Dekhein</a>
+      <a href="${eventUrl}" style="display: inline-block; background: #059669; color: #ffffff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">Event دیکھیں</a>
     `),
   });
 }

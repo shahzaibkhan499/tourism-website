@@ -88,7 +88,7 @@ export default function JobDetailPage() {
         }
         setJob(json);
       })
-      .catch(() => toast.error("Job load nahi ho saki"))
+      .catch(() => toast.error("نوکری لوڈ نہیں ہو سکی"))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -102,7 +102,7 @@ export default function JobDetailPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Application nahi bheji ja saki");
+        toast.error(data.error || "درخواست نہیں بھیجی جا سکی");
         return;
       }
       toast.success("Application bhej di gayi! 🎉");
@@ -112,7 +112,7 @@ export default function JobDetailPage() {
         prev ? { ...prev, myApplication: { status: "APPLIED", appliedAt: new Date().toISOString() } } : prev
       );
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setApplying(false);
     }
@@ -224,7 +224,7 @@ export default function JobDetailPage() {
                   <div className="space-y-3">
                     <Textarea
                       rows={5}
-                      placeholder="Cover letter — apne baare mein aur is job ke liye kyun apply kar rahe hain..."
+                      placeholder="کور لیٹر — اپنے بارے میں اور اس نوکری کے لیے کیوں درخواست دے رہے ہیں..."
                       value={coverLetter}
                       onChange={(e) => setCoverLetter(e.target.value)}
                     />
@@ -349,7 +349,7 @@ export default function JobDetailPage() {
                 </div>
               )}
               <Button variant="outline" className="w-full" asChild>
-                <Link href={`/business/${job.business.id}`}>Business Page Dekhein</Link>
+                <Link href={`/business/${job.business.id}`}>Business Page دیکھیں</Link>
               </Button>
             </CardContent>
           </Card>

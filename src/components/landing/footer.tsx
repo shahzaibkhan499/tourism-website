@@ -8,7 +8,7 @@ const columns = [
     links: [
       { label: "Events", href: "/events" },
       { label: "Community & Clans", href: "/community" },
-      { label: "Rishta", href: "/rishta" },
+      { label: "رشتہ", href: "/rishta" },
       { label: "Jobs", href: "/jobs" },
       { label: "Business Directory", href: "/business" },
     ],

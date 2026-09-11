@@ -36,14 +36,14 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
   },
   openGraph: {
-    title: `${APP_NAME} — Apne Khandaan Ko Digital Banayein`,
+    title: `${APP_NAME} — Apne Khandaan Ko Digital بنائیں`,
     description: APP_DESCRIPTION,
     type: "website",
     images: ["/opengraph-image.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${APP_NAME} — Apne Khandaan Ko Digital Banayein`,
+    title: `${APP_NAME} — Apne Khandaan Ko Digital بنائیں`,
     description: APP_DESCRIPTION,
     images: ["/opengraph-image.png"],
   },

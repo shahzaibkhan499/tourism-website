@@ -58,7 +58,7 @@ export function RishtaCard({ profile }: RishtaCardProps) {
           <h3 className="font-semibold group-hover:text-pink-700">{profile.user?.name}</h3>
           <div className="mt-2 space-y-1.5 text-xs text-gray-500">
             <div className="flex items-center gap-1.5">
-              <span>🎂</span> {profile.age ? `${profile.age} saal` : "Age nahi batayi"}
+              <span>🎂</span> {profile.age ? `${profile.age} saal` : "عمر نہیں بتائی"}
               {profile.height && <span>· {profile.height}</span>}
             </div>
             {profile.education && (

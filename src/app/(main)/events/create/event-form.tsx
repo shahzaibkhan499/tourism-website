@@ -135,7 +135,7 @@ export default function EventForm() {
       })
       .catch(() => {
         if (!cancelled) {
-          toast.error("Event nahi mila");
+          toast.error("ایونٹ نہیں ملا");
           router.push("/events");
         }
       })
@@ -158,13 +158,13 @@ export default function EventForm() {
       const res = await fetch("/api/media/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Upload nahi ho saka");
+        toast.error(data.error || "اپ لوڈ نہیں ہو سکا");
         return;
       }
       setValue("coverImage", data.url);
       toast.success("Cover image upload ho gayi");
     } catch {
-      toast.error("Upload mein masla aa gaya");
+      toast.error("اپ لوڈ میں مسئلہ آ گیا");
     } finally {
       setUploading(false);
     }
@@ -181,14 +181,14 @@ export default function EventForm() {
       });
       const result = await res.json();
       if (!res.ok) {
-        toast.error(result.error || (isEditing ? "Event update nahi ho saka" : "Event nahi ban saka"));
+        toast.error(result.error || (isEditing ? "ایونٹ اپ ڈیٹ نہیں ہو سکا" : "ایونٹ نہیں بن سکا"));
         return;
       }
-      toast.success(isEditing ? "Event update ho gaya ✅" : "Event ban gaya! 🎉");
+      toast.success(isEditing ? "ایونٹ اپ ڈیٹ ہو گیا ✅" : "ایونٹ بن گیا! 🎉");
       router.push(`/events/${isEditing ? eventId : result.id}`);
       router.refresh();
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(false);
     }
@@ -197,7 +197,7 @@ export default function EventForm() {
   if (loadingEvent) {
     return (
       <div className="mx-auto max-w-2xl">
-        <PageHeader title="Event Edit Karein" titleUrdu="تقریب میں تبدیلی" description="Event details load ho rahi hain..." />
+        <PageHeader title="ایونٹ میں ترمیم کریں" titleUrdu="تقریب میں تبدیلی" description="Event details load ho rahi hain..." />
         <Card>
           <CardContent className="space-y-5 p-6">
             <Skeleton className="h-10 w-full" />
@@ -217,12 +217,12 @@ export default function EventForm() {
   return (
     <div className="mx-auto max-w-2xl">
       <PageHeader
-        title={isEditing ? "Event Edit Karein" : "Naya Event Banayein"}
+        title={isEditing ? "ایونٹ میں ترمیم کریں" : "نیا ایونٹ بنائیں"}
         titleUrdu={isEditing ? "تقریب میں تبدیلی" : "نئی تقریب"}
         description={
           isEditing
-            ? "Event ki details update karke save karein"
-            : "Family ko invite karne ke liye event details bharein"
+            ? "ایونٹ کی تفصیلات اپ ڈیٹ کر کے محفوظ کریں"
+            : "فیملی کو مدعو کرنے کے لیے ایونٹ کی تفصیلات بھریں"
         }
       />
 
@@ -231,7 +231,7 @@ export default function EventForm() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-1.5">
               <Label htmlFor="title">Event Title *</Label>
-              <Input id="title" placeholder="e.g. Ahmed ki Shadi — Nikkah" {...register("title")} />
+              <Input id="title" placeholder="مثلاً احمد کی شادی — نکاح" {...register("title")} />
               {errors.title && <p className="text-xs text-red-600">{errors.title.message}</p>}
             </div>
 
@@ -292,7 +292,7 @@ export default function EventForm() {
               <Textarea
                 id="description"
                 rows={4}
-                placeholder="Event ke baare mein likhein — kya hoga, kya layein, etc."
+                placeholder="ایونٹ کے بارے میں لکھیں — کیا ہوگا، کیا لائیں، وغیرہ۔"
                 {...register("description")}
               />
             </div>
@@ -317,7 +317,7 @@ export default function EventForm() {
                   <>
                     <Upload className="h-8 w-8 text-gray-400" />
                     <span className="mt-2 text-sm text-gray-500">
-                      {uploading ? "Upload ho raha hai..." : "Image choose karne ke liye click karein (max 5MB)"}
+                      {uploading ? "اپ لوڈ ہو رہا ہے..." : "تصویر منتخب کرنے کے لیے کلک کریں (زیادہ سے زیادہ 5MB)"}
                     </span>
                   </>
                 )}
@@ -376,11 +376,11 @@ export default function EventForm() {
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {loading
                   ? isEditing
-                    ? "Update ho raha hai..."
-                    : "Event ban raha hai..."
+                    ? "اپ ڈیٹ ہو رہا ہے..."
+                    : "ایونٹ بن رہا ہے..."
                   : isEditing
-                    ? "Changes Save Karein"
-                    : "Event Banayein"}
+                    ? "تبدیلیاں محفوظ کریں"
+                    : "ایونٹ بنائیں"}
               </Button>
             </div>
           </form>

@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return apiSuccess({ message: "Message bhej diya gaya! Hum jald raabta karein gay." }, 201);
+    return apiSuccess({ message: "پیغام بھیج دیا گیا! ہم جلد رابطہ کریں گے۔" }, 201);
   } catch (error) {
     return handleApiError(error);
   }

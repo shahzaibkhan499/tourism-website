@@ -60,7 +60,7 @@ export default function ClanDetailPage() {
         }
         setClan(json);
       })
-      .catch(() => toast.error("Clan data load nahi ho saka"))
+      .catch(() => toast.error("کلان ڈیٹا لوڈ نہیں ہو سکا"))
       .finally(() => setLoading(false));
 
     fetch("/api/clans")
@@ -174,7 +174,7 @@ export default function ClanDetailPage() {
             <CardTitle className="text-base">Clan ke baare mein</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm leading-relaxed text-gray-600">{clan.description || "Koi description nahi hai."}</p>
+            <p className="text-sm leading-relaxed text-gray-600">{clan.description || "کوئی تفصیل نہیں ہے۔"}</p>
             {clan.history && (
               <>
                 <h3 className="mt-5 text-sm font-semibold">History</h3>
@@ -221,7 +221,7 @@ export default function ClanDetailPage() {
           <div className="relative w-64">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <Input
-              placeholder="Naam ya city se dhundein..."
+              placeholder="نام یا شہر سے تلاش کریں..."
               className="pl-9"
               value={memberQuery}
               onChange={(e) => setMemberQuery(e.target.value)}
@@ -230,7 +230,7 @@ export default function ClanDetailPage() {
         </CardHeader>
         <CardContent>
           {clan.members.length === 0 ? (
-            <p className="py-8 text-center text-sm text-gray-500">Koi data nahi mila</p>
+            <p className="py-8 text-center text-sm text-gray-500">کوئی ڈیٹا نہیں ملا</p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {clan.members.map((m) => (

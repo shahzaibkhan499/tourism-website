@@ -52,7 +52,7 @@ export async function DELETE(req: NextRequest) {
     const user = await requireUser();
     const { searchParams } = new URL(req.url);
     const ids = searchParams.get("ids");
-    if (!ids) return apiError(400, "Media ids zaroori hain");
+    if (!ids) return apiError(400, "میڈیا آئی ڈیز ضروری ہیں");
 
     const idList = ids.split(",");
 

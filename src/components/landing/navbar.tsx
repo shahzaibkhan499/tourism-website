@@ -107,7 +107,7 @@ export function Navbar() {
           ) : (
             <>
               <Button variant="ghost" asChild>
-                <Link href="/login">Login Karein</Link>
+                <Link href="/login">لاگ اِن کریں</Link>
               </Button>
               <Button asChild>
                 <Link href="/register">Free Mein Shuru Karein</Link>
@@ -157,7 +157,7 @@ export function Navbar() {
                     <Link href="/register">Free Mein Shuru Karein</Link>
                   </Button>
                   <Button variant="outline" asChild>
-                    <Link href="/login">Login Karein</Link>
+                    <Link href="/login">لاگ اِن کریں</Link>
                   </Button>
                 </>
               )}

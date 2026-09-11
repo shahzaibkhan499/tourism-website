@@ -25,7 +25,7 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      toast.error("Email aur password dono likhein");
+      toast.error("ای میل اور پاس ورڈ دونوں لکھیں");
       return;
     }
     setLoading(true);
@@ -37,20 +37,20 @@ export default function LoginForm() {
       });
       if (result?.error) {
         const messages: Record<string, string> = {
-          InvalidCredentials: "Email ya password ghalat hai",
-          AccountBanned: "Aapka account ban kar diya gaya hai",
-          AccountInactive: "Aapka account deactivate hai",
-          RateLimitExceeded: "Bohat zyada koshishein. 15 minute baad dobara koshish karein",
+          InvalidCredentials: "ای میل یا پاس ورڈ غلط ہے",
+          AccountBanned: "آپ کا اکاؤنٹ بند کر دیا گیا ہے",
+          AccountInactive: "آپ کا اکاؤنٹ غیر فعال ہے",
+          RateLimitExceeded: "بہت زیادہ کوششیں۔ 15 منٹ بعد دوبارہ کوشش کریں",
         };
-        toast.error(messages[result.error] || "Login nahi ho saka");
+        toast.error(messages[result.error] || "لاگ اِن نہیں ہو سکا");
         return;
       }
-      toast.success("Khush aamdeed! Login kamyab.");
+      toast.success("خوش آمدید! لاگ اِن کامیاب۔");
       window.sessionStorage.setItem("dk-login-flag", "1");
       router.push(callbackUrl);
       router.refresh();
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(false);
     }
@@ -63,7 +63,7 @@ export default function LoginForm() {
       await signIn("google", { callbackUrl });
     } catch {
       setGoogleLoading(false);
-      toast.error("Google login nahi ho saka. (Google OAuth credentials configure karein)");
+      toast.error("گوگل لاگ اِن نہیں ہو سکا۔ (گوگل OAuth کریڈینشلز کنفیگر کریں)");
     }
   };
 
@@ -103,7 +103,7 @@ export default function LoginForm() {
               />
             </svg>
           )}
-          Google se Login Karein
+          Google se لاگ اِن کریں
         </Button>
 
         <div className="relative my-5">
@@ -161,7 +161,7 @@ export default function LoginForm() {
           </div>
           <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Login ho raha hai..." : "Login Karein"}
+            {loading ? "لاگ اِن ہو رہا ہے..." : "لاگ اِن کریں"}
           </Button>
         </form>
 

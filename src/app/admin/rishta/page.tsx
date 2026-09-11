@@ -55,20 +55,20 @@ interface AdminRishta {
 export default function AdminRishtaPage() {
   const [profiles, setProfiles] = useState<AdminRishta[]>([]);
   const [loading, setLoading] = useState(true);
-  const [gender, setGender] = useState("");
-  const [sect, setSect] = useState("");
-  const [verified, setVerified] = useState("");
+  const [gender, setGender] = useState("all");
+  const [sect, setSect] = useState("all");
+  const [verified, setVerified] = useState("all");
 
   const fetchProfiles = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (gender) params.set("gender", gender);
-      if (sect) params.set("sect", sect);
-      if (verified) params.set("verified", verified);
+      if (gender !== "all") params.set("gender", gender);
+      if (sect !== "all") params.set("sect", sect);
+      if (verified !== "all") params.set("verified", verified);
       const res = await fetch(`/api/admin/rishta?${params}`);
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Profiles load nahi ho sakin");
+      if (!res.ok) return toast.error(data.error || "پروفائلز لوڈ نہیں ہو سکیں");
       setProfiles(data.profiles);
     } catch {
       toast.error("Network error");
@@ -89,8 +89,8 @@ export default function AdminRishtaPage() {
         body: JSON.stringify({ id, action }),
       });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Action nahi ho saka");
-      toast.success("Action kamyab raha");
+      if (!res.ok) return toast.error(data.error || "کارروائی نہیں ہو سکی");
+      toast.success("کارروائی کامیاب رہی");
       fetchProfiles();
     } catch {
       toast.error("Network error");
@@ -100,8 +100,8 @@ export default function AdminRishtaPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Rishta Profiles</h1>
-        <p className="text-sm text-gray-500">Platform ke tamam rishta profiles</p>
+        <h1 className="text-2xl font-bold">رشتہ پروفائلز</h1>
+        <p className="text-sm text-gray-500">پلیٹ فارم کے تمام رشتہ پروفائلز</p>
       </div>
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
@@ -110,7 +110,7 @@ export default function AdminRishtaPage() {
             <SelectValue placeholder="Gender" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab</SelectItem>
+            <SelectItem value="all">تمام</SelectItem>
             <SelectItem value="MALE">Male</SelectItem>
             <SelectItem value="FEMALE">Female</SelectItem>
           </SelectContent>
@@ -120,7 +120,7 @@ export default function AdminRishtaPage() {
             <SelectValue placeholder="Sect" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab</SelectItem>
+            <SelectItem value="all">تمام</SelectItem>
             {SECTS.map((s) => (
               <SelectItem key={s} value={s}>
                 {s}
@@ -133,7 +133,7 @@ export default function AdminRishtaPage() {
             <SelectValue placeholder="Verified" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab</SelectItem>
+            <SelectItem value="all">تمام</SelectItem>
             <SelectItem value="true">Verified</SelectItem>
             <SelectItem value="false">Unverified</SelectItem>
           </SelectContent>
@@ -167,7 +167,7 @@ export default function AdminRishtaPage() {
                 {profiles.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={9} className="py-10 text-center text-gray-500">
-                      Koi data nahi mila
+                      کوئی ڈیٹا نہیں ملا
                     </TableCell>
                   </TableRow>
                 ) : (

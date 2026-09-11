@@ -27,7 +27,7 @@ export function Hero() {
         >
           Apne <span className="text-gradient-green">Khandaan</span> Ko
           <br />
-          Digital Banayein
+          Digital بنائیں
         </motion.h1>
 
         <motion.p
@@ -53,7 +53,7 @@ export function Hero() {
             </Link>
           </Button>
           <Button size="xl" variant="outline" asChild>
-            <Link href="/login">Login Karein</Link>
+            <Link href="/login">لاگ اِن کریں</Link>
           </Button>
         </motion.div>
 
@@ -66,7 +66,7 @@ export function Hero() {
           {[
             { icon: "📅", label: "Events", desc: "Family functions" },
             { icon: "👥", label: "Clans", desc: "Community judein" },
-            { icon: "💚", label: "Rishta", desc: "Safe & respectful" },
+            { icon: "💚", label: "رشتہ", desc: "Safe & respectful" },
             { icon: "💼", label: "Jobs", desc: "Family businesses" },
           ].map((item) => (
             <div key={item.label} className="rounded-xl border border-gray-100 bg-white/70 p-4 shadow-sm backdrop-blur">

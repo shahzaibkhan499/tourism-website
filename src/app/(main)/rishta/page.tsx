@@ -32,14 +32,14 @@ export default function RishtaPage() {
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const [gender, setGender] = useState("");
+  const [gender, setGender] = useState("all");
   const [minAge, setMinAge] = useState("");
   const [maxAge, setMaxAge] = useState("");
-  const [education, setEducation] = useState("");
+  const [education, setEducation] = useState("all");
   const [profession, setProfession] = useState("");
-  const [sect, setSect] = useState("");
+  const [sect, setSect] = useState("all");
   const [city, setCity] = useState("");
-  const [maritalStatus, setMaritalStatus] = useState("");
+  const [maritalStatus, setMaritalStatus] = useState("all");
   const [caste, setCaste] = useState("");
   const debouncedProfession = useDebounce(profession);
   const debouncedCaste = useDebounce(caste);
@@ -49,28 +49,28 @@ export default function RishtaPage() {
       setLoading(true);
       try {
         const params = new URLSearchParams({ limit: "12" });
-        if (gender) params.set("gender", gender);
+        if (gender !== "all") params.set("gender", gender);
         if (minAge) params.set("minAge", minAge);
         if (maxAge) params.set("maxAge", maxAge);
-        if (education) params.set("education", education);
+        if (education !== "all") params.set("education", education);
         if (debouncedProfession) params.set("profession", debouncedProfession);
-        if (sect) params.set("sect", sect);
+        if (sect !== "all") params.set("sect", sect);
         if (city) params.set("city", city);
-        if (maritalStatus) params.set("maritalStatus", maritalStatus);
+        if (maritalStatus !== "all") params.set("maritalStatus", maritalStatus);
         if (debouncedCaste) params.set("caste", debouncedCaste);
         if (cursor) params.set("cursor", cursor);
 
         const res = await fetch(`/api/rishta?${params}`);
         const data = await res.json();
         if (!res.ok) {
-          toast.error(data.error || "Profiles load nahi ho sakin");
+          toast.error(data.error || "پروفائلز لوڈ نہیں ہو سکیں");
           return;
         }
         setProfiles((prev) => (replace ? data.items : [...prev, ...data.items]));
         setHasMore(data.hasMore);
         setNextCursor(data.nextCursor);
       } catch {
-        toast.error("Network error. Dobara koshish karein.");
+        toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
       } finally {
         setLoading(false);
       }
@@ -87,14 +87,14 @@ export default function RishtaPage() {
   return (
     <div>
       <PageHeader
-        title="Rishta"
+        title="رشتہ"
         titleUrdu="رشتہ"
-        description="Respectful aur safe tareeqe se rishta dhundein"
+        description="احترام اور حفاظت کے ساتھ رشتہ تلاش کریں"
         actions={
           <Button className="bg-pink-600 hover:bg-pink-700" asChild>
             <Link href="/rishta/create">
               <Plus className="mr-1 h-4 w-4" />
-              Apna Profile Banayein
+              Apna Profile بنائیں
             </Link>
           </Button>
         }
@@ -126,10 +126,10 @@ export default function RishtaPage() {
             <Label className="text-xs">Gender</Label>
             <Select value={gender} onValueChange={setGender}>
               <SelectTrigger>
-                <SelectValue placeholder="Koi bhi" />
+                <SelectValue placeholder="کوئی بھی" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Koi bhi</SelectItem>
+                <SelectItem value="all">کوئی بھی</SelectItem>
                 <SelectItem value="MALE">Male</SelectItem>
                 <SelectItem value="FEMALE">Female</SelectItem>
               </SelectContent>
@@ -147,10 +147,10 @@ export default function RishtaPage() {
             <Label className="text-xs">Education</Label>
             <Select value={education} onValueChange={setEducation}>
               <SelectTrigger>
-                <SelectValue placeholder="Koi bhi" />
+                <SelectValue placeholder="کوئی بھی" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Koi bhi</SelectItem>
+                <SelectItem value="all">کوئی بھی</SelectItem>
                 {EDUCATION_LEVELS.map((e) => (
                   <SelectItem key={e} value={e}>
                     {e}
@@ -167,10 +167,10 @@ export default function RishtaPage() {
             <Label className="text-xs">Sect</Label>
             <Select value={sect} onValueChange={setSect}>
               <SelectTrigger>
-                <SelectValue placeholder="Koi bhi" />
+                <SelectValue placeholder="کوئی بھی" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Koi bhi</SelectItem>
+                <SelectItem value="all">کوئی بھی</SelectItem>
                 {SECTS.map((s) => (
                   <SelectItem key={s} value={s}>
                     {s}
@@ -187,10 +187,10 @@ export default function RishtaPage() {
             <Label className="text-xs">Marital Status</Label>
             <Select value={maritalStatus} onValueChange={setMaritalStatus}>
               <SelectTrigger>
-                <SelectValue placeholder="Koi bhi" />
+                <SelectValue placeholder="کوئی بھی" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Koi bhi</SelectItem>
+                <SelectItem value="all">کوئی بھی</SelectItem>
                 {MARITAL_STATUSES.map((m) => (
                   <SelectItem key={m.value} value={m.value}>
                     {m.label} — {m.labelUrdu}
@@ -222,9 +222,9 @@ export default function RishtaPage() {
       ) : profiles.length === 0 ? (
         <EmptyState
           icon={<Heart className="h-12 w-12" />}
-          title="Koi data nahi mila"
-          description="In filters ke mutabiq koi profile nahi mili. Filters badal kar dekhein."
-          actionLabel="Sab Profiles Dekhein"
+          title="کوئی ڈیٹا نہیں ملا"
+          description="ان فلٹرز کے مطابق کوئی پروفائل نہیں ملی۔ فلٹرز بدل کر دیکھیں۔"
+          actionLabel="تمام پروفائلز دیکھیں"
           onAction={() => {
             setGender("");
             setMinAge("");

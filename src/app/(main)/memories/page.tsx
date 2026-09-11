@@ -36,8 +36,8 @@ import type { MemoryItem } from "@/types";
 export default function MemoriesPage() {
   const [memories, setMemories] = useState<MemoryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState("");
-  const [visibility, setVisibility] = useState("");
+  const [category, setCategory] = useState("all");
+  const [visibility, setVisibility] = useState("all");
   const [view, setView] = useState<"timeline" | "grid">("timeline");
   const [hasMore, setHasMore] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -48,14 +48,14 @@ export default function MemoriesPage() {
       setLoading(true);
       try {
         const params = new URLSearchParams({ limit: "12" });
-        if (category) params.set("category", category);
-        if (visibility) params.set("visibility", visibility);
+        if (category !== "all") params.set("category", category);
+        if (visibility !== "all") params.set("visibility", visibility);
         if (cursor) params.set("cursor", cursor);
 
         const res = await fetch(`/api/memories?${params}`);
         const data = await res.json();
         if (!res.ok) {
-          toast.error(data.error || "Memories load nahi ho sakin");
+          toast.error(data.error || "یادیں لوڈ نہیں ہو سکیں");
           return;
         }
         setMemories((prev) => (replace ? data.items : [...prev, ...data.items]));
@@ -63,7 +63,7 @@ export default function MemoriesPage() {
         setNextCursor(data.nextCursor);
         setOnThisDay(data.onThisDay || []);
       } catch {
-        toast.error("Network error. Dobara koshish karein.");
+        toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
       } finally {
         setLoading(false);
       }
@@ -80,7 +80,7 @@ export default function MemoriesPage() {
       const res = await fetch(`/api/memories/${id}`, { method: "DELETE" });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Delete nahi ho saki");
+        toast.error(data.error || "ڈیلیٹ نہیں ہو سکی");
         return;
       }
       toast.success("Memory delete ho gayi");
@@ -95,12 +95,12 @@ export default function MemoriesPage() {
       <PageHeader
         title="Memories"
         titleUrdu="یادیں"
-        description="Apni yaadein mehfooz karein"
+        description="اپنی یادیں محفوظ کریں"
         actions={
           <Button className="bg-emerald-600 hover:bg-emerald-700" asChild>
             <Link href="/memories/create">
               <Plus className="mr-1 h-4 w-4" />
-              Nayi Memory Banayein
+              نئی یاد بنائیں
             </Link>
           </Button>
         }
@@ -126,7 +126,7 @@ export default function MemoriesPage() {
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab categories</SelectItem>
+            <SelectItem value="all">تمام زمرے</SelectItem>
             {MEMORY_CATEGORIES.map((c) => (
               <SelectItem key={c.value} value={c.value}>
                 {c.emoji} {c.label} — {c.labelUrdu}
@@ -139,7 +139,7 @@ export default function MemoriesPage() {
             <SelectValue placeholder="Visibility" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab</SelectItem>
+            <SelectItem value="all">Sab</SelectItem>
             <SelectItem value="public">Public</SelectItem>
             <SelectItem value="private">Private</SelectItem>
           </SelectContent>
@@ -171,9 +171,9 @@ export default function MemoriesPage() {
       ) : memories.length === 0 ? (
         <EmptyState
           icon={<BookOpen className="h-12 w-12" />}
-          title="Koi data nahi mila"
-          description="Abhi koi memory nahi hai. Apni pehli memory banayein!"
-          actionLabel="Memory Banayein"
+          title="کوئی ڈیٹا نہیں ملا"
+          description="ابھی کوئی یاد نہیں ہے۔ اپنی پہلی یاد بنائیں!"
+          actionLabel="یاد بنائیں"
           actionHref="/memories/create"
         />
       ) : view === "grid" ? (

@@ -74,7 +74,7 @@ export async function PATCH(req: NextRequest) {
         const existing = await prisma.user.findFirst({
           where: { phone: d.phone, id: { not: user.id } },
         });
-        if (existing) return apiError(400, "Yeh phone number kisi aur ka hai");
+        if (existing) return apiError(400, "یہ فون نمبر کسی اور کا ہے");
         data.phone = d.phone;
       } else {
         data.phone = null;

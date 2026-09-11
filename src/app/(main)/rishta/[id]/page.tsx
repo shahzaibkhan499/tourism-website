@@ -104,7 +104,7 @@ export default function RishtaDetailPage() {
         }
         setProfile(json);
       })
-      .catch(() => toast.error("Profile load nahi ho saki"))
+      .catch(() => toast.error("پروفائل لوڈ نہیں ہو سکی"))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -118,14 +118,14 @@ export default function RishtaDetailPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Request nahi bheji ja saki");
+        toast.error(data.error || "درخواست نہیں بھیجی جا سکی");
         return;
       }
-      toast.success("Interest bhej diya gaya! 💚");
+      toast.success("دلچسپی بھیج دی گئی! 💚");
       setDialogOpen(false);
       setMessage("");
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setSending(false);
     }
@@ -144,7 +144,7 @@ export default function RishtaDetailPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Report nahi ho saki");
+        toast.error(data.error || "رپورٹ نہیں ہو سکی");
         return;
       }
       toast.success("Report submit ho gayi");
@@ -232,13 +232,13 @@ export default function RishtaDetailPage() {
                     <DialogTitle>Interest Bhejein</DialogTitle>
                     <DialogDescription>
                       {profile.isGuardianMode
-                        ? "Yeh profile guardian mode mein hai. Aapka message guardian tak jayega."
-                        : "Aapka message seedha profile wale tak jayega."}
+                        ? "یہ پروفائل گارڈین موڈ میں ہے۔ آپ کا پیغام گارڈین تک جائے گا۔"
+                        : "آپ کا پیغام سیدھا پروفائل والے تک جائے گا۔"}
                     </DialogDescription>
                   </DialogHeader>
                   <Textarea
                     rows={4}
-                    placeholder="Apna taaruf aur family ke baare mein mukhtasar likhein..."
+                    placeholder="اپنا تعارف اور فیملی کے بارے میں مختصر لکھیں..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                   />
@@ -271,7 +271,7 @@ export default function RishtaDetailPage() {
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       className="bg-red-600 hover:bg-red-700"
-                      onClick={() => handleReport("Yeh profile fake ya inappropriate lagti hai")}
+                      onClick={() => handleReport("یہ پروفائل جعلی یا نامناسب لگتی ہے")}
                     >
                       Report Karein
                     </AlertDialogAction>
@@ -319,7 +319,7 @@ export default function RishtaDetailPage() {
             <DetailRow label="Weight" value={profile.weight || "—"} />
             <DetailRow label="Complexion" value={profile.complexion || "—"} />
             <DetailRow label="Marital Status" value={maritalLabel} />
-            <DetailRow label="Children" value={profile.children > 0 ? String(profile.children) : "Koi nahi"} />
+            <DetailRow label="Children" value={profile.children > 0 ? String(profile.children) : "کوئی نہیں"} />
             <DetailRow label="City Preference" value={profile.cityPreference || "—"} />
             <DetailRow label="Country Preference" value={profile.countryPreference || "—"} />
             <DetailRow label="Caste/Clan Preference" value={profile.castePreference || "—"} />
@@ -359,7 +359,7 @@ export default function RishtaDetailPage() {
             />
             <DetailRow label="Income" value={profile.income || "—"} />
             <DetailRow label="Sect" value={profile.sect || "—"} />
-            <DetailRow label="Maslak" value={profile.maslak || "—"} />
+            <DetailRow label="مسلک" value={profile.maslak || "—"} />
           </CardContent>
         </Card>
 
@@ -372,13 +372,13 @@ export default function RishtaDetailPage() {
             <div>
               <h4 className="text-xs font-semibold uppercase text-gray-400">About</h4>
               <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-gray-600">
-                {profile.about || "Koi taaruf nahi likha gaya"}
+                {profile.about || "کوئی تعارف نہیں لکھا گیا"}
               </p>
             </div>
             <div>
               <h4 className="text-xs font-semibold uppercase text-gray-400">Family Background</h4>
               <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-gray-600">
-                {profile.familyBackground || "Nahi bataya gaya"}
+                {profile.familyBackground || "نہیں بتایا گیا"}
               </p>
             </div>
           </CardContent>
@@ -392,7 +392,7 @@ export default function RishtaDetailPage() {
             </CardHeader>
             <CardContent>
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600">
-                {profile.expectations || "Nahi batayi gayin"}
+                {profile.expectations || "نہیں بتائی گئیں"}
               </p>
             </CardContent>
           </Card>
@@ -407,7 +407,7 @@ export default function RishtaDetailPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <DetailRow label="Guardian Name" value={profile.guardianName || "—"} />
-                <DetailRow label="Rishta" value={profile.guardianRelation || "—"} />
+                <DetailRow label="رشتہ" value={profile.guardianRelation || "—"} />
                 {profile.isApproved && <DetailRow label="Phone" value={profile.guardianPhone || "—"} />}
               </CardContent>
             </Card>

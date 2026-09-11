@@ -18,18 +18,18 @@ import {
 import { cn } from "@/lib/utils";
 
 const features = [
-  { icon: CalendarDays, color: "bg-emerald-100 text-emerald-700", title: "Events", desc: "Family events banayein, manage karein aur RSVP lein — shaadi, eid, mehndi sab." },
-  { icon: Users, color: "bg-blue-100 text-blue-700", title: "Clan & Community", desc: "Apni community, clan aur sub-clan se judein. Apne logon ko dhundein." },
-  { icon: Heart, color: "bg-pink-100 text-pink-700", title: "Rishta", desc: "Respectful aur safe rishta search. Guardian mode aur verification ke saath." },
-  { icon: Briefcase, color: "bg-amber-100 text-amber-700", title: "Jobs", desc: "Family businesses ki jobs. Apni community ke logon ke saath kaam karein." },
-  { icon: BookOpen, color: "bg-purple-100 text-purple-700", title: "Memories & Media", desc: "Yaadein mehfooz karein — photos, videos aur kahaniyan aik jagah." },
-  { icon: Accessibility, color: "bg-orange-100 text-orange-700", title: "Buzurg Mode", desc: "Bade buzurgon ke liye simple UI, video calls aur medicine reminders." },
+  { icon: CalendarDays, color: "bg-emerald-100 text-emerald-700", title: "Events", desc: "فیملی ایونٹس بنائیں، منظم کریں اور RSVP لیں — شادی، عید، مہندی سب۔" },
+  { icon: Users, color: "bg-blue-100 text-blue-700", title: "Clan & Community", desc: "اپنی کمیونٹی، کلان اور سب کلان سے جڑیں۔ اپنے لوگوں کو ڈھونڈیں۔" },
+  { icon: Heart, color: "bg-pink-100 text-pink-700", title: "رشتہ", desc: "احترام اور حفاظت کے ساتھ رشتہ کی تلاش۔ گارڈین موڈ اور تصدیق کے ساتھ۔" },
+  { icon: Briefcase, color: "bg-amber-100 text-amber-700", title: "Jobs", desc: "فیملی بزنسز کی نوکریاں۔ اپنی کمیونٹی کے لوگوں کے ساتھ کام کریں۔" },
+  { icon: BookOpen, color: "bg-purple-100 text-purple-700", title: "Memories & Media", desc: "یادیں محفوظ کریں — تصاویر، ویڈیوز اور کہانیاں ایک جگہ۔" },
+  { icon: Accessibility, color: "bg-orange-100 text-orange-700", title: "Buzurg Mode", desc: "بڑے بزرگوں کے لیے سادہ UI، ویڈیو کالز اور میڈیسن ریمائنڈرز۔" },
   { icon: ShieldCheck, color: "bg-green-100 text-green-700", title: "Security", desc: "bcrypt encryption, 2FA, rate limiting aur audit logs." },
   { icon: Baby, color: "bg-yellow-100 text-yellow-700", title: "Kids Zone", desc: "Family quiz, achievements aur points ke saath bachon ki learning." },
-  { icon: HeartHandshake, color: "bg-rose-100 text-rose-700", title: "Female First", desc: "Khawateen ki privacy aur suraksha sab se pehle. Guardian mode available." },
-  { icon: Building2, color: "bg-sky-100 text-sky-700", title: "Business Directory", desc: "Family-owned businesses discover karein aur reviews dein." },
-  { icon: Lock, color: "bg-slate-100 text-slate-700", title: "E2E Encryption", desc: "Aapka data aapka hai. End-to-end security ke saath." },
-  { icon: Bell, color: "bg-red-100 text-red-700", title: "Notifications", desc: "Event reminders, rishta requests aur updates — kabhi miss na karein." },
+  { icon: HeartHandshake, color: "bg-rose-100 text-rose-700", title: "Female First", desc: "خواتین کی پرائیویسی اور حفاظت سب سے پہلے۔ گارڈین موڈ دستیاب ہے۔" },
+  { icon: Building2, color: "bg-sky-100 text-sky-700", title: "Business Directory", desc: "فیملی بزنسز دریافت کریں اور جائزے دیں۔" },
+  { icon: Lock, color: "bg-slate-100 text-slate-700", title: "E2E Encryption", desc: "آپ کا ڈیٹا آپ کا ہے۔ اینڈ ٹو اینڈ سیکیورٹی کے ساتھ۔" },
+  { icon: Bell, color: "bg-red-100 text-red-700", title: "Notifications", desc: "ایونٹ ریمائنڈرز، رشتہ کی درخواستیں اور اپ ڈیٹس — کبھی مس نہ کریں۔" },
 ];
 
 export function Features() {

@@ -15,12 +15,12 @@ export async function POST(req: NextRequest) {
     const file = formData.get("file") as File | null;
 
     if (!file) {
-      return apiError(400, "File chunein");
+      return apiError(400, "فائل منتخب کریں");
     }
 
     const validation = validateUpload({ type: file.type, size: file.size });
     if (!validation.ok) {
-      return apiError(400, validation.error || "File valid nahi hai");
+      return apiError(400, validation.error || "فائل درست نہیں ہے");
     }
 
     const type = detectMediaType(file.type);

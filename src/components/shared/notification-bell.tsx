@@ -43,9 +43,9 @@ export function NotificationBell() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {loading ? (
-          <div className="p-4 text-center text-sm text-gray-500">Load ho raha hai...</div>
+          <div className="p-4 text-center text-sm text-gray-500">لوڈ ہو رہا ہے...</div>
         ) : notifications.length === 0 ? (
-          <div className="p-6 text-center text-sm text-gray-500">Koi notification nahi hai 🔔</div>
+          <div className="p-6 text-center text-sm text-gray-500">کوئی اطلاع نہیں ہے 🔔</div>
         ) : (
           notifications.map((n) => {
             const Icon = typeIcons[n.type] || Info;

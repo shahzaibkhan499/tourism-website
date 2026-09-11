@@ -91,7 +91,7 @@ async function main() {
       dateOfBirth: new Date("1998-02-20"),
       city: "Karachi",
       province: "Sindh",
-      bio: "Teacher aur parhai ki shauqeen 📚",
+      bio: "ٹیچر اور پڑھائی کی شوقین 📚",
       bloodGroup: "O+",
       occupation: "Teacher",
       education: "Master's",
@@ -285,8 +285,8 @@ async function main() {
   // ---------- Sample events ----------
   const eventsData: Prisma.EventUncheckedCreateInput[] = [
     {
-      title: "Khandaan ki Eid Milan Party",
-      description: "Puri family ki Eid Milan party. Sab log zaroor aayein! Khana, mithaai aur dher sari batein.",
+      title: "خاندان کی عید ملن پارٹی",
+      description: "پوری فیملی کی عید ملن پارٹی۔ سب لوگ ضرور آئیں! کھانا، مٹھائی اور ڈھیر ساری باتیں۔",
       type: "EID_MILAN",
       date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
       location: "Arain House, Model Town, Lahore",
@@ -296,7 +296,7 @@ async function main() {
     },
     {
       title: "Ahmed ki Shadi — Nikkah Ceremony",
-      description: "Allah ke fazal se Ahmed ki shadi. Nikkah ki rasam, dua ki darkhwast hai.",
+      description: "اللہ کے فضل سے احمد کی شادی۔ نکاح کی رسم، دعا کی درخواست ہے۔",
       type: "NIKKAH",
       date: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
       location: "Marquee Hall, Gulberg, Lahore",
@@ -305,8 +305,8 @@ async function main() {
       creatorId: demo.id,
     },
     {
-      title: "Family Picnic — Jallo Park",
-      description: "Monthly family picnic. Bachon ke liye games aur cricket match ka intizam hoga.",
+      title: "فیملی پکنک — جالو پارک",
+      description: "ماہانہ فیملی پکنک۔ بچوں کے لیے گیمز اور کرکٹ میچ کا انتظام ہوگا۔",
       type: "FAMILY_REUNION",
       date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       location: "Jallo Park, Lahore",
@@ -315,7 +315,7 @@ async function main() {
     },
     {
       title: "Quran Khawani — Abbu ki Barsi",
-      description: "Abbu ki barsi par Quran khawani. Isha ke baad dua hogi.",
+      description: "ابو کی برسی پر قرآن خوانی۔ عشاء کے بعد دعا ہوگی۔",
       type: "BARSI",
       date: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
       location: "House # 12, DHA Phase 5, Karachi",
@@ -324,7 +324,7 @@ async function main() {
     },
     {
       title: "Usman ka Business Opening",
-      description: "Alhamdulillah, naya business shuru ho raha hai. Dua ke liye tashreef layein.",
+      description: "الحمدللہ، نیا بزنس شروع ہو رہا ہے۔ دعا کے لیے تشریف لائیں۔",
       type: "JOB_CELEBRATION",
       date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
       location: "Blue Area, Islamabad",
@@ -387,8 +387,8 @@ async function main() {
 
   const memoriesData: SeedMemory[] = [
     {
-      title: "Bachpan ki Eid",
-      description: "1998 ki Eid — sab cousins aik saath. Kya din thay!",
+      title: "بچپن کی عید",
+      description: "1998 کی عید — سب کزنز ایک ساتھ۔ کیا دن تھے!",
       date: new Date("1998-01-30"),
       location: "Dada ka ghar, Lahore",
       category: "CHILDHOOD",
@@ -417,7 +417,7 @@ async function main() {
       media: [seedPhoto("mehndi-1.jpg", demo.id), seedPhoto("mehndi-2.jpg", demo.id)],
     },
     {
-      title: "Family Picnic — Jallo Park",
+      title: "فیملی پکنک — جالو پارک",
       description: "Cricket match, biryani aur dhoop. Perfect Sunday.",
       date: new Date("2022-02-06"),
       location: "Jallo Park, Lahore",
@@ -427,7 +427,7 @@ async function main() {
       media: [seedPhoto("picnic-1.jpg", demo.id)],
     },
     {
-      title: "Bachpan ki yaadein — purani photo",
+      title: "بچپن کی یادیں — purani photo",
       description: "Dada ki almari se mili 1985 ki purani tasveer.",
       date: new Date("1985-05-12"),
       location: "Lahore",
@@ -486,7 +486,7 @@ async function main() {
   const jobsData: Prisma.JobPostingUncheckedCreateInput[] = [
     {
       title: "Sales Manager — Textile Division",
-      description: "Hamein apni textile division ke liye tajurba kaar Sales Manager chahiye. Candidate ke paas minimum 5 saal ka tajurba hona chahiye.",
+      description: "ہمیں اپنی ٹیکسٹائل ڈویژن کے لیے تجربہ کار سیلز مینیجر چاہیے۔ امیدوار کے پاس کم از کم 5 سال کا تجربہ ہونا چاہیے۔",
       requirements: "Minimum 5 saal sales experience, achi communication skills, market knowledge",
       type: "FULL_TIME",
       experience: "5+ years",
@@ -574,8 +574,8 @@ async function main() {
 
   // ---------- Sample notifications ----------
   const notificationsData: Prisma.NotificationUncheckedCreateInput[] = [
-    { userId: demo.id, type: "system", title: "Khush aamdeed! 🌳", message: "Digital Khandaan par account banane ka shukriya. Apna profile complete karein.", link: "/profile" },
-    { userId: demo.id, type: "event_reminder", title: "Family Picnic aa rahi hai", message: "Family Picnic — Jallo Park 7 din baad hai. RSVP karein!", link: "/events" },
+    { userId: demo.id, type: "system", title: "خوش آمدید! 🌳", message: "Digital Khandaan par account banane ka shukriya. Apna profile complete karein.", link: "/profile" },
+    { userId: demo.id, type: "event_reminder", title: "فیملی پکنک آنے والی ہے", message: "فیملی پکنک — جالو پارک 7 دن بعد ہے۔ RSVP کریں!", link: "/events" },
     { userId: demo2.id, type: "clan_update", title: "Memon community update", message: "Memon community mein 3 naye members shamil hue.", link: "/community" },
   ];
 
@@ -594,8 +594,8 @@ async function main() {
     { key: "contact_email", value: "support@digitalkhandaan.pk" },
     { key: "support_phone", value: "+92 300 1234567" },
     { key: "about_us", value: "Digital Khandaan Pakistan ka pehla complete digital family platform hai." },
-    { key: "terms_of_service", value: "Terms of service yahan likhein." },
-    { key: "privacy_policy", value: "Privacy policy yahan likhein." },
+    { key: "terms_of_service", value: "شرائطِ استعمال یہاں لکھیں۔" },
+    { key: "privacy_policy", value: "پرائیویسی پالیسی یہاں لکھیں۔" },
     { key: "welcome_email_template", value: "Assalam-o-Alaikum {{name}}, Digital Khandaan mein khush aamdeed!" },
     { key: "event_reminder_template", value: "Kal {{event}} hai!" },
     { key: "password_reset_template", value: "Password reset ke liye yeh link use karein: {{link}}" },

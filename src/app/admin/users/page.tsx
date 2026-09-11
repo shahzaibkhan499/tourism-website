@@ -112,8 +112,8 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const [role, setRole] = useState("");
-  const [status, setStatus] = useState("");
+  const [role, setRole] = useState("all");
+  const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -131,18 +131,18 @@ export default function AdminUsersPage() {
     try {
       const params = new URLSearchParams({ page: String(page) });
       if (debouncedQ) params.set("q", debouncedQ);
-      if (role) params.set("role", role);
-      if (status) params.set("status", status);
+      if (role !== "all") params.set("role", role);
+      if (status !== "all") params.set("status", status);
 
       const res = await fetch(`/api/admin/users?${params}`);
       const data = await res.json();
-      if (res.status === 403 || data.error === "Aapko is action ki ijazat nahi hai") {
-        toast.error("Admin access zaroori hai");
+      if (res.status === 403 || data.error === "آپ کو اس کارروائی کی اجازت نہیں ہے") {
+        toast.error("ایڈمن رسائی ضروری ہے");
         window.location.href = "/dashboard";
         return;
       }
       if (!res.ok) {
-        toast.error(data.error || "Users load nahi ho sake");
+        toast.error(data.error || "صارفین لوڈ نہیں ہو سکے");
         return;
       }
       setUsers(data.users);
@@ -168,10 +168,10 @@ export default function AdminUsersPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Action nahi ho saka");
+        toast.error(data.error || "کارروائی نہیں ہو سکی");
         return;
       }
-      toast.success(data.message || "Action kamyab raha");
+      toast.success(data.message || "کارروائی کامیاب رہی");
       setBanTarget(null);
       setDeleteTarget(null);
       setDeleteConfirm("");
@@ -186,7 +186,7 @@ export default function AdminUsersPage() {
       const res = await fetch(`/api/admin/users/${userId}`);
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Details load nahi ho sakin");
+        toast.error(data.error || "تفصیلات لوڈ نہیں ہو سکیں");
         return;
       }
       setDetailUser(data);
@@ -235,7 +235,7 @@ export default function AdminUsersPage() {
       URL.revokeObjectURL(url);
       toast.success(`${allUsers.length} users export ho gaye`);
     } catch {
-      toast.error("Export fail ho gaya");
+      toast.error("ایکسپورٹ ناکام ہو گیا");
     } finally {
       setExporting(false);
     }
@@ -258,14 +258,14 @@ export default function AdminUsersPage() {
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input placeholder="Naam, email ya phone..." className="pl-9" value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} />
+          <Input placeholder="نام، ای میل یا فون..." className="pl-9" value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} />
         </div>
         <Select value={role} onValueChange={(v) => { setRole(v); setPage(1); }}>
           <SelectTrigger className="w-full sm:w-40">
             <SelectValue placeholder="Role" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab roles</SelectItem>
+            <SelectItem value="all">تمام کردار</SelectItem>
             <SelectItem value="USER">User</SelectItem>
             <SelectItem value="MODERATOR">Moderator</SelectItem>
             <SelectItem value="ADMIN">Admin</SelectItem>
@@ -276,7 +276,7 @@ export default function AdminUsersPage() {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab</SelectItem>
+            <SelectItem value="all">تمام</SelectItem>
             <SelectItem value="active">Active</SelectItem>
             <SelectItem value="banned">Banned</SelectItem>
             <SelectItem value="unverified">Unverified</SelectItem>
@@ -310,7 +310,7 @@ export default function AdminUsersPage() {
                 {users.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="py-10 text-center text-gray-500">
-                      Koi data nahi mila
+                      کوئی ڈیٹا نہیں ملا
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -410,7 +410,7 @@ export default function AdminUsersPage() {
           </AlertDialogHeader>
           <Textarea
             rows={3}
-            placeholder="Ban ki wajah likhein..."
+            placeholder="پابندی کی وجہ لکھیں..."
             value={banReason}
             onChange={(e) => setBanReason(e.target.value)}
           />
@@ -437,7 +437,7 @@ export default function AdminUsersPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <Input
-            placeholder="DELETE type karein"
+            placeholder="DELETE لکھیں"
             value={deleteConfirm}
             onChange={(e) => setDeleteConfirm(e.target.value)}
           />
@@ -476,7 +476,7 @@ export default function AdminUsersPage() {
               <DetailRow label="Clan" value={detailUser.clan?.name || "—"} />
               <DetailRow label="Sub-Clan" value={detailUser.subClan?.name || "—"} />
               <DetailRow label="2FA" value={detailUser.twoFactorEnabled ? "Enabled" : "Disabled"} />
-              <DetailRow label="Last Login" value={detailUser.lastLoginAt ? formatDate(detailUser.lastLoginAt, "dd MMM yyyy, h:mm a") : "Kabhi nahi"} />
+              <DetailRow label="Last Login" value={detailUser.lastLoginAt ? formatDate(detailUser.lastLoginAt, "dd MMM yyyy, h:mm a") : "کبھی نہیں"} />
               <DetailRow label="Login Count" value={String(detailUser.loginCount)} />
               <DetailRow label="Ban Reason" value={detailUser.banReason || "—"} />
               <DetailRow label="Bio" value={detailUser.bio || "—"} />
@@ -485,7 +485,7 @@ export default function AdminUsersPage() {
               <DetailRow label="Media" value={String(detailUser._count.media)} />
               <DetailRow label="Reports (by user)" value={String(detailUser._count.reports)} />
               <DetailRow label="Reports (against)" value={String(detailUser._count.reportedBy)} />
-              <DetailRow label="Rishta Profile" value={detailUser.rishtaProfile ? (detailUser.rishtaProfile.isActive ? "Active" : "Inactive") : "Nahi hai"} />
+              <DetailRow label="رشتہ پروفائل" value={detailUser.rishtaProfile ? (detailUser.rishtaProfile.isActive ? "Active" : "Inactive") : "نہیں ہے"} />
               <DetailRow label="Businesses" value={detailUser.businesses.length ? detailUser.businesses.map((b) => b.name).join(", ") : "—"} />
             </div>
           )}

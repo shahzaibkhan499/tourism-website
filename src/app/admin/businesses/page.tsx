@@ -54,20 +54,20 @@ interface AdminBusiness {
 export default function AdminBusinessesPage() {
   const [businesses, setBusinesses] = useState<AdminBusiness[]>([]);
   const [loading, setLoading] = useState(true);
-  const [industry, setIndustry] = useState("");
+  const [industry, setIndustry] = useState("all");
   const [city, setCity] = useState("");
-  const [verified, setVerified] = useState("");
+  const [verified, setVerified] = useState("all");
 
   const fetchBusinesses = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (industry) params.set("industry", industry);
+      if (industry !== "all") params.set("industry", industry);
       if (city) params.set("city", city);
-      if (verified) params.set("verified", verified);
+      if (verified !== "all") params.set("verified", verified);
       const res = await fetch(`/api/admin/businesses?${params}`);
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Businesses load nahi ho sake");
+      if (!res.ok) return toast.error(data.error || "بزنسز لوڈ نہیں ہو سکے");
       setBusinesses(data.businesses);
     } catch {
       toast.error("Network error");
@@ -88,8 +88,8 @@ export default function AdminBusinessesPage() {
         body: JSON.stringify({ id, action }),
       });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Action nahi ho saka");
-      toast.success("Action kamyab raha");
+      if (!res.ok) return toast.error(data.error || "کارروائی نہیں ہو سکی");
+      toast.success("کارروائی کامیاب رہی");
       fetchBusinesses();
     } catch {
       toast.error("Network error");
@@ -100,7 +100,7 @@ export default function AdminBusinessesPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Businesses</h1>
-        <p className="text-sm text-gray-500">Directory ke tamam businesses</p>
+        <p className="text-sm text-gray-500">ڈائریکٹری کے تمام بزنسز</p>
       </div>
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
@@ -109,7 +109,7 @@ export default function AdminBusinessesPage() {
             <SelectValue placeholder="Industry" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab industries</SelectItem>
+            <SelectItem value="all">تمام صنعتیں</SelectItem>
             {INDUSTRIES.map((i) => (
               <SelectItem key={i} value={i}>
                 {i}
@@ -122,13 +122,13 @@ export default function AdminBusinessesPage() {
             <SelectValue placeholder="Verified" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab</SelectItem>
+            <SelectItem value="all">تمام</SelectItem>
             <SelectItem value="true">Verified</SelectItem>
             <SelectItem value="false">Unverified</SelectItem>
           </SelectContent>
         </Select>
-        <Button variant="outline" onClick={() => { setIndustry(""); setCity(""); setVerified(""); }}>
-          Filters Clear Karein
+        <Button variant="outline" onClick={() => { setIndustry("all"); setCity(""); setVerified("all"); }}>
+          فلٹرز صاف کریں
         </Button>
       </div>
 
@@ -157,7 +157,7 @@ export default function AdminBusinessesPage() {
                 {businesses.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="py-10 text-center text-gray-500">
-                      Koi data nahi mila
+                      کوئی ڈیٹا نہیں ملا
                     </TableCell>
                   </TableRow>
                 ) : (

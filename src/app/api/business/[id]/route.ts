@@ -109,7 +109,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       data: { isActive: false },
     });
 
-    return apiSuccess({ message: "Business deactivate ho gaya" });
+    return apiSuccess({ message: "بزنس غیر فعال ہو گیا" });
   } catch (error) {
     return handleApiError(error);
   }

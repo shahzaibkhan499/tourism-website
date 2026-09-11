@@ -13,8 +13,8 @@ interface EmptyStateProps {
 
 export function EmptyState({
   icon,
-  title = "Koi data nahi mila",
-  description = "Abhi yahan kuch nahi hai.",
+  title = "کوئی ڈیٹا نہیں ملا",
+  description = "ابھی یہاں کچھ نہیں ہے۔",
   actionLabel,
   actionHref,
   onAction,

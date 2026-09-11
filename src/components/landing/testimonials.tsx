@@ -15,12 +15,12 @@ const testimonials = [
   {
     name: "Saima Yousafzai",
     clan: "Yousafzai Clan, Swat",
-    quote: "Buzurg mode ki wajah se meri Ammi ab khud video calls karti hain. Medicine reminder feature bohat kaam aaya. Allah khush rakhe team ko.",
+    quote: "بزرگ موڈ کی وجہ سے میری امی اب خود ویڈیو کالز کرتی ہیں۔ میڈیسن ریمائنڈر فیچر بہت کام آیا۔ اللہ خوش رکھے ٹیم کو۔",
   },
   {
     name: "Usman Memon",
     clan: "Memon Clan, Karachi",
-    quote: "Humara family business ab directory par listed hai aur community ke logon se 3 naye orders mile hain. Jobs post karna bhi bohat aasan hai.",
+    quote: "ہمارا فیملی بزنس اب ڈائریکٹری میں درج ہے اور کمیونٹی کے لوگوں سے 3 نئے آرڈرز ملے ہیں۔ نوکریاں پوسٹ کرنا بھی بہت آسان ہے۔",
   },
 ];
 

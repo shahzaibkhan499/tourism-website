@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
       where: { userId: user.id, isActive: true },
     });
     if (!business) {
-      return apiError(400, "Job post karne ke liye pehle business profile banayein");
+      return apiError(400, "نوکری پوسٹ کرنے کے لیے پہلے بزنس پروفائل بنائیں");
     }
 
     const d = parsed.data;

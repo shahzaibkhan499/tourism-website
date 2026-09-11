@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     if (!clan) throw new Error("NOT_FOUND");
 
     if (user.clanId === clanId) {
-      return apiError(400, "Aap pehle se is clan ke member hain");
+      return apiError(400, "آپ پہلے سے اس کلان کے ممبر ہیں");
     }
 
     // Store join request in SiteSettings queue (schema has no dedicated table)
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
         r.userId === user.id && r.clanId === clanId && r.status === "PENDING"
     );
     if (existing) {
-      return apiError(400, "Aapki request pehle se pending hai");
+      return apiError(400, "آپ کی درخواست پہلے سے زیر التوا ہے");
     }
 
     queue.push({
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return apiSuccess({ message: "Join request bhej di gayi! Approval ke baad aap member ban jayenge." }, 201);
+    return apiSuccess({ message: "شمولیت کی درخواست بھیج دی گئی! منظوری کے بعد آپ ممبر بن جائیں گے۔" }, 201);
   } catch (error) {
     return handleApiError(error);
   }
@@ -126,7 +126,7 @@ export async function PATCH(req: NextRequest) {
     const { requestId, action } = body as { requestId: string; action: "APPROVE" | "REJECT" };
 
     if (!requestId || !["APPROVE", "REJECT"].includes(action)) {
-      return apiError(400, "Ghalat request");
+      return apiError(400, "غلط درخواست");
     }
 
     const queueSetting = await prisma.siteSettings.findUnique({ where: { key: "clan_join_requests" } });
@@ -145,7 +145,7 @@ export async function PATCH(req: NextRequest) {
           userId: request.userId,
           type: "clan_update",
           title: "Clan request manzoor!",
-          message: `${request.clanName} clan join karne ki aapki request manzoor ho gayi. Khush aamdeed!`,
+          message: `${request.clanName} clan join karne ki aapki request manzoor ho gayi. خوش آمدید!`,
           link: "/community",
         },
       });

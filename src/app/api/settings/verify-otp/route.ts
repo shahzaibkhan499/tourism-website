@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       .object({
         type: z.enum(["email", "phone"]),
         value: z.string().min(1).max(100),
-        otp: z.string().length(6, "OTP 6 digits ka hota hai"),
+        otp: z.string().length(6, "OTP 6 ہندسوں کا ہوتا ہے"),
       })
       .safeParse(body);
     if (!parsed.success) {
@@ -26,12 +26,12 @@ export async function POST(req: NextRequest) {
     const { type, value, otp } = parsed.data;
 
     if (type === "email") {
-      const email = z.string().email("Sahi email likhein").safeParse(value);
-      if (!email.success) return apiError(400, "Sahi email likhein");
+      const email = z.string().email("درست ای میل لکھیں").safeParse(value);
+      if (!email.success) return apiError(400, "درست ای میل لکھیں");
       const taken = await prisma.user.findUnique({ where: { email: email.data } });
-      if (taken) return apiError(409, "Ye email pehle se registered hai");
+      if (taken) return apiError(409, "یہ ای میل پہلے سے رجسٹرڈ ہے");
     } else if (!PHONE_REGEX.test(value)) {
-      return apiError(400, "Sahi Pakistani mobile number likhein (03001234567)");
+      return apiError(400, "درست پاکستانی موبائل نمبر لکھیں (03001234567)");
     }
 
     const identifier = `${type}-change:${user.id}`;
@@ -39,10 +39,10 @@ export async function POST(req: NextRequest) {
       where: { identifier_token: { identifier, token: otp } },
     });
 
-    if (!record) return apiError(400, "Ghalat OTP. Dobara check karein");
+    if (!record) return apiError(400, "غلط OTP۔ دوبارہ چیک کریں");
     if (record.expires < new Date()) {
       await prisma.verificationToken.deleteMany({ where: { identifier } });
-      return apiError(400, "OTP expire ho gaya hai. Naya OTP lein");
+      return apiError(400, "OTP کی مدت ختم ہو گئی ہے۔ نیا OTP لیں");
     }
 
     // Apply the change + consume the token atomically
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     );
 
     return apiSuccess({
-      message: type === "email" ? "Email badal gaya!" : "Phone number badal gaya!",
+      message: type === "email" ? "ای میل بدل گیا!" : "فون نمبر بدل گیا!",
     });
   } catch (error) {
     return handleApiError(error);

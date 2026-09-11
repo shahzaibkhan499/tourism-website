@@ -23,15 +23,15 @@ function ResetPasswordForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) {
-      toast.error("Reset link ghalat hai");
+      toast.error("ری سیٹ لنک غلط ہے");
       return;
     }
     if (password.length < 8) {
-      toast.error("Password kam az kam 8 characters ka ho");
+      toast.error("پاس ورڈ کم از کم 8 حروف کا ہو");
       return;
     }
     if (password !== confirm) {
-      toast.error("Dono passwords match nahi karte");
+      toast.error("دونوں پاس ورڈز مماثل نہیں ہیں");
       return;
     }
     setLoading(true);
@@ -43,13 +43,13 @@ function ResetPasswordForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Password reset nahi ho saka");
+        toast.error(data.error || "پاس ورڈ ری سیٹ نہیں ہو سکا");
         return;
       }
-      toast.success("Password badal gaya! Ab login karein.");
+      toast.success("پاس ورڈ بدل گیا! اب لاگ اِن کریں۔");
       router.push("/login");
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(false);
     }
@@ -103,7 +103,7 @@ function ResetPasswordForm() {
           </div>
           <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Save ho raha hai..." : "Password Save Karein"}
+            {loading ? "محفوظ ہو رہا ہے..." : "پاس ورڈ محفوظ کریں"}
           </Button>
           <p className="text-center text-sm text-gray-600">
             <Link href="/login" className="font-semibold text-emerald-600 hover:underline">

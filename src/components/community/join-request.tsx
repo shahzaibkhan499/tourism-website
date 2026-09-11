@@ -50,15 +50,15 @@ export function JoinRequest({ clanId, clanName, subClans }: JoinRequestProps) {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Request nahi bheji ja saki");
+        toast.error(data.error || "درخواست نہیں بھیجی جا سکی");
         return;
       }
-      toast.success("Join request bhej di gayi! Approval ke baad aap member ban jayenge.");
+      toast.success("شمولیت کی درخواست بھیج دی گئی! منظوری کے بعد آپ ممبر بن جائیں گے۔");
       setOpen(false);
       setSubClanId("");
       setOtherName("");
     } catch {
-      toast.error("Network error. Dobara koshish karein.");
+      toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
       setLoading(false);
     }
@@ -84,7 +84,7 @@ export function JoinRequest({ clanId, clanName, subClans }: JoinRequestProps) {
             <Label>Sub-Clan</Label>
             <Select value={subClanId} onValueChange={setSubClanId}>
               <SelectTrigger>
-                <SelectValue placeholder="Sub-clan chunein" />
+                <SelectValue placeholder="سب کلان منتخب کریں" />
               </SelectTrigger>
               <SelectContent>
                 {subClans.map((s) => (

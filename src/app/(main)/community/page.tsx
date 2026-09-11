@@ -38,7 +38,7 @@ export default function CommunityPage() {
         }
         setData(json);
       })
-      .catch(() => toast.error("Community data load nahi ho saka"))
+      .catch(() => toast.error("کمیونٹی ڈیٹا لوڈ نہیں ہو سکا"))
       .finally(() => setLoading(false));
   }, [debouncedSearch]);
 
@@ -63,7 +63,7 @@ export default function CommunityPage() {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
-            placeholder="Community ya clan dhundein..."
+            placeholder="کمیونٹی یا کلان تلاش کریں..."
             className="pl-9"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -80,7 +80,7 @@ export default function CommunityPage() {
 
         <TabsContent value="all">
           {data?.communities.length === 0 ? (
-            <EmptyState icon={<Users className="h-12 w-12" />} title="Koi data nahi mila" description="Koi community nahi mili" />
+            <EmptyState icon={<Users className="h-12 w-12" />} title="کوئی ڈیٹا نہیں ملا" description="کوئی کمیونٹی نہیں ملی" />
           ) : (
             <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {data?.communities.map((c) => (
@@ -147,9 +147,9 @@ export default function CommunityPage() {
             <EmptyState
               className="mt-4"
               icon={<Home className="h-12 w-12" />}
-              title="Koi data nahi mila"
-              description="Aap abhi kisi clan ke member nahi hain. Neeche clans browse karein aur join karein!"
-              actionLabel="Clans Browse Karein"
+              title="کوئی ڈیٹا نہیں ملا"
+              description="آپ ابھی کسی کلان کے ممبر نہیں ہیں۔ نیچے کلانز براؤز کریں اور جوائن کریں!"
+              actionLabel="کلانز براؤز کریں"
             />
           )}
         </TabsContent>
@@ -166,8 +166,8 @@ export default function CommunityPage() {
             <EmptyState
               className="mt-4"
               icon={<Users className="h-12 w-12" />}
-              title="Koi data nahi mila"
-              description="Abhi koi clan nahi hai. Admin se raabta karein."
+              title="کوئی ڈیٹا نہیں ملا"
+              description="ابھی کوئی کلان نہیں ہے۔ ایڈمن سے رابطہ کریں۔"
             />
           )}
         </TabsContent>
@@ -204,7 +204,7 @@ function ClanCard({
             {clan._count?.members ?? 0} members · {clan._count?.subClans ?? 0} sub-clans
           </span>
           <Button size="sm" variant="outline" asChild>
-            <Link href={`/community/${clan.id}`}>Dekhein</Link>
+            <Link href={`/community/${clan.id}`}>دیکھیں</Link>
           </Button>
         </div>
       </CardContent>

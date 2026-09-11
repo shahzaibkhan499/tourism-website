@@ -37,16 +37,16 @@ export async function POST(req: NextRequest) {
     const { type, value } = parsed.data;
 
     if (type === "email") {
-      const email = z.string().email("Sahi email likhein").safeParse(value);
-      if (!email.success) return apiError(400, "Sahi email likhein");
+      const email = z.string().email("درست ای میل لکھیں").safeParse(value);
+      if (!email.success) return apiError(400, "درست ای میل لکھیں");
       const taken = await prisma.user.findUnique({ where: { email: email.data } });
-      if (taken) return apiError(409, "Ye email pehle se registered hai");
+      if (taken) return apiError(409, "یہ ای میل پہلے سے رجسٹرڈ ہے");
     } else {
       if (!PHONE_REGEX.test(value)) {
-        return apiError(400, "Sahi Pakistani mobile number likhein (03001234567)");
+        return apiError(400, "درست پاکستانی موبائل نمبر لکھیں (03001234567)");
       }
       const taken = await prisma.user.findFirst({ where: { phone: value } });
-      if (taken) return apiError(409, "Ye phone number pehle se registered hai");
+      if (taken) return apiError(409, "یہ فون نمبر پہلے سے رجسٹرڈ ہے");
     }
 
     const otp = generateOtp();
@@ -75,14 +75,14 @@ export async function POST(req: NextRequest) {
           <p style="font-size:13px;color:#6b7280;">Yeh code 10 minute mein expire ho jayega. Agar yeh request aapne nahi ki, to is email ko ignore kar dein.</p>
         `),
       });
-      if (!ok) return apiError(502, "Email bhejne mein masla aa gaya. Dobara koshish karein.");
+      if (!ok) return apiError(502, "ای میل بھیجنے میں مسئلہ آ گیا۔ دوبارہ کوشش کریں۔");
 
       await auditLog(user.id, type === "email" ? "EMAIL_CHANGE_OTP" : "PHONE_CHANGE_OTP", "User", user.id, undefined, getClientIp(req.headers));
 
-      return apiSuccess({ message: "OTP bhej diya gaya hai", devOtp: info === "logged" ? otp : undefined });
+      return apiSuccess({ message: "OTP بھیج دیا گیا ہے", devOtp: info === "logged" ? otp : undefined });
     }
 
-    return apiError(400, "Aapke account par koi email registered nahi hai");
+    return apiError(400, "آپ کے اکاؤنٹ پر کوئی ای میل رجسٹرڈ نہیں ہے");
   } catch (error) {
     return handleApiError(error);
   }

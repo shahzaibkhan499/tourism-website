@@ -60,8 +60,8 @@ const statusBadge = (status: string) =>
 export default function AdminReportsPage() {
   const [reports, setReports] = useState<AdminReport[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
   const [viewReport, setViewReport] = useState<AdminReport | null>(null);
   const [actionReport, setActionReport] = useState<AdminReport | null>(null);
   const [actionType, setActionType] = useState<"resolve" | "dismiss" | "warn" | "ban">("resolve");
@@ -72,11 +72,11 @@ export default function AdminReportsPage() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (statusFilter) params.set("status", statusFilter);
-      if (typeFilter) params.set("type", typeFilter);
+      if (statusFilter !== "all") params.set("status", statusFilter);
+      if (typeFilter !== "all") params.set("type", typeFilter);
       const res = await fetch(`/api/admin/reports?${params}`);
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Reports load nahi ho sakin");
+      if (!res.ok) return toast.error(data.error || "رپورٹس لوڈ نہیں ہو سکیں");
       setReports(data.reports);
     } catch {
       toast.error("Network error");
@@ -97,8 +97,8 @@ export default function AdminReportsPage() {
         body: JSON.stringify({ id, action, adminNote: note }),
       });
       const data = await res.json();
-      if (!res.ok) return toast.error(data.error || "Action nahi ho saka");
-      toast.success("Action kamyab raha");
+      if (!res.ok) return toast.error(data.error || "کارروائی نہیں ہو سکی");
+      toast.success("کارروائی کامیاب رہی");
       setActionReport(null);
       setAdminNote("");
       fetchReports();
@@ -111,7 +111,7 @@ export default function AdminReportsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Reports</h1>
-        <p className="text-sm text-gray-500">Users ki shikayat aur reports</p>
+        <p className="text-sm text-gray-500">صارفین کی شکایات اور رپورٹس</p>
       </div>
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
@@ -120,7 +120,7 @@ export default function AdminReportsPage() {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab statuses</SelectItem>
+            <SelectItem value="all">تمام حالتیں</SelectItem>
             <SelectItem value="PENDING">Pending</SelectItem>
             <SelectItem value="REVIEWED">Reviewed</SelectItem>
             <SelectItem value="RESOLVED">Resolved</SelectItem>
@@ -132,7 +132,7 @@ export default function AdminReportsPage() {
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sab types</SelectItem>
+            <SelectItem value="all">تمام اقسام</SelectItem>
             {REPORT_TYPES.map((t) => (
               <SelectItem key={t} value={t}>
                 {t}
@@ -166,7 +166,7 @@ export default function AdminReportsPage() {
                 {reports.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="py-10 text-center text-gray-500">
-                      Koi data nahi mila
+                      کوئی ڈیٹا نہیں ملا
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -299,10 +299,10 @@ export default function AdminReportsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {actionType === "resolve" && "Report resolve karein"}
-              {actionType === "dismiss" && "Report dismiss karein"}
-              {actionType === "warn" && "User ko warning dein"}
-              {actionType === "ban" && "User ko ban karein"}
+              {actionType === "resolve" && "رپورٹ حل کریں"}
+              {actionType === "dismiss" && "رپورٹ مسترد کریں"}
+              {actionType === "warn" && "صارف کو وارننگ دیں"}
+              {actionType === "ban" && "صارف کو بند کریں"}
             </DialogTitle>
             <DialogDescription>
               {actionReport?.reported?.name} ({actionReport?.reported?.email}) — {actionReport?.type}
@@ -312,7 +312,7 @@ export default function AdminReportsPage() {
             rows={4}
             placeholder={
               actionType === "ban"
-                ? "Ban ki wajah likhein..."
+                ? "پابندی کی وجہ لکھیں..."
                 : "Admin note (optional)..."
             }
             value={adminNote}

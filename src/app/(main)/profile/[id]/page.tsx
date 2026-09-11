@@ -58,7 +58,7 @@ export default function PublicProfilePage() {
         }
         setProfile(json);
       })
-      .catch(() => toast.error("Profile load nahi ho saki"))
+      .catch(() => toast.error("پروفائل لوڈ نہیں ہو سکی"))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -70,12 +70,12 @@ export default function PublicProfilePage() {
         body: JSON.stringify({
           reportedId: id,
           type: "Inappropriate Content",
-          reason: "Yeh user inappropriate content ya behavior mein mulawwis lagta hai",
+          reason: "یہ صارف نامناسب مواد یا رویے میں ملوث لگتا ہے",
         }),
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Report nahi ho saki");
+        toast.error(data.error || "رپورٹ نہیں ہو سکی");
         return;
       }
       toast.success("Report submit ho gayi");
@@ -177,7 +177,7 @@ export default function PublicProfilePage() {
             <CardTitle className="text-base">Taaruf</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600">{profile.bio || "Koi bio nahi hai"}</p>
+            <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600">{profile.bio || "کوئی تعارف نہیں ہے"}</p>
           </CardContent>
         </Card>
         <Card>

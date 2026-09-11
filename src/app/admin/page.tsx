@@ -79,7 +79,7 @@ export default function AdminDashboardPage() {
         }
         setData(json);
       })
-      .catch(() => toast.error("Dashboard data load nahi ho saka"))
+      .catch(() => toast.error("ڈیش بورڈ ڈیٹا لوڈ نہیں ہو سکا"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -99,7 +99,7 @@ export default function AdminDashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-        <p className="text-sm text-gray-500">Platform ki mukammal surat-e-haal</p>
+        <p className="text-sm text-gray-500">پلیٹ فارم کی مکمل صورتِ حال</p>
       </div>
 
       <AdminStats stats={data.stats} changes={data.changes} />
@@ -192,7 +192,7 @@ export default function AdminDashboardPage() {
           <CardHeader className="flex-row items-center justify-between">
             <CardTitle className="text-base">Recent Reports (pending)</CardTitle>
             <Button size="sm" variant="outline" asChild>
-              <Link href="/admin/reports">Sab Dekhein</Link>
+              <Link href="/admin/reports">سب دیکھیں</Link>
             </Button>
           </CardHeader>
           <CardContent>
