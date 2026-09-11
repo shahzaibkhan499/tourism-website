@@ -376,14 +376,6 @@ export default function ProfilePage() {
               <p className="mt-1 text-sm text-gray-700">{profile.bloodGroup || "—"}</p>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Occupation</div>
-              <p className="mt-1 text-sm text-gray-700">{profile.occupation || "—"}</p>
-            </div>
-            <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Education</div>
-              <p className="mt-1 text-sm text-gray-700">{profile.education || "—"}</p>
-            </div>
-            <div>
               <div className="text-xs font-semibold uppercase text-gray-400">Clan</div>
               <p className="mt-1 text-sm text-gray-700">
                 {profile.clan ? (
@@ -424,22 +416,6 @@ export default function ProfilePage() {
                 <a href={profile.rishtaProfile ? `/rishta/${profile.rishtaProfile.id}` : "/rishta/create"}>
                   {profile.rishtaProfile ? "دیکھیں" : "بنائیں"}
                 </a>
-              </Button>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center justify-between p-5">
-              <div>
-                <div className="flex items-center gap-2 font-semibold">
-                  <Briefcase className="h-4 w-4 text-amber-600" />
-                  Job Profile
-                </div>
-                <p className="mt-0.5 text-xs text-gray-500">
-                  {profile.jobProfile ? "بنا ہوا ہے ✓" : "ابھی نہیں بنایا"}
-                </p>
-              </div>
-              <Button size="sm" variant="outline" asChild>
-                <a href="/profile#job-profile">اپ ڈیٹ کریں</a>
               </Button>
             </CardContent>
           </Card>

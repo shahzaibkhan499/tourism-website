@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Briefcase, ExternalLink, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Briefcase, ExternalLink, Loader2, Pencil } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,27 +26,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface ExpRow {
-  company: string;
-  role: string;
-  startDate: string;
-  endDate: string;
-}
-
-interface EduRow {
-  institution: string;
-  degree: string;
-  year: string;
-  field: string;
-}
-
 interface JobProfileData {
   headline: string | null;
   summary: string | null;
   skills: string[];
   languages: string[];
-  experience: ExpRow[];
-  education: EduRow[];
   resumeUrl: string | null;
   linkedinUrl: string | null;
   githubUrl: string | null;
@@ -86,8 +70,6 @@ export function JobProfileSection() {
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
   const [portfolioUrl, setPortfolioUrl] = useState("");
-  const [experience, setExperience] = useState<ExpRow[]>([]);
-  const [education, setEducation] = useState<EduRow[]>([]);
 
   const loadProfile = () => {
     setLoading(true);
@@ -108,8 +90,6 @@ export function JobProfileSection() {
           setLinkedinUrl(p.linkedinUrl || "");
           setGithubUrl(p.githubUrl || "");
           setPortfolioUrl(p.portfolioUrl || "");
-          setExperience(p.experience || []);
-          setEducation(p.education || []);
         }
       })
       .catch(() => toast.error("جاب پروفائل لوڈ نہیں ہوئی"))
@@ -136,8 +116,6 @@ export function JobProfileSection() {
           summary: summary.trim() || null,
           skills: toArray(skills),
           languages: toArray(languages),
-          experience: experience.filter((e) => e.company.trim() && e.role.trim()),
-          education: education.filter((e) => e.institution.trim() && e.degree.trim()),
           resumeUrl: null,
           linkedinUrl: linkedinUrl.trim() || null,
           githubUrl: githubUrl.trim() || null,
@@ -183,7 +161,7 @@ export function JobProfileSection() {
               <Briefcase className="h-4 w-4 text-amber-600" />
               Job Profile
             </CardTitle>
-            <CardDescription>جابز کے لیے آپ کی پیشہ ورانہ پروفائل</CardDescription>
+            <CardDescription>جابز کے لیے پیشہ ورانہ پروفائل — تعلیم و تجربہ نیچے "Education Detail" اور "Experience" سیکشنز میں بھریں</CardDescription>
           </div>
           <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
             <Pencil className="mr-1 h-3.5 w-3.5" />
@@ -208,44 +186,6 @@ export function JobProfileSection() {
             {(data.languages?.length ?? 0) > 0 && (
               <div className="text-sm text-gray-600">
                 <span className="font-medium text-gray-800">Languages:</span> {data.languages.join(", ")}
-              </div>
-            )}
-            {(data.experience?.length ?? 0) > 0 && (
-              <div>
-                <div className="mb-2 text-xs font-semibold uppercase text-gray-400">Experience</div>
-                <div className="space-y-2">
-                  {data.experience.map((e, i) => (
-                    <div key={i} className="rounded-lg border p-3 text-sm">
-                      <div className="font-medium">
-                        {e.role} — {e.company}
-                      </div>
-                      {(e.startDate || e.endDate) && (
-                        <div className="text-xs text-gray-500">
-                          {e.startDate || "—"} → {e.endDate || "Present"}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            {(data.education?.length ?? 0) > 0 && (
-              <div>
-                <div className="mb-2 text-xs font-semibold uppercase text-gray-400">Education</div>
-                <div className="space-y-2">
-                  {data.education.map((e, i) => (
-                    <div key={i} className="rounded-lg border p-3 text-sm">
-                      <div className="font-medium">
-                        {e.degree}
-                        {e.field ? ` — ${e.field}` : ""}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {e.institution}
-                        {e.year ? ` (${e.year})` : ""}
-                      </div>
-                    </div>
-                  ))}
-                </div>
               </div>
             )}
             <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-600">
@@ -359,69 +299,11 @@ export function JobProfileSection() {
                 <Input id="jp-portfolio" placeholder="https://..." value={portfolioUrl} onChange={(e) => setPortfolioUrl(e.target.value)} />
               </div>
             </div>
-
-            {/* Experience */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Experience</Label>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setExperience([...experience, { company: "", role: "", startDate: "", endDate: "" }])}
-                >
-                  <Plus className="mr-1 h-3.5 w-3.5" /> Add
-                </Button>
-              </div>
-              {experience.length === 0 && <p className="text-xs text-gray-500">ابھی کوئی تجربہ شامل نہیں کیا</p>}
-              {experience.map((e, i) => (
-                <div key={i} className="space-y-2 rounded-lg border p-3">
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <Input placeholder="Company" value={e.company} onChange={(ev) => setExperience(experience.map((x, j) => (j === i ? { ...x, company: ev.target.value } : x)))} />
-                    <Input placeholder="Role" value={e.role} onChange={(ev) => setExperience(experience.map((x, j) => (j === i ? { ...x, role: ev.target.value } : x)))} />
-                    <Input placeholder="Start (e.g. 2020)" value={e.startDate} onChange={(ev) => setExperience(experience.map((x, j) => (j === i ? { ...x, startDate: ev.target.value } : x)))} />
-                    <Input placeholder="End (khali = Present)" value={e.endDate} onChange={(ev) => setExperience(experience.map((x, j) => (j === i ? { ...x, endDate: ev.target.value } : x)))} />
-                  </div>
-                  <Button type="button" size="sm" variant="ghost" className="text-red-600" onClick={() => setExperience(experience.filter((_, j) => j !== i))}>
-                    <Trash2 className="mr-1 h-3.5 w-3.5" /> Remove
-                  </Button>
-                </div>
-              ))}
-            </div>
-
-            {/* Education */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Education</Label>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setEducation([...education, { institution: "", degree: "", year: "", field: "" }])}
-                >
-                  <Plus className="mr-1 h-3.5 w-3.5" /> Add
-                </Button>
-              </div>
-              {education.length === 0 && <p className="text-xs text-gray-500">ابھی کوئی تعلیم شامل نہیں کی</p>}
-              {education.map((e, i) => (
-                <div key={i} className="space-y-2 rounded-lg border p-3">
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <Input placeholder="Institution" value={e.institution} onChange={(ev) => setEducation(education.map((x, j) => (j === i ? { ...x, institution: ev.target.value } : x)))} />
-                    <Input placeholder="Degree" value={e.degree} onChange={(ev) => setEducation(education.map((x, j) => (j === i ? { ...x, degree: ev.target.value } : x)))} />
-                    <Input placeholder="Field (optional)" value={e.field} onChange={(ev) => setEducation(education.map((x, j) => (j === i ? { ...x, field: ev.target.value } : x)))} />
-                    <Input placeholder="Year (e.g. 2022)" value={e.year} onChange={(ev) => setEducation(education.map((x, j) => (j === i ? { ...x, year: ev.target.value } : x)))} />
-                  </div>
-                  <Button type="button" size="sm" variant="ghost" className="text-red-600" onClick={() => setEducation(education.filter((_, j) => j !== i))}>
-                    <Trash2 className="mr-1 h-3.5 w-3.5" /> Remove
-                  </Button>
-                </div>
-              ))}
-            </div>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              منسوخ
             </Button>
             <Button onClick={save} disabled={saving} className="bg-emerald-600 hover:bg-emerald-700">
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

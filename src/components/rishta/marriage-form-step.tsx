@@ -93,7 +93,6 @@ export function MarriageFormStep({ register, watch, setValue, errors }: any) {
           setValue={setValue}
         />
         <Field label="Mother Tongue" urdu="مادری زبان" path="marriageForm.personal.motherTongue" register={register} errors={errors} placeholder="اردو، پنجابی..." />
-        <Field label="Children (If Have)" urdu="اولاد (اگر ہے)" path="marriageForm.personal.childrenInfo" register={register} errors={errors} />
       </div>
 
       <SectionTitle en="Physical Appearance" ur="جسمانی حالت" />
