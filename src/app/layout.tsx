@@ -8,8 +8,20 @@ import { Providers } from "@/components/providers";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const urdu = Noto_Nastaliq_Urdu({ subsets: ["arabic"], weight: ["400", "700"], variable: "--font-urdu", display: "swap" });
 
+// Parse NEXT_PUBLIC_APP_URL safely: if the env value is malformed
+// (missing https://, extra characters, etc.) we fall back to localhost
+// instead of crashing the production build.
+function safeUrl(raw: string | undefined, fallback: string): URL {
+  try {
+    const candidate = (raw ?? "").trim();
+    return new URL(candidate || fallback);
+  } catch {
+    return new URL(fallback);
+  }
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:4001"),
+  metadataBase: safeUrl(process.env.NEXT_PUBLIC_APP_URL, "http://localhost:3000"),
   title: {
     default: `${APP_NAME} — Apna Digital Khandaan`,
     template: `%s | ${APP_NAME}`,

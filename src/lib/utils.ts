@@ -7,7 +7,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function absoluteUrl(path: string) {
-  return `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}${path}`;
+  const base = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").trim().replace(/\/+$/, "");
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${base}${cleanPath}`;
 }
 
 export function formatDate(date: Date | string | null | undefined, pattern = "dd MMM yyyy") {
