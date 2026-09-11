@@ -64,7 +64,6 @@ export function toGedcom(data: ExportData): string {
     if (m.location) out.push(`1 MARR`);
     if (m.location) out.push(`2 PLAC ${esc(m.location)}`);
     if (m.status === "DIVORCED") out.push("1 DIV");
-    const children = data.relationships.filter((r) => r.parentId === m.spouse1Id || r.parentId === m.spouse2Id);
     const kids = new Set<string>();
     for (const r of data.relationships) {
       if ((r.parentId === m.spouse1Id || r.parentId === m.spouse2Id) && !kids.has(r.childId)) {

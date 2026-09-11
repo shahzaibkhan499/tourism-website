@@ -54,7 +54,6 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const zoomRefK = useRef(1);
   const viewRef = useRef<ViewState>({ x: 0, y: 0, k: 1 });
-  const maxDepthRef = useRef(5);
   const [zoomK, setZoomK] = useState(1);
   const [wrapSize, setWrapSize] = useState<{ w: number; h: number }>({ w: 900, h: 600 });
 
@@ -283,7 +282,6 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
 
   const bgClick = () => setSelected(null);
 
-  const allIds = useMemo(() => new Set(graph.members.map((m) => m.id)), [graph.members]);
   const searchActive = searchMatches.length > 0;
 
   // keep pendingNodes (for minimap / canvas tier) in sync

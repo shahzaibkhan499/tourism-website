@@ -15,7 +15,7 @@ interface TreeStatsProps {
   graph: TreeGraphData;
 }
 
-export function TreeStats({ tree, graph }: TreeStatsProps) {
+export function TreeStats({ graph }: TreeStatsProps) {
   const stats = useMemo(() => {
     const members = graph.members;
     const males = members.filter((m) => m.gender === "MALE").length;

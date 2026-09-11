@@ -5,7 +5,7 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getEventTypeInfo } from "@/lib/constants";
-import { formatDate } from "@/lib/utils";
+import { formatDate, optimizeImageUrl } from "@/lib/utils";
 
 interface EventCardProps {
   event: {
@@ -34,8 +34,9 @@ export function EventCard({ event }: EventCardProps) {
           {event.coverImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={event.coverImage}
+              src={optimizeImageUrl(event.coverImage)}
               alt={event.title}
+              loading="lazy"
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (

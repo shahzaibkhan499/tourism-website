@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "sonner";
 import { HeartHandshake, Pencil } from "lucide-react";
 import {
   Dialog,

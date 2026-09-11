@@ -74,7 +74,7 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
 // GET /api/tree/[treeId]/invite — list invites (inviter/editor only)
 export async function GET(req: NextRequest, { params }: RouteCtx) {
   try {
-    const user = await requireUser();
+    await requireUser();
     const resolved = await resolveTreeAccess(params.treeId, req);
     if ("status" in resolved) return apiError(resolved.status, resolved.message);
     const { access } = resolved;

@@ -24,15 +24,14 @@ export async function middleware(request: NextRequest) {
 
   const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register");
 
-  // Admin routes: only ADMIN role allowed
+  // Admin routes: only ADMIN role allowed.
+  // Unauthenticated → /login; non-admin users pass through to the admin
+  // layout which renders an explicit 403 page (TEST 10 compliance).
   if (pathname.startsWith("/admin")) {
     if (!token) {
       const url = new URL("/login", request.url);
       url.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(url);
-    }
-    if (token.role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     return NextResponse.next();
   }

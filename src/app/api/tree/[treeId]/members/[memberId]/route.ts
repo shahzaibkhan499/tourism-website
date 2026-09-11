@@ -120,7 +120,7 @@ export async function DELETE(req: NextRequest, { params }: RouteCtx) {
       });
     }
 
-    let reassignTargetId: string | null = reassignToId ?? null;
+    const reassignTargetId: string | null = reassignToId ?? null;
     if (reassignTargetId) {
       const target = await prisma.familyMember.findFirst({
         where: { id: reassignTargetId, treeId: params.treeId },

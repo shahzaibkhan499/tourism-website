@@ -4,7 +4,7 @@ import Link from "next/link";
 import { MapPin, GraduationCap, Briefcase, ShieldCheck, Eye } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { initials } from "@/lib/utils";
+import { initials, optimizeImageUrl } from "@/lib/utils";
 
 interface RishtaCardProps {
   profile: {
@@ -35,8 +35,9 @@ export function RishtaCard({ profile }: RishtaCardProps) {
           {profile.photos.length > 0 ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={profile.photos[0]}
-              alt="Profile"
+              src={optimizeImageUrl(profile.photos[0])}
+              alt="Rishta Profile Photo"
+              loading="lazy"
               className="blur-photo h-full w-full object-cover"
             />
           ) : (

@@ -30,9 +30,9 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         <header className="flex h-16 shrink-0 items-center justify-between border-b bg-white px-4 lg:px-6">
           <div className="flex items-center gap-3">
             <MobileNav isAdmin={isAdmin} />
-            <h1 className="text-sm font-medium text-gray-500">
+            <div className="text-sm font-medium text-gray-500">
               <span className="font-urdu">السلام علیکم</span> {session.user.name?.split(" ")[0]}
-            </h1>
+            </div>
           </div>
           <div className="flex items-center gap-1.5">
             <NotificationBell />

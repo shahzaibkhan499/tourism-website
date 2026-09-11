@@ -1,5 +1,7 @@
 "use client";
 
+import { optimizeImageUrl } from "@/lib/utils";
+
 import { useMemo, useState } from "react";
 import { BookOpen, CalendarClock, HeartHandshake, Info, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -84,8 +86,9 @@ export function TreeSidebar({ treeId, graph, canEdit, onDataChanged }: TreeSideb
           {member.photo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={member.photo}
-              alt={fullName(member)}
+              src={optimizeImageUrl(member.photo)}
+              alt={`${fullName(member)} — Family Member`}
+              loading="lazy"
               className={`h-14 w-14 rounded-full object-cover ring-2 ${deceased ? "ring-gray-300 grayscale" : member.gender === "MALE" ? "ring-blue-300" : "ring-pink-300"}`}
             />
           ) : (

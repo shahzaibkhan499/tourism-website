@@ -12,7 +12,7 @@ const removeSchema = z.object({ collaboratorId: z.string().min(1) });
 // GET /api/tree/[treeId]/collaborate — list collaborators
 export async function GET(req: NextRequest, { params }: RouteCtx) {
   try {
-    const user = await requireUser();
+    await requireUser();
     const resolved = await resolveTreeAccess(params.treeId, req);
     if ("status" in resolved) return apiError(resolved.status, resolved.message);
 

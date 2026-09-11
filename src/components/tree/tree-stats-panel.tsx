@@ -14,7 +14,6 @@ import {
   YAxis,
   Cell,
 } from "recharts";
-import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,

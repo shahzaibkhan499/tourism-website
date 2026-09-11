@@ -23,9 +23,6 @@ export interface RelationshipPathResult {
   sameBloodline: boolean;
 }
 
-const MALE_N = { name: "male", urdu: "مرد" };
-const FEMALE_N = { name: "female", urdu: "خاتون" };
-
 const PARENT_TERMS = {
   male: { name: "father", urdu: "ابو / والد" },
   female: { name: "mother", urdu: "امی / والدہ" },
@@ -102,11 +99,6 @@ const NIECE_NEPHEW_TERMS = {
   sister_child: { male: { name: "sister's son (bhaanja)", urdu: "بھانجا" }, female: { name: "sister's daughter (bhaanji)", urdu: "بھانجی" } },
 };
 
-const STEP_TERMS = {
-  male: { name: "step father", urdu: "سوتیلا باپ" },
-  female: { name: "step mother", urdu: "سوتیلی ماں" },
-};
-
 const OTHER_TERMS = {
   adopted_son: { name: "adopted son", urdu: "لے پالک بیٹا" },
   adopted_daughter: { name: "adopted daughter", urdu: "لے پالک بیٹی" },
@@ -155,8 +147,6 @@ export function resolveRelationship(
       foundPath = cur.path;
       break;
     }
-    const member = graph.memberById.get(cur.id)!;
-
     const neighbors: { id: string; kind: "parent" | "child" | "spouse" | "sibling" }[] = [];
     for (const p of graph.parentIdsOf.get(cur.id) ?? []) neighbors.push({ id: p, kind: "parent" });
     for (const c of graph.childrenIdsOf.get(cur.id) ?? []) neighbors.push({ id: c, kind: "child" });
@@ -224,7 +214,7 @@ function nameFromPath(
   kinds: string[],
   targets: TreeMemberDto[],
   from: TreeMemberDto,
-  graph: TreeGraphData
+  _graph: TreeGraphData
 ): { name: string; urdu: string } | null {
   const g = (m: TreeMemberDto) => (m.gender === "MALE" ? "male" : "female");
 

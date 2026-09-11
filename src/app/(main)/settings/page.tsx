@@ -1,5 +1,7 @@
 "use client";
 
+import { NotificationSoundCard } from "@/components/settings/notification-sound-card";
+
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -578,6 +580,7 @@ export default function SettingsPage() {
                 </div>
               </CardContent>
             </Card>
+            <NotificationSoundCard />
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">SMS Notifications</CardTitle>

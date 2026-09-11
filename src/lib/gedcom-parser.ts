@@ -106,7 +106,6 @@ export function parseGedcom(content: string): GedcomResult {
   let inDeat = false;
   let inMarr = false;
   let inDiv = false;
-  let pendingValue: string | null = null;
 
   const flushIndi = () => {
     if (curIndi) individuals.push(curIndi);
@@ -146,7 +145,6 @@ export function parseGedcom(content: string): GedcomResult {
       } else if (l.tag === "SUBM" || l.tag === "SOUR" || l.tag === "NOTE" || l.tag === "REPO" || l.tag === "OBJE") {
         // ignore top-level non-INDI records
       }
-      pendingValue = null;
       continue;
     }
 

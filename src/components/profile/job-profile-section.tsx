@@ -161,7 +161,7 @@ export function JobProfileSection() {
               <Briefcase className="h-4 w-4 text-amber-600" />
               Job Profile
             </CardTitle>
-            <CardDescription>جابز کے لیے پیشہ ورانہ پروفائل — تعلیم و تجربہ نیچے "Education Detail" اور "Experience" سیکشنز میں بھریں</CardDescription>
+            <CardDescription>جابز کے لیے پیشہ ورانہ پروفائل — تعلیم و تجربہ نیچے Education Detail اور Experience سیکشنز میں بھریں</CardDescription>
           </div>
           <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
             <Pencil className="mr-1 h-3.5 w-3.5" />

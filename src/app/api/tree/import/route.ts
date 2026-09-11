@@ -360,7 +360,7 @@ export async function POST(req: NextRequest) {
         const relSet = new Set<string>();
         const marSet = new Set<string>();
         for (const link of pendingLinks) {
-          for (const [parentName, role] of [
+          for (const [parentName] of [
             [link.fatherName, "parent"],
             [link.motherName, "parent"],
           ] as const) {

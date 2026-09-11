@@ -10,7 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 
 // ============================================================
 // EXPORT MODAL — format selection + download (GEDCOM/JSON/PDF/PNG).

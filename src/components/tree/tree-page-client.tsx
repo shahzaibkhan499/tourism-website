@@ -23,6 +23,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTreeStore } from "@/stores/tree-store";
+import { toast } from "sonner";
 import { buildTreeGraph } from "@/lib/tree-graph";
 import { layoutTree } from "@/lib/tree-layout";
 import type { TreeGraphDto } from "@/types/tree";
@@ -70,7 +71,6 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
   const viewerRef = useRef<TreeViewerApi | null>(null);
 
   const setTreeId = useTreeStore((s) => s.setTreeId);
-  const contextMenu = useTreeStore((s) => s.contextMenu);
   const setAddMemberOpen = useTreeStore((s) => s.setAddMemberOpen);
   const setEditMemberOpen = useTreeStore((s) => s.setEditMemberOpen);
   const setAddMarriageOpen = useTreeStore((s) => s.setAddMarriageOpen);
@@ -112,7 +112,6 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
   const [isMobile, setIsMobile] = useState(false);
 
   const [addMemberPresets, setAddMemberPresets] = useState<{ parentIds?: string[]; spouseId?: string; gender?: "MALE" | "FEMALE" }>({});
-  const [marriagePreset, setMarriagePreset] = useState<string | undefined>(undefined);
   const [relationshipPreset, setRelationshipPreset] = useState<string | undefined>(undefined);
 
   const load = useCallback(async () => {
@@ -135,14 +134,50 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
     load();
   }, [load]);
 
-  // keyboard: Ctrl+F opens search; S toggles details panel
+  // keyboard: Ctrl+F opens search; S toggles details panel; Ctrl+Z undo; Ctrl+Shift+Z / Ctrl+Y redo
+  const undoRef = useRef(false);
+  const redoRef = useRef(false);
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
+    const onKey = async (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "f") {
         e.preventDefault();
         setSearchOpen(true);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !e.shiftKey) {
+        e.preventDefault();
+        if (undoRef.current || !data?.tree || !data.canEdit) return;
+        undoRef.current = true;
+        try {
+          const res = await fetch(`/api/tree/${data.tree.id}/undo`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+          const j = await res.json().catch(() => null);
+          if (!res.ok) {
+            toast.error(j?.error ?? "واپسی ممکن نہیں");
+          } else {
+            toast.success(j?.message ?? "تبدیلی واپس کر دی گئی");
+            await load();
+          }
+        } finally {
+          undoRef.current = false;
+        }
+      }
+      if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === "y" || (e.key.toLowerCase() === "z" && e.shiftKey))) {
+        e.preventDefault();
+        if (redoRef.current || !data?.tree || !data.canEdit) return;
+        redoRef.current = true;
+        try {
+          const res = await fetch(`/api/tree/${data.tree.id}/redo`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+          const j = await res.json().catch(() => null);
+          if (!res.ok) {
+            toast.error(j?.error ?? "دوبارہ لاگو ممکن نہیں");
+          } else {
+            toast.success(j?.message ?? "تبدیلی دوبارہ لاگو ہو گئی");
+            await load();
+          }
+        } finally {
+          redoRef.current = false;
+        }
       }
       if ((e.key === "s" || e.key === "S") && !e.ctrlKey && !e.metaKey && selectedMemberId) {
         e.preventDefault();
@@ -151,7 +186,7 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [setSearchOpen, setDetailPanel, selectedMemberId]);
+  }, [setSearchOpen, setDetailPanel, selectedMemberId, data, load]);
 
   // mobile detection (bottom sheet mode, Step 41)
   useEffect(() => {
@@ -435,7 +470,6 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
         onOpenChange={setAddMarriageOpen}
         treeId={tree.id}
         graph={graph}
-        presetSpouseId={marriagePreset}
         onSaved={load}
       />
 

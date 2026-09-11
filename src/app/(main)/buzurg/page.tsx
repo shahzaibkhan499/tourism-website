@@ -15,7 +15,19 @@ import {
   Play,
   Pause,
   Loader2,
+  BellRing,
+  SkipBack,
+  SkipForward,
+  Volume2,
 } from "lucide-react";
+import {
+  getQuranAudioElement,
+  playAlarm,
+  playQuranAudio,
+  preloadQuranMetadata,
+  quranStreamUrl,
+  setQuranVolume as setQuranElVolume,
+} from "@/lib/audio";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -61,6 +73,16 @@ export default function BuzurgPage() {
   const [recordingBusy, setRecordingBusy] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  // Quran player state (Fix 1)
+  const [quranLoading, setQuranLoading] = useState(false);
+  const [quranError, setQuranError] = useState<string | null>(null);
+  const [quranVolume, setQuranVolumeState] = useState(0.8);
+  const [quranPaused, setQuranPaused] = useState(false);
+  const quranFallbackRef = useRef(false);
+  // Medicine alarm state (Fix 2)
+  const [alarmReminder, setAlarmReminder] = useState<MedicineReminder | null>(null);
+  const stopAlarmFnRef = useRef<(() => void) | null>(null);
+  const firedAlarmsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     fetch("/api/clans")
@@ -95,7 +117,100 @@ export default function BuzurgPage() {
 
     const saved = localStorage.getItem("dk-medicine-reminders");
     if (saved) setReminders(JSON.parse(saved));
+
+    // preload first surah metadata (no heavy download)
+    preloadQuranMetadata(quranStreamUrl(1));
   }, []);
+
+  // Medicine alarm checker — every 10s, plays Web Audio alarm at reminder time
+  useEffect(() => {
+    const check = () => {
+      const now = new Date();
+      const hhmm = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+      const today = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][now.getDay()];
+      for (const r of reminders) {
+        if (r.time !== hhmm) continue;
+        if (!r.days.includes(today)) continue;
+        const key = `${r.id}-${hhmm}`;
+        if (firedAlarmsRef.current.has(key)) continue;
+        firedAlarmsRef.current.add(key);
+        setAlarmReminder(r);
+        void playAlarm().then((handle) => {
+          if (handle) stopAlarmFnRef.current = handle.stop;
+        });
+      }
+    };
+    check();
+    const iv = setInterval(check, 10000);
+    return () => clearInterval(iv);
+  }, [reminders]);
+
+  // ---------- Quran player functions (Fix 1) ----------
+  const startSurah = async (id: number) => {
+    stopAlarmFnRef.current?.();
+    setQuranError(null);
+    setQuranPaused(false);
+    setQuranLoading(true);
+    const url = quranStreamUrl(id, quranFallbackRef.current);
+    const el = await playQuranAudio(url);
+    if (!el) {
+      setQuranLoading(false);
+      setQuranError("آڈیو چلانے کے لیے براؤزر سپورٹ نہیں ہے");
+      return;
+    }
+    el.volume = quranVolume;
+    el.onplaying = () => setQuranLoading(false);
+    el.onwaiting = () => setQuranLoading(true);
+    el.onpause = () => setQuranPaused(true);
+    el.onplay = () => setQuranPaused(false);
+    el.onended = () => {
+      // auto-advance to next surah when one finishes
+      void startSurah(id === 114 ? 1 : id + 1);
+    };
+    el.onerror = () => {
+      if (!quranFallbackRef.current) {
+        // primary CDN failed → retry with fallback mirror once
+        quranFallbackRef.current = true;
+        toast.info("دوسرے سرور سے کوشش ہو رہی ہے...");
+        void startSurah(id);
+      } else {
+        setQuranLoading(false);
+        setQuranPaused(false);
+        setQuranError("آڈیو لوڈ نہیں ہو سکی — انٹرنیٹ کنکشن چیک کریں");
+      }
+    };
+    setPlayingSurah(id);
+  };
+
+  const toggleSurah = (id: number) => {
+    const el = getQuranAudioElement();
+    if (playingSurah === id && el && !quranError) {
+      if (!el.paused) {
+        el.pause();
+        setQuranPaused(true);
+        setPlayingSurah(id);
+        return;
+      }
+      void el.play().catch(() => setQuranError("آڈیو چل نہیں سکی — دوبارہ کوشش کریں"));
+      setQuranPaused(false);
+      return;
+    }
+    void startSurah(id);
+  };
+
+  const nextSurah = (current: number | null) => {
+    if (current) void startSurah(current === 114 ? 1 : current + 1);
+  };
+  const prevSurah = (current: number | null) => {
+    if (current) void startSurah(current === 1 ? 114 : current - 1);
+  };
+
+  const stopAlarmAndClear = () => {
+    stopAlarmFnRef.current?.();
+    stopAlarmFnRef.current = null;
+    setAlarmReminder(null);
+    toast.success("الارم بند کر دیا گیا");
+  };
 
   // Real voice note recording (MediaRecorder) → upload → memory
   const toggleRecording = async () => {
@@ -350,32 +465,111 @@ export default function BuzurgPage() {
         </CardContent>
       </Card>
 
-      {/* Quran player */}
+      {/* Quran player — real HTML5 audio via islamic.network CDN (Fix 1) */}
       <Card>
         <CardHeader>
           <CardTitle className="buzurg-heading">قرآن سنیں</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {QURAN_SURAHS.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => setPlayingSurah(playingSurah === s.id ? null : s.id)}
-              className={cn(
-                "flex w-full items-center justify-between rounded-xl border p-4 text-left transition-colors",
-                playingSurah === s.id ? "border-emerald-300 bg-emerald-50" : "hover:bg-gray-50"
-              )}
-            >
-              <span className="text-xl font-semibold">
-                {s.id}. {s.nameUrdu}
-              </span>
-              {playingSurah === s.id ? <Pause className="h-6 w-6 text-emerald-600" /> : <Play className="h-6 w-6 text-gray-400" />}
-            </button>
-          ))}
-          {playingSurah && (
-            <p className="text-center text-sm text-emerald-700">
-              ▶ سورہ چل رہی ہے (آڈیو منسلک کرنے کے لیے آڈیو URL کنفیگر کریں)
+        <CardContent className="space-y-4">
+          {playingSurah ? (
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-2xl font-bold text-emerald-800">
+                    {QURAN_SURAHS.find((s) => s.id === playingSurah)?.nameUrdu ?? ""}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    سورہ نمبر {playingSurah} — {QURAN_SURAHS.find((s) => s.id === playingSurah)?.name ?? ""}
+                  </div>
+                </div>
+                {quranLoading && <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />}
+              </div>
+
+              <div className="mt-4 flex items-center justify-center gap-4">
+                <Button
+                  variant="outline"
+                  className="h-14 w-14 rounded-full"
+                  onClick={() => prevSurah(playingSurah)}
+                  aria-label="پچھلی سورہ"
+                >
+                  <SkipBack className="h-6 w-6" />
+                </Button>
+                <Button
+                  className="h-20 w-20 rounded-full bg-emerald-600 hover:bg-emerald-700"
+                  onClick={() => toggleSurah(playingSurah)}
+                  aria-label="چلائیں یا روکیں"
+                >
+                  {quranLoading ? (
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  ) : quranPaused ? (
+                    <Play className="h-9 w-9" />
+                  ) : (
+                    <Pause className="h-9 w-9" />
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-14 w-14 rounded-full"
+                  onClick={() => nextSurah(playingSurah)}
+                  aria-label="اگلی سورہ"
+                >
+                  <SkipForward className="h-6 w-6" />
+                </Button>
+              </div>
+
+              <div className="mt-4 flex items-center gap-3">
+                <Volume2 className="h-6 w-6 shrink-0 text-gray-500" />
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  value={quranVolume}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    setQuranVolumeState(v);
+                    setQuranElVolume(v);
+                  }}
+                  className="h-3 w-full accent-emerald-600"
+                  aria-label="آواز کی مقدار"
+                />
+              </div>
+
+              {quranError && <p className="mt-3 text-center text-base text-red-600">{quranError}</p>}
+            </div>
+          ) : (
+            <p className="rounded-xl bg-gray-50 p-4 text-center text-sm text-gray-500">
+              سورہ چن کر سنیں — پہلی بار بٹن دبانے پر آواز شروع ہوگی 🔊
             </p>
           )}
+
+          <div className="max-h-80 overflow-y-auto rounded-xl border">
+            {QURAN_SURAHS.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => toggleSurah(s.id)}
+                className={cn(
+                  "flex w-full items-center justify-between border-b p-3.5 text-left transition-colors last:border-b-0",
+                  playingSurah === s.id ? "border-emerald-300 bg-emerald-50" : "hover:bg-gray-50"
+                )}
+              >
+                <span className="text-lg font-semibold">
+                  {s.id}. {s.nameUrdu}
+                </span>
+                {playingSurah === s.id ? (
+                  quranLoading ? (
+                    <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
+                  ) : quranPaused ? (
+                    <Play className="h-6 w-6 text-emerald-600" />
+                  ) : (
+                    <Pause className="h-6 w-6 text-emerald-600" />
+                  )
+                ) : (
+                  <Play className="h-6 w-6 text-gray-400" />
+                )}
+              </button>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
@@ -441,6 +635,25 @@ export default function BuzurgPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Medicine alarm (Fix 2) — vibrating bell + big Stop button */}
+      {alarmReminder && (
+        <Card className="border-red-400 bg-red-50">
+          <CardContent className="space-y-4 p-6">
+            <style>{`@keyframes dk-bell-shake { 0%, 100% { transform: rotate(0deg); } 20% { transform: rotate(18deg); } 40% { transform: rotate(-18deg); } 60% { transform: rotate(10deg); } 80% { transform: rotate(-10deg); } } .dk-bell-shake { animation: dk-bell-shake 0.6s ease-in-out infinite; }`}</style>
+            <div className="flex justify-center">
+              <BellRing className="dk-bell-shake h-16 w-16 text-red-600" />
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-700">💊 {alarmReminder.name}</div>
+              <p className="mt-1 text-lg text-gray-600">دوا کا وقت ہو گیا ہے!</p>
+            </div>
+            <Button className="h-14 w-full bg-red-600 text-xl text-white hover:bg-red-700" onClick={stopAlarmAndClear}>
+              الارم بند کریں — Stop Alarm
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Emergency */}
       <Card className="border-red-300 bg-red-50">

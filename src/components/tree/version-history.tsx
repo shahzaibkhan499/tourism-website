@@ -38,7 +38,8 @@ const ACTION_LABELS: Record<string, string> = {
   DUPLICATE_SKIP: "ڈپلیکیٹ چھوڑے گئے",
   TREE_MERGE: "درخت ملائے گئے",
   IMPORT: "امپورٹ ہوا",
-  UNDO: "تبدیلی واپس ہوئی",
+  UNDO: "تبدیلی واپس ہوئی (Undo)",
+  REDO: "تبدیلی دوبارہ لاگو ہوئی (Redo)",
 };
 
 export function VersionHistory({ treeId }: VersionHistoryProps) {

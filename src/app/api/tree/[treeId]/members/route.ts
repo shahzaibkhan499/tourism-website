@@ -50,7 +50,7 @@ function serializeMember(m: {
 // GET /api/tree/[treeId]/members — paginated member list with filters
 export async function GET(req: NextRequest, { params }: RouteCtx) {
   try {
-    const user = await requireUser();
+    await requireUser();
     const resolved = await resolveTreeAccess(params.treeId, req);
     if ("status" in resolved) return apiError(resolved.status, resolved.message);
     const { access } = resolved;

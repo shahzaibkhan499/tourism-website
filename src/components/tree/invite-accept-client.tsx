@@ -37,7 +37,6 @@ export function InviteAcceptClient(props: InviteAcceptClientProps) {
   const [busy, setBusy] = useState<"accept" | "reject" | null>(null);
   const [done, setDone] = useState<"ACCEPTED" | "REJECTED" | null>(null);
   const expired = new Date(props.expiresAt) < new Date();
-  const completed = props.status !== "PENDING" || done !== null;
 
   const respond = async (accept: boolean) => {
     setBusy(accept ? "accept" : "reject");

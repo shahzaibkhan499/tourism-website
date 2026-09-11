@@ -3,7 +3,10 @@ import { Inter, Noto_Nastaliq_Urdu } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants";
+import { JsonLd, organizationLd, webSiteLd } from "@/lib/seo";
 import { Providers } from "@/components/providers";
+import { AudioInitializer } from "@/components/shared/audio-initializer";
+import { ThemeApplier } from "@/components/shared/theme-applier";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const urdu = Noto_Nastaliq_Urdu({ subsets: ["arabic"], weight: ["400", "700"], variable: "--font-urdu", display: "swap" });
@@ -47,6 +50,18 @@ export const metadata: Metadata = {
     description: APP_DESCRIPTION,
     images: ["/opengraph-image.png"],
   },
+  alternates: {
+    languages: {
+      en: "/",
+      ur: "/",
+    },
+  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#059669",
 };
 
 export default function RootLayout({
@@ -55,8 +70,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ur" suppressHydrationWarning>
       <body className={`${inter.variable} ${urdu.variable} font-sans antialiased`}>
+        <JsonLd data={organizationLd()} />
+        <JsonLd data={webSiteLd()} />
+        <AudioInitializer />
+        <ThemeApplier />
         <Providers>{children}</Providers>
         <Toaster richColors position="top-right" />
       </body>

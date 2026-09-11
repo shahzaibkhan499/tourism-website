@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { getIp } from "@/lib/api";
-import type { FamilyMember, FamilyTree, Prisma, TreePrivacySettings, User } from "@prisma/client";
+import type { FamilyMember, FamilyTree, Prisma, TreePrivacySettings } from "@prisma/client";
 
 // ============================================================
 // FAMILY TREE — access control + privacy enforcement

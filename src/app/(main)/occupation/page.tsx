@@ -131,17 +131,8 @@ const SECTIONS = [
   },
 ];
 
-const STATUS_KEYS: Record<string, string> = {
-  EMPLOYED: "ملازم",
-  UNEMPLOYED: "بے روزگار",
-  STUDENT: "طالب علم",
-  RETIRED: "ریٹائرڈ",
-  HOMEMAKER: "گھریلو",
-};
-
 export default function OccupationPage() {
   const [data, setData] = useState<OccupationData | null>(null);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [statusForm, setStatusForm] = useState({ employmentStatus: "EMPLOYED", jobType: "FULL_TIME" });
@@ -156,9 +147,8 @@ export default function OccupationPage() {
           employmentStatus: payload.employmentStatus ?? "EMPLOYED",
           jobType: payload.jobType ?? "FULL_TIME",
         });
-        setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {});
   };
 
   useEffect(() => {

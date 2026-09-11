@@ -77,7 +77,7 @@ export function EditMarriageModal({ open, onOpenChange, treeId, marriage, spouse
     watch,
     setValue,
     reset,
-    formState: { errors },
+    formState: {},
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { date: "", endDate: "", location: "", status: "MARRIED", type: "NIKKAH" },

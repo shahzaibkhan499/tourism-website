@@ -12,8 +12,6 @@ const FIELDS: JsonField[] = [
 ];
 
 export function AlertsSection({ profile, onSaved }: { profile: any; onSaved: () => void }) {
-  const alerts = profile?.extendedProfile?.alerts ?? {};
-  const on = Object.values(alerts).filter(Boolean).length;
   return (
     <JsonFormSection
       icon={BellRing}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { GitMerge, Loader2, Search } from "lucide-react";
 import {
@@ -71,7 +71,6 @@ export function MergePreview({ open, onOpenChange, sourceTreeId, onMerged }: Mer
     setPreview(null);
   }, [open, sourceTreeId]);
 
-  const target = useMemo(() => trees.find((t) => t.id === targetId), [trees, targetId]);
 
   const runPreview = async () => {
     if (!targetId) {

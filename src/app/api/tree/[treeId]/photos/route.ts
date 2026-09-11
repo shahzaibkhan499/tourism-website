@@ -13,7 +13,7 @@ const MAX_PHOTO = 8 * 1024 * 1024; // 8MB
 // GET /api/tree/[treeId]/photos — group photos with tags
 export async function GET(req: NextRequest, { params }: RouteCtx) {
   try {
-    const user = await requireUser();
+    await requireUser();
     const resolved = await resolveTreeAccess(params.treeId, req);
     if ("status" in resolved) return apiError(resolved.status, resolved.message);
 
@@ -132,7 +132,7 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
 // DELETE /api/tree/[treeId]/photos — remove photo (body: {photoId})
 export async function DELETE(req: NextRequest, { params }: RouteCtx) {
   try {
-    const user = await requireUser();
+    await requireUser();
     const resolved = await resolveTreeAccess(params.treeId, req);
     if ("status" in resolved) return apiError(resolved.status, resolved.message);
     const { access } = resolved;

@@ -10,7 +10,7 @@ type RouteCtx = { params: { treeId: string } };
 // GET /api/tree/[treeId]/privacy — tree + member privacy settings
 export async function GET(req: NextRequest, { params }: RouteCtx) {
   try {
-    const user = await requireUser();
+    await requireUser();
     const resolved = await resolveTreeAccess(params.treeId, req);
     if ("status" in resolved) return apiError(resolved.status, resolved.message);
     const { access } = resolved;

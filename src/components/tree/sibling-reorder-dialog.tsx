@@ -64,6 +64,26 @@ export function SiblingReorderDialog({ open, onOpenChange, treeId, graph, member
     });
   };
 
+  // Reset to birth order: oldest first (leftmost), nulls last, ties by name
+  const resetToBirthOrder = () => {
+    setOrder((prev) =>
+      [...prev].sort((a, b) => {
+        const ma = graph.memberById.get(a);
+        const mb = graph.memberById.get(b);
+        if (!ma || !mb) return 0;
+        const da = ma.dateOfBirth ? new Date(ma.dateOfBirth).getTime() : null;
+        const db = mb.dateOfBirth ? new Date(mb.dateOfBirth).getTime() : null;
+        if (da !== db) {
+          if (da === null) return 1;
+          if (db === null) return -1;
+          return da - db;
+        }
+        return fullName(ma).localeCompare(fullName(mb), "en", { sensitivity: "base" });
+      })
+    );
+    toast.success("پیدائش کی ترتیب بحال کر دی گئی — محفوظ کرنا نہ بھولیں");
+  };
+
   const onDragStart = (index: number) => setDragIndex(index);
   const onDrop = (index: number) => {
     if (dragIndex === null || dragIndex === index) {
@@ -110,6 +130,17 @@ export function SiblingReorderDialog({ open, onOpenChange, treeId, graph, member
             بڑا پہلے (بائیں)، چھوٹا بعد میں — گھسیٹیں یا تیر استعمال کریں
           </DialogDescription>
         </DialogHeader>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="w-full"
+          disabled={saving}
+          onClick={resetToBirthOrder}
+        >
+          پیدائش کی ترتیب پر واپس — Reset to Birth Order
+        </Button>
 
         {order.length === 0 ? (
           <p className="py-6 text-center text-sm text-gray-500">Koi data nahi mila</p>

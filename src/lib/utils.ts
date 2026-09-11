@@ -111,3 +111,18 @@ export function isSameDayMonth(date: Date | string, month: number, day: number):
   const d = new Date(date);
   return d.getMonth() === month && d.getDate() === day;
 }
+
+// ============================================================
+// SEO/PERF: force Cloudinary to serve WebP (auto format/quality)
+// for Cloudinary-hosted images; pass other URLs through unchanged.
+// ============================================================
+export function optimizeImageUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  if (url.includes("res.cloudinary.com") && !url.includes("f_auto")) {
+    const idx = url.indexOf("/upload/");
+    if (idx !== -1) {
+      return url.slice(0, idx + 8) + "f_auto,q_auto/" + url.slice(idx + 8);
+    }
+  }
+  return url;
+}

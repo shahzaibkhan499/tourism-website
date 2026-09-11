@@ -108,7 +108,7 @@ function normalizeHeader(h: string): string {
 
 export function parseCsv(content: string): CsvParseResult {
   const warnings: string[] = [];
-  let text = content.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  const text = content.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
   if (text.trim().length === 0) {
     return { headers: [], rows: [], delimiter: ",", autoMap: {}, warnings: ["فائل خالی ہے"] };
   }

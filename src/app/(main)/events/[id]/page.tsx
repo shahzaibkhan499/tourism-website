@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { eventLd, SITE_URL } from "@/lib/seo";
+import { useInjectJsonLd } from "@/lib/seo-client";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -80,6 +82,25 @@ export default function EventDetailPage() {
       .catch(() => toast.error("ایونٹ لوڈ نہیں ہو سکا"))
       .finally(() => setLoading(false));
   }, [id]);
+
+  useInjectJsonLd(
+    "event-jsonld",
+    event
+      ? eventLd({
+          name: event.title,
+          description: event.description ?? null,
+          startDate: event.date,
+          endDate: event.endDate ?? null,
+          location: event.location ?? null,
+          image: event.coverImage ?? null,
+          url: `${SITE_URL}/events/${event.id}`,
+        })
+      : null
+  );
+
+  useEffect(() => {
+    if (event) document.title = `${event.title} — ایونٹ | Digital Family Tree`;
+  }, [event]);
 
   const handleDelete = async () => {
     setDeleting(true);

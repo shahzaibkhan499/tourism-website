@@ -183,7 +183,7 @@ export async function PUT(req: NextRequest, { params }: RouteCtx) {
 // DELETE /api/tree/[treeId] — delete whole tree (owner only; members/comments cascade)
 export async function DELETE(req: NextRequest, { params }: RouteCtx) {
   try {
-    const user = await requireUser();
+    await requireUser();
     const resolved = await resolveTreeAccess(params.treeId, req);
     if ("status" in resolved) return apiError(resolved.status, resolved.message);
     const { access } = resolved;

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { personLd, SITE_URL } from "@/lib/seo";
+import { useInjectJsonLd } from "@/lib/seo-client";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
@@ -68,6 +70,23 @@ export default function PublicProfilePage() {
       .catch(() => toast.error("پروفائل لوڈ نہیں ہو سکی"))
       .finally(() => setLoading(false));
   }, [id]);
+
+  useInjectJsonLd(
+    "person-jsonld",
+    profile
+      ? personLd({
+          name: profile.name ?? "ممبر",
+          bio: profile.bio ?? null,
+          image: profile.image ?? null,
+          city: profile.city ?? null,
+          url: `${SITE_URL}/profile/${profile.id}`,
+        })
+      : null
+  );
+
+  useEffect(() => {
+    if (profile?.name) document.title = `${profile.name} — پروفائل | Digital Family Tree`;
+  }, [profile]);
 
   const handleReport = async () => {
     try {

@@ -68,7 +68,6 @@ export function ImportModal({ open, onOpenChange, treeId, onImported }: ImportMo
   const [format, setFormat] = useState<"gedcom" | "csv">("gedcom");
   const [fileName, setFileName] = useState<string | null>(null);
   const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
-  const [csvAutoMap, setCsvAutoMap] = useState<Record<string, CsvMemberField>>({});
   const [mapping, setMapping] = useState<Record<string, string>>({});
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -78,7 +77,6 @@ export function ImportModal({ open, onOpenChange, treeId, onImported }: ImportMo
   const reset = () => {
     setFileName(null);
     setCsvHeaders([]);
-    setCsvAutoMap({});
     setMapping({});
     setFile(null);
     setResult(null);
@@ -94,7 +92,6 @@ export function ImportModal({ open, onOpenChange, treeId, onImported }: ImportMo
       f.text().then((text) => {
         const parsed = parseCsv(text);
         setCsvHeaders(parsed.headers);
-        setCsvAutoMap(parsed.autoMap as Record<string, CsvMemberField>);
         const m: Record<string, string> = {};
         for (const [h, field] of Object.entries(parsed.autoMap)) m[h] = field;
         setMapping(m);

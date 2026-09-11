@@ -15,7 +15,7 @@ const tagSchema = z.object({
 // POST /api/tree/[treeId]/photos/[photoId]/tags — face tag a member
 export async function POST(req: NextRequest, { params }: RouteCtx) {
   try {
-    const user = await requireUser();
+    await requireUser();
     const resolved = await resolveTreeAccess(params.treeId, req);
     if ("status" in resolved) return apiError(resolved.status, resolved.message);
     const { access } = resolved;
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
 // DELETE /api/tree/[treeId]/photos/[photoId]/tags — remove tag (body: {memberId})
 export async function DELETE(req: NextRequest, { params }: RouteCtx) {
   try {
-    const user = await requireUser();
+    await requireUser();
     const resolved = await resolveTreeAccess(params.treeId, req);
     if ("status" in resolved) return apiError(resolved.status, resolved.message);
     const { access } = resolved;

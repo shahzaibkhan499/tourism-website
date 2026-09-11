@@ -9,7 +9,7 @@ type RouteCtx = { params: { treeId: string } };
 // POST /api/tree/[treeId]/compare — compare 2 members side-by-side
 export async function POST(req: NextRequest, { params }: RouteCtx) {
   try {
-    const user = await requireUser();
+    await requireUser();
     const resolved = await resolveTreeAccess(params.treeId, req);
     if ("status" in resolved) return apiError(resolved.status, resolved.message);
 

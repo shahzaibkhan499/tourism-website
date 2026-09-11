@@ -1,11 +1,12 @@
 "use client";
 
+import { optimizeImageUrl } from "@/lib/utils";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Camera, Loader2, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -211,8 +212,9 @@ export function GroupPhotos({ treeId, memberIds }: GroupPhotosProps) {
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={p.url}
-                  alt={p.caption ?? "خاندانی تصویر"}
+                  src={optimizeImageUrl(p.url)}
+                  alt={p.caption ?? "خاندانی تصویر (Family Photo)"}
+                  loading="lazy"
                   className="h-44 w-full cursor-crosshair object-cover"
                   onClick={(e) => onImageClick(e, p)}
                 />

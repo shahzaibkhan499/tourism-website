@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { DECEASED_COLOR, GENDER_COLORS, NODE_H, NODE_W, SELECTED_COLOR, ageOf, formatDate, fullName, initials, isDeceased } from "@/lib/tree-utils";
+import { DECEASED_COLOR, GENDER_COLORS, NODE_H, NODE_W, SELECTED_COLOR, formatDate, fullName, initials, isDeceased } from "@/lib/tree-utils";
 import { TREE_THEME } from "@/components/tree/use-dark-mode";
 import type { TreeMemberDto } from "@/types/tree";
 
@@ -52,7 +52,6 @@ function TreeNodeInner({
   const x = cx - NODE_W / 2;
   const y = cy - NODE_H / 2;
   const scale = selected ? 1.03 : hovered ? 1.03 : 1;
-  const age = ageOf(member);
   const dates =
     showDates && (member.dateOfBirth || member.dateOfDeath)
       ? `${member.dateOfBirth ? "b." + formatDate(member.dateOfBirth) : ""}${member.dateOfDeath ? " – d." + formatDate(member.dateOfDeath) : ""}`

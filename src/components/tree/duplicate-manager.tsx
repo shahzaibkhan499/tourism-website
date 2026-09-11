@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Check, GitMerge, Loader2, RefreshCw, SkipForward } from "lucide-react";
+import { Check, GitMerge, RefreshCw } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -40,7 +40,7 @@ export function DuplicateManager({ open, onOpenChange, treeId, onResolved }: Dup
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -53,11 +53,11 @@ export function DuplicateManager({ open, onOpenChange, treeId, onResolved }: Dup
     } finally {
       setLoading(false);
     }
-  };
+  }, [treeId]);
 
   useEffect(() => {
     if (open) load();
-  }, [open]);
+  }, [open, load]);
 
   const resolve = async (row: DupRow, action: "MERGE" | "SKIP") => {
     setBusy(`${row.member1.id}|${row.member2.id}`);
