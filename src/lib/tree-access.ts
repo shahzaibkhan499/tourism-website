@@ -194,13 +194,27 @@ export async function restoreSnapshot(treeId: string, snapshot: unknown) {
     members: { id: string; firstName: string; lastName: string; gender: string; dateOfBirth: string | null; dateOfDeath: string | null; isAlive: boolean; generation: number; sortOrder: number; parentIds: string[] }[];
     marriages: { id: string; spouse1Id: string; spouse2Id: string; status: string; date: string | null }[];
   };
+  const memberIds = new Set(snap.members.map((m) => m.id));
   await prisma.$transaction([
     prisma.relationship.deleteMany({ where: { treeId } }),
     prisma.marriage.deleteMany({ where: { treeId } }),
+    // members: upsert — deleted members are re-created
     ...snap.members.map((m) =>
-      prisma.familyMember.update({
+      prisma.familyMember.upsert({
         where: { id: m.id },
-        data: {
+        create: {
+          id: m.id,
+          treeId,
+          firstName: m.firstName,
+          lastName: m.lastName,
+          gender: (m.gender as never) ?? "MALE",
+          dateOfBirth: m.dateOfBirth ? new Date(m.dateOfBirth) : null,
+          dateOfDeath: m.dateOfDeath ? new Date(m.dateOfDeath) : null,
+          isAlive: m.isAlive,
+          generation: m.generation,
+          sortOrder: m.sortOrder,
+        },
+        update: {
           firstName: m.firstName,
           lastName: m.lastName,
           gender: m.gender as never,
@@ -212,25 +226,30 @@ export async function restoreSnapshot(treeId: string, snapshot: unknown) {
         },
       })
     ),
+    // relationships: only between restored members
     ...snap.members.flatMap((m) =>
-      m.parentIds.map((pid) =>
-        prisma.relationship.create({
-          data: { treeId, parentId: pid, childId: m.id },
+      m.parentIds
+        .filter((pid) => memberIds.has(pid))
+        .map((pid) =>
+          prisma.relationship.create({
+            data: { treeId, parentId: pid, childId: m.id },
+          })
+        )
+    ),
+    // marriages: only when both spouses restored
+    ...snap.marriages
+      .filter((m) => memberIds.has(m.spouse1Id) && memberIds.has(m.spouse2Id))
+      .map((m) =>
+        prisma.marriage.create({
+          data: {
+            treeId,
+            spouse1Id: m.spouse1Id,
+            spouse2Id: m.spouse2Id,
+            status: (m.status as never) ?? "MARRIED",
+            date: m.date ? new Date(m.date) : null,
+          },
         })
-      )
-    ),
-    ...snap.marriages.map((m) =>
-      prisma.marriage.create({
-        data: {
-          id: m.id,
-          treeId,
-          spouse1Id: m.spouse1Id,
-          spouse2Id: m.spouse2Id,
-          status: m.status as never,
-          date: m.date ? new Date(m.date) : null,
-        },
-      })
-    ),
+      ),
   ]);
 }
 

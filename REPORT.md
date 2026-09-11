@@ -1,98 +1,92 @@
-# 🌳 Digital Khandaan — Project Status Report
+# Family Tree Module — Build Report
 
-**Status: ✅ COMPLETE — Production build passes, TypeScript clean, ESLint clean, full E2E verification (2026-09-11)**
+**Date:** 2026-09-11 · **Commits:** `0338547` (Steps 1–7), `ecfd81d` (Steps 8–22), `cb91211` (Steps 23–37)
+**Status:** Steps 1–37 of 53 complete + runtime-verified. **NOT yet pushed/deployed** (live main = `4276de7`).
 
 ---
 
-## 1. ✅ Foundation & Infrastructure
+## ✅ 1. WHAT WAS MADE (per spec)
 
-- **Framework**: Next.js 14.2.35 (App Router) + TypeScript 5.5 strict + Tailwind CSS 3.4 + shadcn/ui (New York, Slate, 24 primitives)
-- **Auth**: NextAuth v5.0.0-beta.19 — JWT sessions, Credentials provider (bcryptjs 12 rounds) + Google OAuth
-- **Database**: Prisma 5.17 + PostgreSQL 17.11 — 24 models exactly per spec, migration `init` applied, seeded
-- **Security**: middleware auth+admin guards, 5-attempts/15-min rate limiting on auth routes, CSP + security headers in `next.config.mjs`, Zod validation + sanitization in every route, upload type/size/magic-byte validation, audit logging on all mutations
-- **Scripts**: `dev`, `build`, `start`, `lint`, `db:migrate`, `db:deploy`, `db:seed`, `db:studio`, `scripts/setup-sandbox.sh` (fresh-environment bootstrap)
+### Database (Step 1)
+- 19 new models + 10 enums appended to `prisma/schema.prisma` (additive-only), 4 new User relations.
+- Pushed to local PostgreSQL **and Neon live** (`familytree` DB). All `@@index`/`@@unique`/`onDelete: Cascade` per spec.
 
-## 2. ✅ User Features (17)
+### Foundation (Step 2)
+- `src/types/tree.ts` — all DTOs · `src/stores/tree-store.ts` — full Zustand UI state.
 
-| # | Feature | Details |
-|---|---------|---------|
-| 1 | Landing | 9 sections; live DB stats wired to `/api/public/communities` (animated count-up) |
-| 2 | Register/Login | 30 Pakistani cities dropdown, password strength meter, Google OAuth, forgot/reset password |
-| 3 | Dashboard | Stats, upcoming events, recent activity, auto login-log recording |
-| 4 | Events | All 31 event types (Urdu + emoji), RSVP (GOING/MAYBE/NOT_GOING), create/edit/delete, recurring, cover images |
-| 5 | Community/Clan/Sub-Clan | 10 communities, clans, sub-clans, join-request queue with approve/reject |
-| 6 | Rishta | Filters, privacy (photos hidden from non-verified), request inbox with Accept/Reject, notifications |
-| 7 | Jobs | Postings, applications, job profiles (experience/education/skills) |
-| 8 | Business | Directory, reviews+ratings, verification badges, create/edit |
-| 9 | Memories | Timeline + grid, categories, On-This-Day, create with media |
-| 10 | Media | Upload (Cloudinary → local fallback), 5GB quota, search + type filter, grid/list views, bulk delete |
-| 11 | Profile | Edit, public view, avatars, job profile editor |
-| 12 | Settings | 6 tabs: account (OTP email/phone change), privacy, notifications, language, theme, security (2FA + live login history) |
-| 13 | Security | bcrypt 12, rate limits, sanitization, audit logs, security headers |
-| 14 | 2FA | Speakeasy TOTP + QR code, 10 backup codes, enable/verify/disable |
-| 15 | Buzurg Mode | 5 big buttons, family dialog, medicine reminders (localStorage), **real voice-note recorder** (MediaRecorder → upload → memory) |
-| 16 | Kids Mode | Gate (`family123`), quiz with **real family photos from DB**, 30s timer, points + badges |
-| 17 | Notifications | Tabs, unread badge, mark-read, cursor pagination |
+### APIs — ALL 41 spec endpoints + 5 photo endpoints built (~46 total)
+| Area | Endpoints |
+|---|---|
+| Tree CRUD | GET/POST `/api/tree`, GET/PUT/DELETE `/api/tree/[treeId]` |
+| Members | GET/POST members, PUT/DELETE `[memberId]`, PUT reorder |
+| Relationships | POST, PUT/DELETE `[id]` (type change incl.) |
+| Marriages | POST, PUT/DELETE `[id]` (divorce, dates) |
+| Comments | GET/POST/PUT/DELETE `comments/[memberId]`, POST `react` (threaded + pinned + emoji) |
+| Timeline | GET/POST `timeline/[memberId]` |
+| Stories | GET/POST `stories/[memberId]` |
+| Verify | POST `verify` |
+| Invite | POST/GET `invite`, GET/POST `invite/[token]` (accept → collaborator / claim profile) |
+| Collaborate | GET/POST/PUT/DELETE `collaborate` (VIEWER/EDITOR/ADMIN roles) |
+| Merge | GET/POST `merge`, PUT `merge/[id]` (preview + execute in transaction) |
+| Duplicates | GET `duplicates`, POST `duplicates/resolve` (MERGE/SKIP) |
+| Calculator | POST `relationship-calc` (BFS + 50+ Urdu names) |
+| Privacy | GET/PUT `privacy` (tree), POST `privacy` (member-level) |
+| Stats | GET `stats` (demographics + chart data) |
+| History/Undo | GET `history` (cursor paginated), POST `undo` |
+| Compare | POST `compare` (side-by-side) |
+| Import | POST `import` (GEDCOM/CSV multipart, 2MB + type validation) |
+| Export | GET `export/[treeId]?format=gedcom\|json\|pdf\|png` |
+| Photos (33a) | GET/POST/DELETE `photos`, POST/DELETE `photos/[photoId]/tags` (face tagging) |
 
-## 3. ✅ Admin Panel (12 sub-pages)
+### Pages (6)
+`/tree` (list) · `/tree/create` · `/tree/[treeId]` (viewer) · `/tree/[treeId]/settings` (privacy + photos) · `/tree/[treeId]/collaborate` · `/tree/[treeId]/history` · `/tree/invite/[token]` (accept page)
 
-Dashboard (Recharts Line/Bar/Pie/Area + AdminStats) · Users (search, filters, ban/unban, role change, CSV export, delete w/ confirmation) · Clans (communities/clans/subclans/join-requests management) · Events (feature/delete) · Reports (reviewed/resolve/dismiss/warn/ban) · Businesses (verify/feature/suspend/delete) · Rishta (verify/suspend/delete) · Jobs (activate/deactivate/delete) · Media (storage stats, grid, view/download/delete) · Settings (maintenance mode, registration toggle, content pages, email templates) · Audit Log (filters + pagination + JSON details) · Contact Messages (read/unread, reply, delete)
+### Components (30, one per file in /components/tree)
+Viewer (D3 SVG zoom/pan/pinch), GenoPro-style layout (multi-wife mother columns, husband own slot), node/link/marriage rendering per spec colors, controls, search (debounced + prev/next), legend, minimap, context menu, stats bar, details sidebar (info/comments/timeline/stories tabs), add/edit member + marriage + relationship modals, delete-with-reassignment dialog, duplicate alert + manager, relationship calculator, member comparison, merge preview, invite modal + list, collaborator list, privacy settings, version history, import modal (CSV column mapping), export modal, group photos + face tagging, stats panel (Recharts: 6 charts).
 
-## 4. ✅ API Layer — 50 route files
+### Libs (10)
+`tree-utils` · `tree-graph` · `tree-layout` (Buchheim-style slot layout + 4 directions) · `tree-validators` (Zod) · `tree-access` (roles + privacy enforcement + versioning) · `duplicate-detection` (Levenshtein + 80/60 thresholds) · `relationship-names` (50+ Urdu rishte) · `tree-merge` · `gedcom-parser` (5.5.1) · `csv-parser` (mapping) · `tree-export` (4 formats via sharp + pdfkit)
 
-- **Auth (7)**: `[...nextauth]`, register, forgot-password, reset-password, **login-log** (ua-parser-js device/browser/OS), + settings OTP pair
-- **Events (3)**: list (filters+cursor), detail (PATCH/DELETE with time merge), RSVP
-- **Clans (2)**: communities+clans+join queue, clan detail + member search
-- **Rishta (5)**: list (filters), create, detail (privacy-aware), request (GET/POST/**PATCH accept-reject**), request/[id]
-- **Jobs (3)**: list, detail+apply, apply
-- **Business (3)**: directory, detail (reviews+jobs), review POST
-- **Memories (2)**: list (category/date filters), create (nested media), [id] update/delete
-- **Media (2)**: list (type/q/cursor + quota), upload (multipart, Cloudinary fallback)
-- **Profile (3)**: own profile GET/PATCH, public [id], job-profile GET/PUT
-- **Notifications (1)**: list, mark-read, delete
-- **Reports (1)**: create + list
-- **Settings (6)**: 2fa, password, account, sessions (login history), **otp**, **verify-otp**
-- **Public (2)**: communities+stats, contact
-- **Admin (13)**: dashboard, users, users/[id], clans, events, reports, businesses, rishta, jobs, media, settings, audit, contact
+### Spec scenarios verified LIVE
+- **A** (1+1+3): parents above, children below marriage link ✅
+- **B** (1 husband + 3 wives): Fatima | Ahmed | Ayesha | Zainab columns, children under own mother ✅
+- **C** (sibling order): sortOrder → DOB oldest-left → gender → type → name ✅ (+ reorder API)
+- **D** (merge): preview common members (name/DOB±2y/parents scoring) + execute + re-link ✅
+- **E** (duplicates): 95 → BLOCK 409, 70 → WARN create, <60 allow ✅
 
-## 5. ✅ Build Quality
+---
 
-- `npx tsc --noEmit` — **0 errors**
-- `npx next lint` — **0 warnings, 0 errors**
-- `npm run build` — **passes, 65+ pages generated** (landing + all static/dynamic pages + all API routes)
+## ⚠️ 2. WHAT WAS NOT MADE (gaps)
 
-## 5a. ✅ Production Smoke Test (passed 2026-09-11)
+1. **Marriage edit/divorce UI** (Step 16) — APIs work, `AddMarriageModal` is add-only; no edit/divorce buttons yet.
+2. **Relationship type-change/remove UI** (Step 17) — API exists, no UI control yet.
+3. **Verification badges UI** (23a) — verify API + records work; badges not shown on member cards yet.
+4. **Drag-to-reorder siblings UI** (11b) — PUT reorder API verified; no drag handles yet.
+5. **Step 38 — Lazy loading** (4-generation default, expand-on-click) — viewer renders full tree; only a 200+ member notice.
+6. **Step 39 — Canvas fallback** (1000+ nodes) — not built.
+7. **Step 43 — Web Worker / virtualization / LOD** — not built.
+8. **Step 40 extras** — Ctrl+F, +/−, arrows, R, Esc done; N/S/P/B shortcuts not.
+9. **Step 41 bottom sheet** — pinch-zoom done via d3; mobile bottom-sheet layout not.
+10. **Step 42 dark mode** — app-wide dark mode exists; tree components use fixed light styling.
+11. **Redo** — Undo works; no redo (spec lists Undo/Redo in 30a but only `/undo` endpoint).
+12. **Deployment** — 3 commits local-only; needs fresh PAT + push + live verification.
 
-**Auth & guards**
-- Landing `/` 200 · Login/Register/Reset pages 200 · OG/favicon/apple assets served
-- Middleware (now at `src/middleware.ts` — required for it to compile): unauthenticated `/dashboard` & `/admin` → **307 to /login?callbackUrl=…**; USER on `/admin` → 307 to /dashboard; `/api/admin/*` as USER → **403**
-- Credentials login (CSRF → callback → JWT session) works; `/api/auth/session` returns user+role
-- All 17 protected pages + all 12 admin pages return 200 with proper sessions
+---
 
-**Full E2E write-flow pass (all verified against production server)**
-- `POST /api/events` (with time merge) → `POST /api/events/[id]/rsvp` → `PATCH /api/events/[id]` ✓
-- `POST /api/memories` (nested media create) · `POST /api/media/upload` (multipart, local fallback) ✓
-- `POST /api/business/[id]/review` · `POST /api/jobs/apply` ✓
-- `POST /api/clans` join request → admin `PATCH /api/clans` APPROVE ✓
-- Rishta full cycle: `POST /api/rishta` → `POST /api/rishta/request` (PENDING) → receiver `PATCH …/request` ACCEPT → inbox shows ACCEPTED ✓
-- `POST /api/reports` (self-report correctly rejected) · `POST /api/public/contact` ✓
-- Admin: `/api/admin/reports|audit|contact|media|settings|clans?tab=join-requests` all return live data; settings PUT saves ✓
-- Email-change OTP flow verified end-to-end (request OTP → devOtp in dev → verify → email changed; test artifact reverted)
-- `POST /api/auth/login-log` records device/browser/OS/IP → visible in Settings → Security → Active Sessions
+## 🔜 3. WHAT STILL REMAINS (Steps 38–44 + ship)
 
-**Seed v2**
-- Seed is now idempotent: `npx prisma db seed` resets sample tables (users/communities/clans/settings preserved) and can be re-run any time
-- 6 sample memories now ship with 10 real local photos under `/public/uploads/seed/` — the Kids photo quiz (needs ≥4 photo memories) and the Memories timeline/media library work out of the box
+- Step 38: lazy generation depth + expand nodes
+- Step 39: canvas renderer fallback
+- Step 40: remaining keyboard shortcuts
+- Step 41: mobile bottom sheet + polish
+- Step 42: dark mode for tree components
+- Step 43: performance (worker/virtualization/LOD)
+- Step 44: formal edge-case suite (A–E partially done already)
+- Step 16/17/23a/11b UI gaps listed above
+- **Push to GitHub → Vercel deploy → live page-by-page test** (Neon already migrated)
+- Prior backlog: public-profile header privacy gap (outside tree module)
 
-## 6. 🔑 Demo Credentials
+---
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | `admin@digitalkhandaan.pk` | `Admin@12345` |
-| Demo user | `demo@digitalkhandaan.pk` | `Demo@12345` |
-
-Kids Mode gate: `family123` · Local DB: `postgresql://khandaan:khandaan@localhost:5432/khandaan`
-
-## 7. 📦 Public Assets
-
-`public/logo.svg`, `src/app/icon.svg`, `src/app/favicon.ico`, `src/app/apple-icon.png`, `src/app/opengraph-image.png` (1200×630 branded banner), full metadata (OG + Twitter cards) in root layout, README.md complete.
+## 🧪 Runtime test highlights (this turn)
+Relationship calc (بیوی / امی والدہ / چھوٹا بھائی), compare 40%, verify ✓, duplicates 95/70/70, history 10 items, stats 8m/2gen/3mar, privacy tree+member ✓, invite→accept→VIEWER→write 403 ✓, collaborate roles ✓, merge 8 copied/8 rels/3 marriages ✓, export 4 formats 200 ✓, GEDCOM+CSV import ✓, undo ✓, browser: 6 pages zero errors.

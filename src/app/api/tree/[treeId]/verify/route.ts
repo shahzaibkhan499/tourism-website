@@ -7,6 +7,49 @@ import { sanitizeInput } from "@/lib/utils";
 
 type RouteCtx = { params: { treeId: string } };
 
+// GET /api/tree/[treeId]/verify — list verifications
+export async function GET(req: NextRequest, { params }: RouteCtx) {
+  try {
+    const resolved = await resolveTreeAccess(params.treeId, req);
+    if ("status" in resolved) return apiError(resolved.status, resolved.message);
+
+    const [rels, marriages, members] = await Promise.all([
+      prisma.relationship.findMany({ where: { treeId: params.treeId }, select: { id: true, parentId: true, childId: true } }),
+      prisma.marriage.findMany({ where: { treeId: params.treeId }, select: { id: true, spouse1Id: true, spouse2Id: true } }),
+      prisma.familyMember.findMany({ where: { treeId: params.treeId }, select: { id: true } }),
+    ]);
+    const relIds = rels.map((r) => r.id);
+    const marIds = marriages.map((m) => m.id);
+    const memberIds = members.map((m) => m.id);
+    const verifications = await prisma.relationshipVerification.findMany({
+      where: {
+        OR: [
+          { relationshipId: { in: relIds } },
+          { marriageId: { in: marIds } },
+          { memberId: { in: memberIds } },
+        ],
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return apiSuccess({
+      items: verifications.map((v) => ({
+        id: v.id,
+        relationshipId: v.relationshipId,
+        marriageId: v.marriageId,
+        memberId: v.memberId,
+        verified: v.verified,
+        note: v.note,
+        createdAt: v.createdAt.toISOString(),
+      })),
+      relationships: rels,
+      marriages,
+    });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
 // POST /api/tree/[treeId]/verify — verify/dispute a relationship
 export async function POST(req: NextRequest, { params }: RouteCtx) {
   try {

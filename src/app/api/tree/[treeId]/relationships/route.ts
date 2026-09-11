@@ -39,6 +39,32 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
       return apiError(400, "ایک بچے کے زیادہ سے زیادہ 2 والدین ہو سکتے ہیں");
     }
 
+    // cycle guard: parent must not be a descendant of child
+    {
+      const visited = new Set<string>([childId]);
+      let frontier = [childId];
+      let cycle = false;
+      while (frontier.length > 0 && !cycle) {
+        const next: string[] = [];
+        for (const id of frontier) {
+          const children = await prisma.relationship.findMany({ where: { parentId: id } });
+          for (const c of children) {
+            if (c.childId === parentId) {
+              cycle = true;
+              break;
+            }
+            if (!visited.has(c.childId)) {
+              visited.add(c.childId);
+              next.push(c.childId);
+            }
+          }
+          if (cycle) break;
+        }
+        frontier = next;
+      }
+      if (cycle) return apiError(400, "یہ رشتہ دائرہ (cycle) بنا دیتا ہے — والدین بچے کی اولاد نہیں ہو سکتے");
+    }
+
     // child generation must be parent generation + 1 (or recompute)
     const childGeneration = Math.max(parent.generation + 1, child.generation);
 

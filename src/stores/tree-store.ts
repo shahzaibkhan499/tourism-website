@@ -59,7 +59,7 @@ export interface TreeStoreState {
   searchOpen: boolean;
   deletingMemberId: string | null;
   pendingNodes: TreeNodeDatum[];
-  filters: { generation: number | null; gender: string | null; living: boolean | null };
+  filters: { generation: number | null; gender: string | null; living: boolean | null; maxGeneration: number | null };
 
   setTreeId: (id: string | null) => void;
   setSelectedMember: (id: string | null) => void;
@@ -136,7 +136,7 @@ const initialState = {
   searchOpen: false,
   deletingMemberId: null,
   pendingNodes: [] as TreeNodeDatum[],
-  filters: { generation: null, gender: null, living: null },
+  filters: { generation: null, gender: null, living: null, maxGeneration: null },
 };
 
 export const useTreeStore = create<TreeStoreState>((set) => ({

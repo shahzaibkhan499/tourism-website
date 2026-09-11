@@ -28,9 +28,10 @@ const DIRECTIONS: { value: LayoutDirection; label: string }[] = [
 
 interface TreeControlsProps {
   viewerApi: React.RefObject<TreeViewerApi | null>;
+  maxGen?: number | null;
 }
 
-export function TreeControls({ viewerApi }: TreeControlsProps) {
+export function TreeControls({ viewerApi, maxGen = null }: TreeControlsProps) {
   const direction = useTreeStore((s) => s.direction);
   const setDirection = useTreeStore((s) => s.setDirection);
   const showNames = useTreeStore((s) => s.showNames);
@@ -45,9 +46,11 @@ export function TreeControls({ viewerApi }: TreeControlsProps) {
   const toggleMalesFirst = useTreeStore((s) => s.toggleMalesFirst);
   const toggleMinimap = useTreeStore((s) => s.toggleMinimap);
   const toggleLegend = useTreeStore((s) => s.toggleLegend);
+  const maxGeneration = useTreeStore((s) => s.filters.maxGeneration);
+  const setFilters = useTreeStore((s) => s.setFilters);
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:pb-1">
       <div className="flex items-center gap-1 rounded-lg border bg-white p-1 shadow-sm">
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => viewerApi.current?.zoomIn()} aria-label="Zoom in">
           <Plus className="h-4 w-4" />
@@ -63,6 +66,24 @@ export function TreeControls({ viewerApi }: TreeControlsProps) {
         </Button>
       </div>
 
+      {maxGen !== null && maxGen > 1 && (
+        <Select
+          value={maxGeneration === null ? "all" : String(maxGeneration)}
+          onValueChange={(v) => setFilters({ maxGeneration: v === "all" ? null : Number(v) })}
+        >
+          <SelectTrigger className="h-9 w-40 bg-white dark:border-gray-700 dark:bg-gray-900" aria-label="Generation depth">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">تمام نسلیں</SelectItem>
+            {Array.from({ length: maxGen }, (_, i) => i + 1).map((g) => (
+              <SelectItem key={g} value={String(g)}>
+                نسل {g} تک
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
       <Select value={direction} onValueChange={(v) => setDirection(v as LayoutDirection)}>
         <SelectTrigger className="h-9 w-44 bg-white" aria-label="Layout direction">
           <SelectValue />

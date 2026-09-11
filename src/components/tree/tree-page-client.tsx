@@ -11,6 +11,7 @@ import {
   GitMerge,
   HeartHandshake,
   History,
+  Link2,
   Search,
   Send,
   Settings,
@@ -47,6 +48,10 @@ import { InviteModal } from "@/components/tree/invite-modal";
 import { ImportModal } from "@/components/tree/import-modal";
 import { ExportModal } from "@/components/tree/export-modal";
 import { TreeStatsPanel } from "@/components/tree/tree-stats-panel";
+import { CanvasTreeViewer } from "@/components/tree/canvas-tree-viewer";
+import type { CanvasViewerApi } from "@/components/tree/canvas-tree-viewer";
+import { MarriageManager } from "@/components/tree/marriage-manager";
+import { RelationshipManager } from "@/components/tree/relationship-manager";
 
 // ============================================================
 // TREE PAGE CLIENT — loads graph, wires viewer + sidebar +
@@ -82,6 +87,10 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
 
   const direction = useTreeStore((s) => s.direction);
   const malesFirst = useTreeStore((s) => s.malesFirst);
+  const maxGeneration = useTreeStore((s) => s.filters.maxGeneration);
+  const setFilters = useTreeStore((s) => s.setFilters);
+  const detailPanelOpen = useTreeStore((s) => s.detailPanelOpen);
+  const setDetailPanel = useTreeStore((s) => s.setDetailPanel);
 
   const setCalculatorOpen = useTreeStore((s) => s.setCalculatorOpen);
   const setCompareOpen = useTreeStore((s) => s.setCompareOpen);
@@ -98,6 +107,9 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
   const importOpen = useTreeStore((s) => s.importOpen);
   const exportOpen = useTreeStore((s) => s.exportOpen);
   const [statsOpen, setStatsOpen] = useState(false);
+  const [marriagesOpen, setMarriagesOpen] = useState(false);
+  const [relationshipsOpen, setRelationshipsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const [addMemberPresets, setAddMemberPresets] = useState<{ parentIds?: string[]; spouseId?: string; gender?: "MALE" | "FEMALE" }>({});
   const [marriagePreset, setMarriagePreset] = useState<string | undefined>(undefined);
@@ -123,22 +135,64 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
     load();
   }, [load]);
 
-  // keyboard: Ctrl+F opens search
+  // keyboard: Ctrl+F opens search; S toggles details panel
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "f") {
         e.preventDefault();
         setSearchOpen(true);
       }
+      if ((e.key === "s" || e.key === "S") && !e.ctrlKey && !e.metaKey && selectedMemberId) {
+        e.preventDefault();
+        setDetailPanel(!useTreeStore.getState().detailPanelOpen);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [setSearchOpen]);
+  }, [setSearchOpen, setDetailPanel, selectedMemberId]);
 
-  const graph = useMemo(() => {
+  // mobile detection (bottom sheet mode, Step 41)
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  const fullGraph = useMemo(() => {
     if (!data) return null;
     return buildTreeGraph(data.members, data.relationships, data.marriages);
   }, [data]);
+
+  const maxGen = useMemo(() => {
+    if (!data) return 1;
+    return Math.max(...data.members.map((m) => m.generation), 1);
+  }, [data]);
+
+  const defaultDepth = data && data.members.length > 200 ? 4 : null;
+  const activeDepth = maxGeneration ?? defaultDepth;
+
+  const graph = useMemo(() => {
+    if (!fullGraph) return null;
+    if (activeDepth === null) return fullGraph;
+    const visible = fullGraph.members.filter((m) => m.generation <= activeDepth);
+    const visibleIds = new Set(visible.map((m) => m.id));
+    const rels = data!.relationships.filter(
+      (r) => visibleIds.has(r.parentId) && visibleIds.has(r.childId)
+    );
+    const marrs = data!.marriages.filter(
+      (m) => visibleIds.has(m.spouse1Id) && visibleIds.has(m.spouse2Id)
+    );
+    return buildTreeGraph(visible, rels, marrs);
+  }, [fullGraph, activeDepth, data]);
+
+  const hiddenGenerationCount = useMemo(() => {
+    if (!fullGraph || activeDepth === null) return 0;
+    return fullGraph.members.filter((m) => m.generation > activeDepth).length;
+  }, [fullGraph, activeDepth]);
 
   const layout = useMemo(() => {
     if (!graph) return null;
@@ -159,7 +213,7 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
     );
   }
 
-  if (error || !data || !graph || !layout) {
+  if (error || !data || !fullGraph || !graph || !layout) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-10 text-center">
         <p className="text-base font-medium text-red-700">{error || "شجرہ لوڈ نہیں ہو سکا"}</p>
@@ -191,7 +245,7 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
         titleUrdu="شجرہ نسب"
         description={tree.description ?? undefined}
         actions={
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:pb-1">
             {canEdit && (
               <>
                 <Button size="sm" className={toolbarBtn + " bg-emerald-600 hover:bg-emerald-700"} onClick={() => openAddMember({})}>
@@ -205,6 +259,14 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
                 <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setAddRelationshipOpen(true)}>
                   <GitMerge className="mr-1 h-3.5 w-3.5" />
                   رشتہ
+                </Button>
+                <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setMarriagesOpen(true)}>
+                  <HeartHandshake className="mr-1 h-3.5 w-3.5" />
+                  شادیاں
+                </Button>
+                <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setRelationshipsOpen(true)}>
+                  <Link2 className="mr-1 h-3.5 w-3.5" />
+                  رشتے
                 </Button>
               </>
             )}
@@ -277,24 +339,58 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
       </div>
 
       <div className="mb-3">
-        <TreeControls viewerApi={viewerRef} />
+        <TreeControls viewerApi={viewerRef} maxGen={maxGen} />
       </div>
 
       <div className="flex flex-col gap-4 lg:flex-row">
         <div className="relative min-w-0 flex-1">
           <TreeSearch graph={graph} open={searchOpen} onClose={() => setSearchOpen(false)} viewerApi={viewerRef} />
-          <TreeViewer
-            ref={viewerRef}
-            graph={graph}
-            onContextMenu={(e, memberId) => {
-              useTreeStore.getState().openContextMenu(e.clientX, e.clientY, memberId);
-            }}
-            onViewportChange={setViewport}
-          />
+          {graph.members.length > 1000 ? (
+            <CanvasTreeViewer
+              ref={viewerRef as React.RefObject<CanvasViewerApi>}
+              members={graph.members}
+              relationships={data.relationships}
+              marriages={data.marriages}
+              rootId={data.rootMemberId}
+              onContextMenu={(e, memberId) => {
+                useTreeStore.getState().openContextMenu(e.clientX, e.clientY, memberId);
+              }}
+            />
+          ) : (
+            <TreeViewer
+              ref={viewerRef}
+              graph={graph}
+              onContextMenu={(e, memberId) => {
+                useTreeStore.getState().openContextMenu(e.clientX, e.clientY, memberId);
+              }}
+              onViewportChange={setViewport}
+            />
+          )}
           <TreeMinimap layout={layout} graph={graph} viewport={viewport} viewerApi={viewerRef} />
           <TreeLegend />
+          {hiddenGenerationCount > 0 && (
+            <div className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2">
+              <Button
+                size="sm"
+                className="h-8 bg-emerald-600 shadow-lg hover:bg-emerald-700"
+                onClick={() => setFilters({ maxGeneration: null })}
+              >
+                {hiddenGenerationCount} مزید ممبرز دکھائیں (نسلیں: {activeDepth})
+              </Button>
+            </div>
+          )}
         </div>
-        <TreeSidebar treeId={tree.id} graph={graph} canEdit={canEdit} />
+        {isMobile ? (
+          detailPanelOpen && (
+            <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setDetailPanel(false)}>
+              <div className="absolute inset-x-0 bottom-0 max-h-[75vh]" onClick={(e) => e.stopPropagation()}>
+                <TreeSidebar treeId={tree.id} graph={graph} canEdit={canEdit} onDataChanged={load} />
+              </div>
+            </div>
+          )
+        ) : (
+          <TreeSidebar treeId={tree.id} graph={graph} canEdit={canEdit} onDataChanged={load} />
+        )}
       </div>
 
       <TreeContextMenu
@@ -376,6 +472,17 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
       <ExportModal open={exportOpen} onOpenChange={setExportOpen} treeId={tree.id} />
 
       <TreeStatsPanel open={statsOpen} onOpenChange={setStatsOpen} treeId={tree.id} />
+
+      <MarriageManager open={marriagesOpen} onOpenChange={setMarriagesOpen} treeId={tree.id} graph={graph} onSaved={load} />
+
+      <RelationshipManager
+        open={relationshipsOpen}
+        onOpenChange={setRelationshipsOpen}
+        treeId={tree.id}
+        graph={graph}
+        relationships={data.relationships}
+        onSaved={load}
+      />
     </div>
   );
 }

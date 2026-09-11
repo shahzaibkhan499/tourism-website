@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 import { DECEASED_COLOR, GENDER_COLORS, NODE_H, NODE_W, SELECTED_COLOR, ageOf, formatDate, fullName, initials, isDeceased } from "@/lib/tree-utils";
+import { TREE_THEME } from "@/components/tree/use-dark-mode";
 import type { TreeMemberDto } from "@/types/tree";
 
 // ============================================================
@@ -23,6 +24,7 @@ interface TreeNodeProps {
   showPhotos: boolean;
   showDates: boolean;
   dimmed: boolean;
+  dark?: boolean;
   onSelect: (id: string) => void;
   onHover: (id: string | null) => void;
   onContextMenu: (e: React.MouseEvent, id: string) => void;
@@ -39,11 +41,13 @@ function TreeNodeInner({
   showPhotos,
   showDates,
   dimmed,
+  dark = false,
   onSelect,
   onHover,
   onContextMenu,
 }: TreeNodeProps) {
   const deceased = isDeceased(member);
+  const theme = dark ? TREE_THEME.dark : TREE_THEME.light;
   const border = deceased ? DECEASED_COLOR : selected ? SELECTED_COLOR : GENDER_COLORS[member.gender] ?? "#6b7280";
   const x = cx - NODE_W / 2;
   const y = cy - NODE_H / 2;
@@ -79,7 +83,7 @@ function TreeNodeInner({
         height={NODE_H}
         rx={12}
         ry={12}
-        fill="#ffffff"
+        fill={theme.nodeFill}
         stroke={border}
         strokeWidth={3}
         style={{
@@ -133,7 +137,7 @@ function TreeNodeInner({
         </>
       ) : (
         <>
-          <circle cx={x + 30} cy={y + 28} r={20} fill={deceased ? "#f3f4f6" : GENDER_COLORS[member.gender] + "1a"} />
+          <circle cx={x + 30} cy={y + 28} r={20} fill={deceased ? theme.deceasedCircle : GENDER_COLORS[member.gender] + "1a"} />
           <circle cx={x + 30} cy={y + 28} r={20} fill="none" stroke={border} strokeWidth={1.5} />
           <text
             x={x + 30}
@@ -162,7 +166,7 @@ function TreeNodeInner({
 
       {/* dates */}
       {dates && (
-        <text x={x + 58} y={y + 48} fontSize={12} fill="#6b7280">
+        <text x={x + 58} y={y + 48} fontSize={12} fill={theme.dateFill}>
           {dates.length > 30 ? dates.slice(0, 29) + "…" : dates}
         </text>
       )}
@@ -173,8 +177,8 @@ function TreeNodeInner({
       )}
 
       {/* generation badge */}
-      <circle cx={x + NODE_W - 14} cy={y + 14} r={10} fill={deceased ? "#9ca3af" : "#f3f4f6"} />
-      <text x={x + NODE_W - 14} y={y + 18} fontSize={10} fontWeight={700} textAnchor="middle" fill="#4b5563">
+      <circle cx={x + NODE_W - 14} cy={y + 14} r={10} fill={deceased ? "#9ca3af" : theme.genBadgeFill} />
+      <text x={x + NODE_W - 14} y={y + 18} fontSize={10} fontWeight={700} textAnchor="middle" fill={theme.genBadgeText}>
         {member.generation}
       </text>
 

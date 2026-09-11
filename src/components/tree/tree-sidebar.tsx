@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { BookOpen, CalendarClock, HeartHandshake, Info, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTreeStore } from "@/stores/tree-store";
@@ -10,6 +10,8 @@ import type { TreeMemberDto } from "@/types/tree";
 import { MemberComments } from "@/components/tree/member-comments";
 import { MemberTimeline } from "@/components/tree/member-timeline";
 import { MemberStories } from "@/components/tree/member-stories";
+import { VerifySection } from "@/components/tree/verify-section";
+import { SiblingReorderDialog } from "@/components/tree/sibling-reorder-dialog";
 
 // ============================================================
 // TREE SIDEBAR — right details panel: member info (parents,
@@ -21,9 +23,10 @@ interface TreeSidebarProps {
   treeId: string;
   graph: TreeGraphData;
   canEdit: boolean;
+  onDataChanged?: () => void;
 }
 
-export function TreeSidebar({ treeId, graph, canEdit }: TreeSidebarProps) {
+export function TreeSidebar({ treeId, graph, canEdit, onDataChanged }: TreeSidebarProps) {
   const open = useTreeStore((s) => s.detailPanelOpen);
   const selectedId = useTreeStore((s) => s.selectedMemberId);
   const tab = useTreeStore((s) => s.detailTab);
@@ -32,6 +35,7 @@ export function TreeSidebar({ treeId, graph, canEdit }: TreeSidebarProps) {
   const setSelected = useTreeStore((s) => s.setSelectedMember);
 
   const member = selectedId ? graph.memberById.get(selectedId) : undefined;
+  const [reorderOpen, setReorderOpen] = useState(false);
 
   const relatives = useMemo(() => {
     if (!member) return { parents: [], spouses: [], children: [], siblings: [] };
@@ -120,6 +124,9 @@ export function TreeSidebar({ treeId, graph, canEdit }: TreeSidebarProps) {
           </p>
         )}
         {member.bio && <p className="mt-1.5 whitespace-pre-wrap text-sm text-gray-600">{member.bio}</p>}
+        <div className="mt-2">
+          <VerifySection treeId={treeId} memberId={member.id} canEdit={canEdit} />
+        </div>
       </div>
 
       {/* tabs */}
@@ -152,13 +159,39 @@ export function TreeSidebar({ treeId, graph, canEdit }: TreeSidebarProps) {
             <RelativeSection title="والدین — Parents" items={relatives.parents} empty="والدین درج نہیں" />
             <RelativeSection title="شریک حیات — Spouses" items={relatives.spouses} empty="شادی درج نہیں" />
             <RelativeSection title="بچے — Children" items={relatives.children} empty="بچے درج نہیں" />
-            <RelativeSection title="بہن بھائی — Siblings" items={relatives.siblings} empty="بہن بھائی درج نہیں" />
+            <div>
+              <div className="mb-1.5 flex items-center justify-between">
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400">بہن بھائی — Siblings</h4>
+                {canEdit && relatives.siblings.length > 0 && (
+                  <button
+                    type="button"
+                    className="rounded border px-1.5 py-0.5 text-[10px] text-gray-500 hover:border-emerald-300 hover:text-emerald-600"
+                    onClick={() => setReorderOpen(true)}
+                  >
+                    ترتیب بدلیں
+                  </button>
+                )}
+              </div>
+              <RelativeSection title="" items={relatives.siblings} empty="بہن بھائی درج نہیں" />
+            </div>
           </div>
         )}
         {tab === "comments" && <MemberComments treeId={treeId} memberId={member.id} />}
         {tab === "timeline" && <MemberTimeline treeId={treeId} memberId={member.id} />}
         {tab === "stories" && <MemberStories treeId={treeId} memberId={member.id} />}
       </div>
+
+      <SiblingReorderDialog
+        open={reorderOpen}
+        onOpenChange={setReorderOpen}
+        treeId={treeId}
+        graph={graph}
+        memberId={member.id}
+        onSaved={() => {
+          setReorderOpen(false);
+          onDataChanged?.();
+        }}
+      />
     </aside>
   );
 }
@@ -176,7 +209,7 @@ function RelativeSection({
   const list = items.filter((x): x is TreeMemberDto => Boolean(x));
   return (
     <div>
-      <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-400">{title}</h4>
+      {title && <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-400">{title}</h4>}
       {list.length === 0 ? (
         <p className="text-xs text-gray-400">{empty}</p>
       ) : (

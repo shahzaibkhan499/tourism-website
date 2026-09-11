@@ -1,12 +1,13 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
 import { useTreeStore } from "@/stores/tree-store";
 import { layoutTree } from "@/lib/tree-layout";
 import type { TreeLayoutResult } from "@/lib/tree-layout";
 import type { TreeGraphData } from "@/lib/tree-graph";
 import { DOT_GRID_COLOR } from "@/lib/tree-utils";
+import { TREE_THEME, useDarkMode } from "@/components/tree/use-dark-mode";
 import { TreeNode } from "@/components/tree/tree-node";
 import { TreeLink } from "@/components/tree/tree-link";
 import { TreeMarriageLink } from "@/components/tree/tree-marriage-link";
@@ -47,11 +48,15 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
   ref
 ) {
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const dark = useDarkMode();
   const gRef = useRef<SVGGElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
+  const zoomRefK = useRef(1);
   const viewRef = useRef<ViewState>({ x: 0, y: 0, k: 1 });
   const maxDepthRef = useRef(5);
+  const [zoomK, setZoomK] = useState(1);
+  const [wrapSize, setWrapSize] = useState<{ w: number; h: number }>({ w: 900, h: 600 });
 
   const direction = useTreeStore((s) => s.direction);
   const selectedId = useTreeStore((s) => s.selectedMemberId);
@@ -78,6 +83,8 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
   const viewH = Math.max(bounds.height + PAD * 2, 300);
 
   const matchIds = useMemo(() => new Set(searchMatches.map((m) => m.memberId)), [searchMatches]);
+  const theme = dark ? TREE_THEME.dark : TREE_THEME.light;
+  const lod = zoomK < 0.45; // LOD: hide names/dates when zoomed far out
 
   const fit = useCallback(() => {
     const svg = svgRef.current;
@@ -151,6 +158,10 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
         const t = event.transform;
         gRef.current?.setAttribute("transform", t.toString());
         viewRef.current = { x: t.x, y: t.y, k: t.k };
+        if (Math.abs(t.k - zoomRefK.current) > 0.02) {
+          zoomRefK.current = t.k;
+          setZoomK(t.k);
+        }
         emitViewport();
       })
       .on("end", () => emitViewport());
@@ -170,7 +181,10 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
   useEffect(() => {
     const wrap = wrapRef.current;
     if (!wrap) return;
-    const ro = new ResizeObserver(() => fit());
+    const ro = new ResizeObserver(() => {
+      setWrapSize({ w: wrap.clientWidth || 900, h: wrap.clientHeight || 600 });
+      fit();
+    });
     ro.observe(wrap);
     return () => ro.disconnect();
   }, [fit]);
@@ -194,6 +208,32 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
         case "R":
           if (!e.ctrlKey && !e.metaKey) refKeyApi("fit");
           break;
+        case "b":
+        case "B":
+          if (!e.ctrlKey && !e.metaKey) refKeyApi("fit");
+          break;
+        case "n": {
+          if (e.ctrlKey || e.metaKey) break;
+          const matches = useTreeStore.getState().searchMatches;
+          if (matches.length > 0) {
+            const sel = useTreeStore.getState().selectedMemberId;
+            const idx = matches.findIndex((m) => m.memberId === sel);
+            const next = matches[(idx + 1) % matches.length];
+            refApiCenter(next.memberId);
+          }
+          break;
+        }
+        case "p": {
+          if (e.ctrlKey || e.metaKey) break;
+          const matches = useTreeStore.getState().searchMatches;
+          if (matches.length > 0) {
+            const sel = useTreeStore.getState().selectedMemberId;
+            const idx = matches.findIndex((m) => m.memberId === sel);
+            const prev = matches[(idx - 1 + matches.length) % matches.length];
+            refApiCenter(prev.memberId);
+          }
+          break;
+        }
         case "Escape":
           setSelected(null);
           break;
@@ -223,6 +263,11 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
   const refKeyApi = (method: "zoomIn" | "zoomOut" | "fit") => {
     if (typeof ref === "function" || !ref) return;
     (ref as { current: TreeViewerApi | null }).current?.[method]();
+  };
+
+  const refApiCenter = (memberId: string) => {
+    if (typeof ref === "function" || !ref) return;
+    (ref as { current: TreeViewerApi | null }).current?.centerOn(memberId);
   };
 
   const panBy = (dx: number, dy: number) => {
@@ -257,21 +302,22 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
   const capReached = graph.members.length > 200;
 
   return (
-    <div ref={wrapRef} className="relative h-[72vh] w-full overflow-hidden rounded-xl border bg-[#fafafa]">
+    <div ref={wrapRef} className="relative h-[72vh] w-full overflow-hidden rounded-xl border bg-[#fafafa] dark:border-gray-700 dark:bg-[#0b1220]">
       <svg
         ref={svgRef}
         className="h-full w-full touch-none select-none"
-        viewBox={`${-PAD} ${-PAD} ${viewW} ${viewH}`}
+        viewBox={`0 0 ${wrapSize.w} ${wrapSize.h}`}
         onClick={bgClick}
         role="img"
         aria-label="شجرہ نسب کا خاکہ"
+        style={{ background: theme.canvasBg }}
       >
         <defs>
           <pattern id="tree-dots" width="20" height="20" patternUnits="userSpaceOnUse">
-            <circle cx="1" cy="1" r="1" fill={DOT_GRID_COLOR} />
+            <circle cx="1" cy="1" r="1" fill={dark ? theme.dot : DOT_GRID_COLOR} />
           </pattern>
         </defs>
-        <rect x={-PAD} y={-PAD} width={viewW} height={viewH} fill="url(#tree-dots)" />
+        <rect x={0} y={0} width={wrapSize.w} height={wrapSize.h} fill="url(#tree-dots)" />
 
         <g ref={gRef}>
           {/* marriage links under buses */}
@@ -293,10 +339,11 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
                 selected={selectedId === n.id}
                 hovered={hoveredId === n.id}
                 searchMatch={matchIds.has(n.id)}
-                showNames={showNames}
+                showNames={showNames && !lod}
                 showPhotos={showPhotos}
-                showDates={showDates}
+                showDates={showDates && !lod}
                 dimmed={searchActive && !matchIds.has(n.id)}
+                dark={dark}
                 onSelect={setSelected}
                 onHover={setHovered}
                 onContextMenu={onContextMenu}
