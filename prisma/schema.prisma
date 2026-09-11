@@ -1,0 +1,572 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @default(cuid())
+  name             String?
+  email            String    @unique
+  emailVerified    DateTime?
+  image            String?
+  password         String?
+  phone            String?   @unique
+  gender           Gender?
+  dateOfBirth      DateTime?
+  city             String?
+  province         String?
+  clanId           String?
+  subClanId        String?
+  bio              String?
+  bloodGroup       String?
+  occupation       String?
+  education        String?
+  isVerified       Boolean   @default(false)
+  role             Role      @default(USER)
+  isActive         Boolean   @default(true)
+  isBanned         Boolean   @default(false)
+  banReason        String?
+  twoFactorEnabled Boolean   @default(false)
+  twoFactorSecret  String?
+  lastLoginAt      DateTime?
+  loginCount       Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  events          Event[]
+  eventRSVPs      EventRSVP[]
+  memories        Memory[]
+  media           Media[]
+  clan            Clan?          @relation(fields: [clanId], references: [id])
+  subClan         SubClan?       @relation(fields: [subClanId], references: [id])
+  jobProfile      JobProfile?
+  businesses      Business[]
+  rishtaProfile   RishtaProfile?
+  jobApplications JobApplication[]
+  notifications   Notification[]
+  reports         Report[]       @relation("Reporter")
+  reportedBy      Report[]       @relation("Reported")
+  auditLogs       AuditLog[]
+
+  @@index([email])
+  @@index([clanId])
+  @@index([role])
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  ipAddress    String?
+  userAgent    String?
+  device       String?
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model Community {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  nameUrdu    String?
+  description String?
+  region      String?
+  logo        String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  clans       Clan[]
+
+  @@map("communities")
+}
+
+model Clan {
+  id          String   @id @default(cuid())
+  name        String
+  nameUrdu    String?
+  description String?
+  history     String?  @db.Text
+  communityId String
+  logo        String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  community   Community @relation(fields: [communityId], references: [id])
+  subClans    SubClan[]
+  members     User[]
+
+  @@index([communityId])
+  @@map("clans")
+}
+
+model SubClan {
+  id          String   @id @default(cuid())
+  name        String
+  nameUrdu    String?
+  description String?
+  clanId      String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  clan        Clan    @relation(fields: [clanId], references: [id])
+  members     User[]
+
+  @@index([clanId])
+  @@map("sub_clans")
+}
+
+model Event {
+  id               String    @id @default(cuid())
+  title            String
+  description      String?   @db.Text
+  type             EventType
+  date             DateTime
+  endDate          DateTime?
+  location         String?
+  latitude         Float?
+  longitude        Float?
+  hijriDate        String?
+  isPublic         Boolean   @default(false)
+  isRecurring      Boolean   @default(false)
+  recurringPattern String?
+  coverImage       String?
+  creatorId        String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  creator          User      @relation(fields: [creatorId], references: [id])
+  rsvps            EventRSVP[]
+
+  @@index([creatorId])
+  @@index([date])
+  @@index([type])
+  @@map("events")
+}
+
+model EventRSVP {
+  id        String     @id @default(cuid())
+  eventId   String
+  userId    String
+  status    RSVPStatus @default(PENDING)
+  guests    Int        @default(0)
+  note      String?
+  createdAt DateTime   @default(now())
+  event     Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@unique([eventId, userId])
+  @@map("event_rsvps")
+}
+
+enum EventType {
+  BIRTH
+  AQEEQA
+  BISMILLAH
+  KHATAM_QURAN
+  ENGAGEMENT
+  MEHNDI
+  NIKKAH
+  BARAAT
+  WALIMA
+  RUKHSATI
+  DEATH
+  CHEHLUM
+  BARSI
+  EID_UL_FITR
+  EID_UL_ADHA
+  SHAB_E_QADR
+  SHAB_E_MERAJ
+  MILAD_UN_NABI
+  RAMADAN_IFTAR
+  FAMILY_REUNION
+  GRADUATION
+  JOB_CELEBRATION
+  WELCOME_HOME
+  PANCHAYAT
+  INDEPENDENCE_DAY
+  PAKISTAN_DAY
+  QUAID_E_AZAM_DAY
+  IQBAL_DAY
+  BASANT
+  CHAND_RAAT
+  EID_MILAN
+  OTHER
+}
+
+enum RSVPStatus {
+  PENDING
+  GOING
+  NOT_GOING
+  MAYBE
+}
+
+model Memory {
+  id          String         @id @default(cuid())
+  title       String
+  description String?        @db.Text
+  date        DateTime?
+  location    String?
+  category    MemoryCategory @default(OTHER)
+  isPublic    Boolean        @default(false)
+  userId      String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  user        User           @relation(fields: [userId], references: [id])
+  media       Media[]
+
+  @@index([userId])
+  @@map("memories")
+}
+
+model Media {
+  id        String    @id @default(cuid())
+  url       String
+  publicId  String?
+  type      MediaType
+  size      Int?
+  mimeType  String?
+  memoryId  String?
+  userId    String
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+  memory    Memory?   @relation(fields: [memoryId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("media")
+}
+
+enum MemoryCategory {
+  CHILDHOOD
+  WEDDING
+  GATHERING
+  TRAVEL
+  ACHIEVEMENT
+  OLD_PHOTO
+  RELIGIOUS
+  FESTIVAL
+  DAILY_LIFE
+  OTHER
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+}
+
+model JobProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  headline           String?
+  summary            String?  @db.Text
+  experience         Json?
+  education          Json?
+  skills             String[]
+  languages          String[]
+  resumeUrl          String?
+  linkedinUrl        String?
+  githubUrl          String?
+  portfolioUrl       String?
+  expectedSalary     String?
+  preferredLocations String[]
+  availability       String?  @default("ACTIVE")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id])
+  applications       JobApplication[]
+
+  @@map("job_profiles")
+}
+
+model JobPosting {
+  id           String    @id @default(cuid())
+  businessId   String
+  title        String
+  description  String    @db.Text
+  requirements String?   @db.Text
+  type         JobType   @default(FULL_TIME)
+  experience   String?
+  salaryMin    Int?
+  salaryMax    Int?
+  currency     String    @default("PKR")
+  location     String?
+  isRemote     Boolean   @default(false)
+  isActive     Boolean   @default(true)
+  deadline     DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  business     Business  @relation(fields: [businessId], references: [id])
+  applications JobApplication[]
+
+  @@index([businessId])
+  @@index([isActive])
+  @@map("job_postings")
+}
+
+model JobApplication {
+  id           String            @id @default(cuid())
+  jobPostingId String
+  applicantId  String
+  profileId    String
+  coverLetter  String?           @db.Text
+  resumeUrl    String?
+  status       ApplicationStatus @default(APPLIED)
+  notes        String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  jobPosting   JobPosting        @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  applicant    User              @relation(fields: [applicantId], references: [id])
+  profile      JobProfile        @relation(fields: [profileId], references: [id])
+
+  @@unique([jobPostingId, applicantId])
+  @@map("job_applications")
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  FREELANCE
+  INTERNSHIP
+  REMOTE
+}
+
+enum ApplicationStatus {
+  APPLIED
+  VIEWED
+  SHORTLISTED
+  INTERVIEW
+  OFFER
+  HIRED
+  REJECTED
+}
+
+model Business {
+  id            String   @id @default(cuid())
+  userId        String
+  name          String
+  description   String?  @db.Text
+  industry      String?
+  category      String?
+  logo          String?
+  coverImage    String?
+  website       String?
+  phone         String?
+  email         String?
+  address       String?
+  city          String?
+  province      String?
+  latitude      Float?
+  longitude     Float?
+  socialLinks   Json?
+  isVerified    Boolean  @default(false)
+  isFeatured    Boolean  @default(false)
+  isFamilyOwned Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id])
+  jobPostings   JobPosting[]
+  reviews       BusinessReview[]
+
+  @@index([userId])
+  @@index([isActive])
+  @@map("businesses")
+}
+
+model BusinessReview {
+  id         String   @id @default(cuid())
+  businessId String
+  userId     String
+  rating     Int
+  comment    String?  @db.Text
+  createdAt  DateTime @default(now())
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("business_reviews")
+}
+
+model RishtaProfile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  age               Int?
+  height            String?
+  weight            String?
+  complexion        String?
+  education         String?
+  educationDetail   String?
+  profession        String?
+  income            String?
+  sect              String?
+  maslak            String?
+  castePreference   String?
+  cityPreference    String?
+  countryPreference String?
+  maritalStatus     String?  @default("NEVER_MARRIED")
+  children          Int      @default(0)
+  about             String?  @db.Text
+  familyBackground  String?  @db.Text
+  expectations      String?  @db.Text
+  photos            String[]
+  isActive          Boolean  @default(true)
+  isGuardianMode    Boolean  @default(false)
+  guardianName      String?
+  guardianRelation  String?
+  guardianPhone     String?
+  isVerified        Boolean  @default(false)
+  isPremium         Boolean  @default(false)
+  viewsCount        Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id])
+  sentRequests      RishtaRequest[] @relation("Sender")
+  receivedRequests  RishtaRequest[] @relation("Receiver")
+
+  @@map("rishta_profiles")
+}
+
+model RishtaRequest {
+  id         String       @id @default(cuid())
+  senderId   String
+  receiverId String
+  message    String?      @db.Text
+  status     RishtaStatus @default(PENDING)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  sender     RishtaProfile @relation("Sender", fields: [senderId], references: [id])
+  receiver   RishtaProfile @relation("Receiver", fields: [receiverId], references: [id])
+
+  @@map("rishta_requests")
+}
+
+enum RishtaStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  BLOCKED
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+model Report {
+  id         String       @id @default(cuid())
+  reporterId String
+  reportedId String
+  type       String
+  reason     String       @db.Text
+  status     ReportStatus @default(PENDING)
+  adminNote  String?
+  createdAt  DateTime     @default(now())
+  resolvedAt DateTime?
+  reporter   User         @relation("Reporter", fields: [reporterId], references: [id])
+  reported   User         @relation("Reported", fields: [reportedId], references: [id])
+
+  @@index([status])
+  @@map("reports")
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  adminId   String?
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+  admin     User?    @relation(fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([entity])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model SiteSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contact_messages")
+}
