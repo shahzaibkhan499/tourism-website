@@ -57,7 +57,7 @@ export default function CommunityPage() {
 
   return (
     <div>
-      <PageHeader title="Community & Clans" titleUrdu="برادری" description="Apni community aur clan se judein" />
+      <PageHeader title="Community & Clans" titleUrdu="برادری" description="اپنی کمیونٹی اور کلان سے جڑیں" />
 
       <div className="mb-4">
         <div className="relative max-w-md">
@@ -98,13 +98,13 @@ export default function CommunityPage() {
                           </p>
                         )}
                       </div>
-                      <Badge variant="secondary">{c._count?.clans ?? 0} clans</Badge>
+                      <Badge variant="secondary">{c._count?.clans ?? 0} کلانز</Badge>
                     </div>
                     {c.description && <p className="mt-2 line-clamp-2 text-xs text-gray-500">{c.description}</p>}
                     <div className="mt-3 flex items-center justify-between border-t pt-3">
                       <span className="text-xs text-gray-500">
                         <Users className="mr-1 inline h-3.5 w-3.5" />
-                        {c.memberCount ?? 0} members
+                        {c.memberCount ?? 0} ممبرز
                       </span>
                       <Button size="sm" variant="outline" asChild>
                         <Link href={`/community/${c.clans?.[0]?.id || ""}`}>
@@ -133,13 +133,13 @@ export default function CommunityPage() {
                       )}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      {data.myClan.community.name} · {data.myClan._count?.members ?? 0} members ·{" "}
-                      {data.myClan._count?.subClans ?? 0} sub-clans
+                      {data.myClan.community.name} · {data.myClan._count?.members ?? 0} ممبرز ·{" "}
+                      {data.myClan._count?.subClans ?? 0} ذیلی کلانز
                     </p>
                   </div>
                 </div>
                 <Button className="bg-emerald-600 hover:bg-emerald-700" asChild>
-                  <Link href={`/community/${data.myClan.id}`}>Clan Page Kholen</Link>
+                  <Link href={`/community/${data.myClan.id}`}>کلان پیج کھولیں</Link>
                 </Button>
               </CardContent>
             </Card>

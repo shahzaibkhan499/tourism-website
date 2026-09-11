@@ -103,7 +103,8 @@ export default function CreateMemoryPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <PageHeader title="نئی یاد بنائیں" titleUrdu="نئی یاد" description="خاص لمحے محفوظ کریں" />
+      <PageHeader title="Create Memory"
+        titleUrdu="نئی یاد بنائیں" description="خاص لمحے محفوظ کریں" />
 
       <Card>
         <CardContent className="p-6">

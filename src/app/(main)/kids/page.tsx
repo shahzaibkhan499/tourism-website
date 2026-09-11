@@ -245,7 +245,7 @@ export default function KidsPage() {
             </div>
             <p className="mt-1 text-sm text-gray-600">
               Level: {currentLevel.emoji} {currentLevel.name} ({currentLevel.nameUrdu})
-              {nextLevel && <> → Agla: {nextLevel.emoji} {nextLevel.name}</>}
+              {nextLevel && <> → اگلا: {nextLevel.emoji} {nextLevel.name}</>}
             </p>
           </div>
           <div className="w-full sm:w-64">

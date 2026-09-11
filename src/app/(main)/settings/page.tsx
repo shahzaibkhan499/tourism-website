@@ -18,15 +18,16 @@ import {
   Smartphone,
 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
+import { PrivacyTab } from "@/components/settings/privacy-tab";
+import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -533,60 +534,8 @@ export default function SettingsPage() {
           </TabsContent>
 
           {/* PRIVACY TAB */}
-          <TabsContent value="privacy" className="mt-0 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Profile Visibility</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <RadioGroup defaultValue="public">
-                  <label className="flex items-center gap-2">
-                    <RadioGroupItem value="public" /> پبلک — کوئی بھی دیکھ سکتا ہے
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <RadioGroupItem value="clan" /> صرف کلان — صرف آپ کی کلان
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <RadioGroupItem value="private" /> پرائیویٹ — صرف آپ
-                  </label>
-                </RadioGroup>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">رشتہ پروفائل Visibility</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <RadioGroup defaultValue="verified">
-                  <label className="flex items-center gap-2">
-                    <RadioGroupItem value="public" /> Public
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <RadioGroupItem value="verified" /> Verified Users Only (recommended)
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <RadioGroupItem value="private" /> Private
-                  </label>
-                </RadioGroup>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="space-y-4 p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-sm font-medium">Search mein dikhein</div>
-                    <div className="text-xs text-gray-500">Dosre users aapko search kar saken</div>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-sm font-medium">Online status dikhayein</div>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="privacy" className="mt-0">
+            <PrivacyTab />
           </TabsContent>
 
           {/* NOTIFICATIONS TAB */}

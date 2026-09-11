@@ -123,7 +123,7 @@ export default function LoginForm() {
               />
             </svg>
           )}
-          Google se لاگ اِن کریں
+          گوگل سے لاگ اِن کریں
         </Button>
 
         <div className="relative my-5">

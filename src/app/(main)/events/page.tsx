@@ -68,7 +68,7 @@ export default function EventsPage() {
     <div>
       <PageHeader
         title="Events"
-        titleUrdu="تقریبات"
+        titleUrdu="ایونٹس"
         description="فیملی ایونٹس بنائیں، دیکھیں اور RSVP کریں"
         actions={
           <Button className="bg-emerald-600 hover:bg-emerald-700" asChild>

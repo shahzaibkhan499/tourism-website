@@ -22,6 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { formatDate, initials } from "@/lib/utils";
+import { PublicSections } from "@/components/profile/public-sections";
 
 interface PublicProfile {
   id: string;
@@ -40,6 +41,12 @@ interface PublicProfile {
   isOwn: boolean;
   clan: { name: string; nameUrdu: string | null } | null;
   subClan: { name: string; nameUrdu: string | null } | null;
+  sections: Record<string, Record<string, unknown> | null>;
+  occupationProfile: {
+    employmentStatus: string | null;
+    jobType: string | null;
+    details: Record<string, Record<string, unknown>> | null;
+  } | null;
 }
 
 export default function PublicProfilePage() {
@@ -100,7 +107,7 @@ export default function PublicProfilePage() {
         <Button className="mt-4" variant="outline" asChild>
           <Link href="/dashboard">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Dashboard par wapas jayen
+            ڈیش بورڈ پر واپس جائیں
           </Link>
         </Button>
       </div>
@@ -128,7 +135,7 @@ export default function PublicProfilePage() {
                   {profile.name}{" "}
                   {profile.isVerified && (
                     <Badge variant="success" className="align-middle">
-                      <ShieldCheck className="mr-0.5 h-3 w-3" /> Verified
+                      <ShieldCheck className="mr-0.5 h-3 w-3" /> تصدیق شدہ
                     </Badge>
                   )}
                 </h1>
@@ -139,7 +146,7 @@ export default function PublicProfilePage() {
                       <MapPin className="h-3.5 w-3.5" /> {profile.city}
                     </span>
                   )}
-                  <span>Member since {formatDate(profile.createdAt, "MMM yyyy")}</span>
+                  <span>ممبر از {formatDate(profile.createdAt, "MMM yyyy")}</span>
                 </div>
               </div>
             </div>
@@ -159,7 +166,7 @@ export default function PublicProfilePage() {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>منسوخ</AlertDialogCancel>
                     <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={handleReport}>
                       رپورٹ کریں
                     </AlertDialogAction>
@@ -174,7 +181,7 @@ export default function PublicProfilePage() {
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Taaruf</CardTitle>
+            <CardTitle className="text-base">تعارف</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600">{profile.bio || "کوئی تعارف نہیں ہے"}</p>
@@ -212,6 +219,12 @@ export default function PublicProfilePage() {
           </CardContent>
         </Card>
       </div>
+
+      <PublicSections
+        sections={profile.sections}
+        occupation={profile.occupationProfile}
+        isOwn={profile.isOwn}
+      />
     </div>
   );
 }

@@ -90,7 +90,8 @@ export default function CreateBusinessPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <PageHeader title="بزنس رجسٹر کریں" titleUrdu="کاروبار" description="اپنا بزنس ڈائریکٹری میں شامل کریں" />
+      <PageHeader title="Register Business"
+        titleUrdu="بزنس رجسٹر کریں" description="اپنا بزنس ڈائریکٹری میں شامل کریں" />
 
       <Card>
         <CardContent className="p-6">

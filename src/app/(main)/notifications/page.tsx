@@ -176,7 +176,7 @@ export default function NotificationsPage() {
               ))}
             </div>
           ) : items.length === 0 ? (
-            <EmptyState icon={<Bell className="h-12 w-12" />} title="کوئی اطلاع نہیں ہے 🔔" description="Naye updates yahan aayenge" />
+            <EmptyState icon={<Bell className="h-12 w-12" />} title="کوئی اطلاع نہیں ہے 🔔" description="نئی اطلاعات یہاں آئیں گی" />
           ) : (
             <>
               <Card>

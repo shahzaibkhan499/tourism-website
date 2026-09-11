@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -31,6 +31,14 @@ type FormData = z.infer<typeof formSchema>;
 export default function PostJobPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [hasBusiness, setHasBusiness] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch("/api/profile")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => setHasBusiness(Boolean(j?._count?.businesses)))
+      .catch(() => setHasBusiness(false));
+  }, []);
 
   const {
     register,
@@ -69,11 +77,47 @@ export default function PostJobPage() {
     }
   };
 
+  if (hasBusiness === false) {
+    return (
+      <div className="mx-auto max-w-2xl">
+        <PageHeader
+          title="Post a Job"
+          titleUrdu="نوکری پوسٹ کریں"
+          description="اپنے بزنس کے لیے نوکری پوسٹ کریں (بزنس پروفائل ضروری ہے)"
+        />
+        <Card className="border-amber-200 bg-amber-50/50">
+          <CardContent className="flex flex-col items-center gap-4 p-8 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+              <Building2 className="h-7 w-7" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold text-gray-900">جاب پوسٹ کرنے کے لیے بزنس پروفائل ہونا ضروری ہے</p>
+              <p className="mt-1 text-sm text-gray-600">
+                آپ کا ابھی کوئی بزنس پروفائل نہیں ہے۔ پہلے اپنا بزنس رجسٹر کریں، پھر جاب پوسٹ کر سکیں گے۔
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" asChild>
+                <Link href="/jobs">
+                  <ArrowLeft className="mr-1 h-4 w-4" />
+                  واپس جائیں
+                </Link>
+              </Button>
+              <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+                <Link href="/business/create">بزنس پروفائل بنائیں</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-2xl">
       <PageHeader
-        title="نوکری پوسٹ کریں"
-        titleUrdu="نوکری کا اشتہار"
+        title="Post a Job"
+        titleUrdu="نوکری پوسٹ کریں"
         description="اپنے بزنس کے لیے نوکری پوسٹ کریں (بزنس پروفائل ضروری ہے)"
       />
 
@@ -81,7 +125,7 @@ export default function PostJobPage() {
         <Building2 className="h-5 w-5 shrink-0" />
         جاب پوسٹ کرنے کے لیے بزنس پروفائل ہونا ضروری ہے۔ اگر نہیں ہے تو پہلے{" "}
         <Link href="/business/create" className="font-semibold underline">
-          business banayein
+          بزنس بنائیں
         </Link>
         .
       </div>
@@ -111,7 +155,7 @@ export default function PostJobPage() {
               <Textarea
                 id="requirements"
                 rows={4}
-                placeholder="Taleem, tajurba, skills..."
+                placeholder="تعلیم، تجربہ، مہارتیں..."
                 {...register("requirements")}
               />
             </div>

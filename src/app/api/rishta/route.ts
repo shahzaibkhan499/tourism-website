@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { rishtaProfileSchema, rishtaQuerySchema } from "@/lib/validators";
 import { apiError, apiSuccess, handleApiError, requireUser } from "@/lib/api";
@@ -97,6 +98,7 @@ export async function POST(req: NextRequest) {
         guardianName: d.guardianName,
         guardianRelation: d.guardianRelation,
         guardianPhone: d.guardianPhone,
+        marriageForm: (d.marriageForm ?? undefined) as Prisma.InputJsonValue | undefined,
       },
       create: {
         userId: user.id,
@@ -123,6 +125,7 @@ export async function POST(req: NextRequest) {
         guardianName: d.guardianName,
         guardianRelation: d.guardianRelation,
         guardianPhone: d.guardianPhone,
+        marriageForm: (d.marriageForm ?? undefined) as Prisma.InputJsonValue | undefined,
       },
     });
 

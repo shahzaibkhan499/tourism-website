@@ -87,7 +87,7 @@ export default function RishtaPage() {
   return (
     <div>
       <PageHeader
-        title="رشتہ"
+        title="Rishta"
         titleUrdu="رشتہ"
         description="احترام اور حفاظت کے ساتھ رشتہ تلاش کریں"
         actions={

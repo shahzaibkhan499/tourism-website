@@ -73,6 +73,7 @@ export default function JobDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const [job, setJob] = useState<JobDetail | null>(null);
+  const [hasJobProfile, setHasJobProfile] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
   const [applyOpen, setApplyOpen] = useState(false);
   const [coverLetter, setCoverLetter] = useState("");
@@ -90,6 +91,10 @@ export default function JobDetailPage() {
       })
       .catch(() => toast.error("نوکری لوڈ نہیں ہو سکی"))
       .finally(() => setLoading(false));
+    fetch("/api/profile")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => setHasJobProfile(Boolean(json?.jobProfile)))
+      .catch(() => setHasJobProfile(false));
   }, [id]);
 
   const handleApply = async () => {
@@ -207,11 +212,24 @@ export default function JobDetailPage() {
                 </div>
                 <div className="text-xs text-emerald-600">{relativeTimeEn(job.myApplication.appliedAt)}</div>
               </div>
+            ) : hasJobProfile === false ? (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-center">
+                <Briefcase className="mx-auto h-8 w-8 text-amber-600" />
+                <div className="mt-1 text-sm font-semibold text-amber-800">
+                  درخواست دینے کے لیے جاب پروفائل ضروری ہے
+                </div>
+                <div className="mt-1 text-xs text-amber-600">
+                  پہلے اپنی جاب پروفائل بنائیں، پھر اس نوکری کے لیے درخواست دے سکیں گے۔
+                </div>
+                <Button asChild size="sm" className="mt-3 bg-emerald-600 hover:bg-emerald-700">
+                  <Link href="/profile#job-profile">جاب پروفائل بنائیں</Link>
+                </Button>
+              </div>
             ) : (
               <Dialog open={applyOpen} onOpenChange={setApplyOpen}>
                 <DialogTrigger asChild>
                   <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700">
-                    Apply Now
+                    درخواست دیں
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
@@ -235,11 +253,11 @@ export default function JobDetailPage() {
                   </div>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setApplyOpen(false)}>
-                      Cancel
+                      منسوخ
                     </Button>
                     <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={handleApply} disabled={applying}>
                       {applying && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
-                      Application Bhejein
+                      درخواست بھیجیں
                     </Button>
                   </DialogFooter>
                 </DialogContent>

@@ -197,7 +197,7 @@ export default function EventForm() {
   if (loadingEvent) {
     return (
       <div className="mx-auto max-w-2xl">
-        <PageHeader title="ایونٹ میں ترمیم کریں" titleUrdu="تقریب میں تبدیلی" description="Event details load ho rahi hain..." />
+        <PageHeader title="ایونٹ میں ترمیم کریں" titleUrdu="تقریب میں تبدیلی" description="ایونٹ کی تفصیلات لوڈ ہو رہی ہیں..." />
         <Card>
           <CardContent className="space-y-5 p-6">
             <Skeleton className="h-10 w-full" />
@@ -217,8 +217,8 @@ export default function EventForm() {
   return (
     <div className="mx-auto max-w-2xl">
       <PageHeader
-        title={isEditing ? "ایونٹ میں ترمیم کریں" : "نیا ایونٹ بنائیں"}
-        titleUrdu={isEditing ? "تقریب میں تبدیلی" : "نئی تقریب"}
+        title={isEditing ? "Edit Event" : "Create Event"}
+        titleUrdu={isEditing ? "ایونٹ میں ترمیم کریں" : "نیا ایونٹ بنائیں"}
         description={
           isEditing
             ? "ایونٹ کی تفصیلات اپ ڈیٹ کر کے محفوظ کریں"

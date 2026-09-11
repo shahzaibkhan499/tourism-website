@@ -61,7 +61,7 @@ export function ContactSection() {
         <form onSubmit={handleSubmit} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="contact-name">Naam</Label>
+              <Label htmlFor="contact-name">نام</Label>
               <Input
                 id="contact-name"
                 placeholder="آپ کا نام"

@@ -26,6 +26,7 @@ import {
 import { rishtaProfileSchema } from "@/lib/validators";
 import { COMPLEXIONS, EDUCATION_LEVELS, SECTS, MARITAL_STATUSES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { MarriageFormStep } from "@/components/rishta/marriage-form-step";
 
 
 const formSchema = rishtaProfileSchema;
@@ -35,6 +36,7 @@ const STEPS = [
   { title: "Personal", titleUrdu: "ذاتی معلومات" },
   { title: "Professional", titleUrdu: "تعلیم و پیشہ" },
   { title: "Religious & Preferences", titleUrdu: "مذہب و ترجیحات" },
+  { title: "Marriage Form", titleUrdu: "تفصیلی فارم" },
   { title: "About", titleUrdu: "تعارف" },
   { title: "Guardian Mode", titleUrdu: "سرپرست" },
   { title: "Photos", titleUrdu: "تصاویر" },
@@ -91,6 +93,11 @@ export default function CreateRishtaPage() {
   };
 
   const onSubmit = async (data: FormData) => {
+    if (!(data as any).marriageForm?.oathAccepted) {
+      toast.error("حلف نامہ ضروری ہے — براہ کرم تصدیق کریں کہ معلومات درست ہیں");
+      setStep(STEPS.findIndex((st) => st.title === "Marriage Form"));
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/rishta", {
@@ -117,7 +124,7 @@ export default function CreateRishtaPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <PageHeader title="رشتہ پروفائل بنائیں" titleUrdu="رشتہ پروفائل" description="اپنے بارے میں بتائیں — 6 آسان مراحل" />
+      <PageHeader title="Create Rishta Profile" titleUrdu="رشتہ پروفائل بنائیں" description="اپنے بارے میں بتائیں — 7 آسان مراحل" />
 
       {/* Progress */}
       <div className="mb-6">
@@ -139,7 +146,7 @@ export default function CreateRishtaPage() {
             <div className={cn("space-y-4", step !== 0 && "hidden")}>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label>Umar (saal) *</Label>
+                  <Label>عمر (سال) *</Label>
                   <Input type="number" min={18} max={80} {...register("age", { valueAsNumber: true })} />
                   {errors.age && <p className="text-xs text-red-600">{errors.age.message}</p>}
                 </div>
@@ -258,8 +265,8 @@ export default function CreateRishtaPage() {
               </div>
             </div>
 
-            {/* Step 4: About */}
-            <div className={cn("space-y-4", step !== 3 && "hidden")}>
+            {/* Step 5: About */}
+            <div className={cn("space-y-4", step !== 4 && "hidden")}>
               <div className="space-y-1.5">
                 <Label>About Me</Label>
                 <Textarea rows={4} placeholder="اپنے بارے میں لکھیں — شخصیت، مشاغل، طرزِ زندگی..." {...register("about")} />
@@ -274,8 +281,12 @@ export default function CreateRishtaPage() {
               </div>
             </div>
 
-            {/* Step 5: Guardian Mode */}
-            <div className={cn("space-y-4", step !== 4 && "hidden")}>
+            {/* Step 6: Guardian Mode */}
+            {/* Step 4: Marriage Form (Khawajgan) */}
+            <div className={cn("space-y-4", step !== 3 && "hidden")}>
+              <MarriageFormStep register={register} watch={watch} setValue={setValue} errors={errors} />
+            </div>
+            <div className={cn("space-y-4", step !== 5 && "hidden")}>
               <div className="flex items-center justify-between rounded-lg border p-4">
                 <div>
                   <div className="text-sm font-medium">Guardian Mode</div>
@@ -303,8 +314,8 @@ export default function CreateRishtaPage() {
               )}
             </div>
 
-            {/* Step 6: Photos */}
-            <div className={cn("space-y-4", step !== 5 && "hidden")}>
+            {/* Step 7: Photos */}
+            <div className={cn("space-y-4", step !== 6 && "hidden")}>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {photos.map((photo, i) => (
                   <div key={i} className="relative">
@@ -345,18 +356,14 @@ export default function CreateRishtaPage() {
             <div className="mt-6 flex gap-3 border-t pt-5">
               {step > 0 ? (
                 <Button type="button" variant="outline" onClick={prev}>
-                  <ArrowLeft className="mr-1 h-4 w-4" />
-                  Pichla
-                </Button>
+                  <ArrowLeft className="mr-1 h-4 w-4" />پچھلا</Button>
               ) : (
                 <Button type="button" variant="outline" asChild>
-                  <Link href="/rishta">Cancel</Link>
+                  <Link href="/rishta">منسوخ</Link>
                 </Button>
               )}
               {step < STEPS.length - 1 ? (
-                <Button type="button" className="flex-1 bg-pink-600 hover:bg-pink-700" onClick={next}>
-                  Agla
-                  <ArrowRight className="ml-1 h-4 w-4" />
+                <Button type="button" className="flex-1 bg-pink-600 hover:bg-pink-700" onClick={next}>اگلا<ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               ) : (
                 <Button type="submit" className="flex-1 bg-pink-600 hover:bg-pink-700" disabled={loading || uploading}>

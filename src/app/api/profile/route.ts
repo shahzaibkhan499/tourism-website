@@ -26,6 +26,16 @@ export async function GET() {
         bloodGroup: true,
         occupation: true,
         education: true,
+        nameTitle: true,
+        nickname: true,
+        displayName: true,
+        cast: true,
+        origin: true,
+        maritalStatus: true,
+        cnic: true,
+        birthPlace: true,
+        extendedProfile: true,
+        privacy: true,
         isVerified: true,
         role: true,
         twoFactorEnabled: true,
@@ -35,6 +45,7 @@ export async function GET() {
         updatedAt: true,
         clan: { select: { id: true, name: true, nameUrdu: true } },
         subClan: { select: { id: true, name: true, nameUrdu: true } },
+        occupationProfile: true,
         _count: {
           select: { events: true, memories: true, media: true, businesses: true },
         },
@@ -90,6 +101,34 @@ export async function PATCH(req: NextRequest) {
     if (d.education !== undefined) data.education = d.education;
     if (d.clanId !== undefined) data.clanId = d.clanId;
     if (d.subClanId !== undefined) data.subClanId = d.subClanId;
+    if (d.nameTitle !== undefined) data.nameTitle = d.nameTitle;
+    if (d.nickname !== undefined) data.nickname = d.nickname;
+    if (d.displayName !== undefined) data.displayName = d.displayName;
+    if (d.cast !== undefined) data.cast = d.cast;
+    if (d.origin !== undefined) data.origin = d.origin;
+    if (d.maritalStatus !== undefined) data.maritalStatus = d.maritalStatus;
+    if (d.cnic !== undefined) data.cnic = d.cnic;
+    if (d.birthPlace !== undefined) data.birthPlace = d.birthPlace;
+    if (d.extendedProfile !== undefined) {
+      const current = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { extendedProfile: true },
+      });
+      data.extendedProfile = {
+        ...((current?.extendedProfile as Record<string, unknown>) ?? {}),
+        ...(d.extendedProfile as Record<string, unknown>),
+      };
+    }
+    if (d.privacy !== undefined) {
+      const currentP = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { privacy: true },
+      });
+      data.privacy = {
+        ...((currentP?.privacy as Record<string, unknown>) ?? {}),
+        ...(d.privacy as Record<string, unknown>),
+      };
+    }
 
     // Handle image separately (allows null)
     if ("image" in body) data.image = body.image ?? null;
@@ -113,6 +152,16 @@ export async function PATCH(req: NextRequest) {
         bloodGroup: true,
         occupation: true,
         education: true,
+        nameTitle: true,
+        nickname: true,
+        displayName: true,
+        cast: true,
+        origin: true,
+        maritalStatus: true,
+        cnic: true,
+        birthPlace: true,
+        extendedProfile: true,
+        privacy: true,
       },
     });
 

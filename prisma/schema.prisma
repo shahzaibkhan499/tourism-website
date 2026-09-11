@@ -25,6 +25,16 @@ model User {
   bloodGroup       String?
   occupation       String?
   education        String?
+  nameTitle        String?
+  nickname         String?
+  displayName      String?
+  cast             String?
+  origin           String?
+  maritalStatus    String?   @default("SINGLE")
+  cnic             String?
+  birthPlace       String?
+  extendedProfile  Json?
+  privacy          Json?
   isVerified       Boolean   @default(false)
   role             Role      @default(USER)
   isActive         Boolean   @default(true)
@@ -46,6 +56,7 @@ model User {
   clan            Clan?          @relation(fields: [clanId], references: [id])
   subClan         SubClan?       @relation(fields: [subClanId], references: [id])
   jobProfile      JobProfile?
+  occupationProfile OccupationProfile?
   businesses      Business[]
   rishtaProfile   RishtaProfile?
   jobApplications JobApplication[]
@@ -370,6 +381,20 @@ model JobApplication {
   @@map("job_applications")
 }
 
+model OccupationProfile {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  employmentStatus String?  @default("EMPLOYED")
+  jobType          String?  @default("FULL_TIME")
+  details          Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("occupation_profiles")
+}
+
 enum JobType {
   FULL_TIME
   PART_TIME
@@ -463,6 +488,7 @@ model RishtaProfile {
   guardianPhone     String?
   isVerified        Boolean  @default(false)
   isPremium         Boolean  @default(false)
+  marriageForm      Json?
   viewsCount        Int      @default(0)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt

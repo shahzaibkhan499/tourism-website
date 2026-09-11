@@ -68,6 +68,31 @@ export const profileSchema = z.object({
   education: z.string().optional().nullable(),
   clanId: z.string().optional().nullable(),
   subClanId: z.string().optional().nullable(),
+  nameTitle: z.string().optional().nullable(),
+  nickname: z.string().optional().nullable(),
+  displayName: z.string().optional().nullable(),
+  cast: z.string().optional().nullable(),
+  origin: z.string().optional().nullable(),
+  maritalStatus: z.string().optional().nullable(),
+  cnic: z.string().optional().nullable(),
+  birthPlace: z.string().optional().nullable(),
+  extendedProfile: z.record(z.string(), z.any()).optional(),
+  privacy: z.record(z.string(), z.any()).optional(),
+});
+
+// ---------- Occupation ----------
+
+export const occupationStatusSchema = z.object({
+  employmentStatus: z.enum(["EMPLOYED", "UNEMPLOYED", "STUDENT", "RETIRED", "HOMEMAKER"]).optional(),
+  jobType: z.enum(["FULL_TIME", "PART_TIME", "CONTRACT", "FREELANCE", "BUSINESS_OWNER"]).optional(),
+});
+
+export const occupationSectionSchema = z.object({
+  category: z.enum(["corporate", "business", "government", "medical", "specialized"]),
+  data: z
+    .record(z.string(), z.union([z.string(), z.number(), z.boolean()]).nullish())
+    .optional()
+    .default({}),
 });
 
 // ---------- Events ----------
@@ -163,6 +188,7 @@ export const rishtaProfileSchema = z.object({
   guardianName: z.string().optional().nullable(),
   guardianRelation: z.string().optional().nullable(),
   guardianPhone: z.string().optional().nullable(),
+  marriageForm: z.record(z.string(), z.any()).optional().nullable(),
 });
 
 export const rishtaRequestSchema = z.object({

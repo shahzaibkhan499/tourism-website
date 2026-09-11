@@ -31,6 +31,19 @@ import { formatDate, initials } from "@/lib/utils";
 import { PAKISTANI_CITIES, PAKISTANI_PROVINCES, BLOOD_GROUPS, EDUCATION_LEVELS } from "@/lib/constants";
 import type { UserBasic } from "@/types";
 import { JobProfileSection } from "@/components/profile/job-profile-section";
+import { BusinessProfileSection } from "@/components/profile/business-profile-section";
+import { GeneralSection } from "@/components/profile/sections/general-section";
+import { BirthSection } from "@/components/profile/sections/birth-section";
+import { FamilySection } from "@/components/profile/sections/family-section";
+import { RelationSection } from "@/components/profile/sections/relation-section";
+import { DeathSection } from "@/components/profile/sections/death-section";
+import { ContactSection } from "@/components/profile/sections/contact-section";
+import { EducationSection } from "@/components/profile/sections/education-section";
+import { ExperienceSection } from "@/components/profile/sections/experience-section";
+import { FavoritesSection } from "@/components/profile/sections/favorites-section";
+import { PersonalSection } from "@/components/profile/sections/personal-section";
+import { AlertsSection } from "@/components/profile/sections/alerts-section";
+import { OccupationCard } from "@/components/profile/sections/occupation-card";
 
 interface ProfileData extends UserBasic {
   _count: { events: number; memories: number; media: number; businesses: number };
@@ -152,7 +165,7 @@ export default function ProfilePage() {
   }
 
   if (!profile) {
-    return <p className="py-16 text-center text-gray-500">Profile nahi mili</p>;
+    return <p className="py-16 text-center text-gray-500">پروفائل نہیں ملی</p>;
   }
 
   return (
@@ -165,17 +178,17 @@ export default function ProfilePage() {
             <DialogTrigger asChild>
               <Button>
                 <Pencil className="mr-1 h-4 w-4" />
-                Edit Profile
+                پروفائل میں ترمیم
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-xl">
               <DialogHeader>
-                <DialogTitle>Profile ترمیم کریں</DialogTitle>
+                <DialogTitle>پروفائل میں ترمیم کریں</DialogTitle>
                 <DialogDescription>اپنی معلومات اپ ڈیٹ کریں</DialogDescription>
               </DialogHeader>
               <div className="grid max-h-[60vh] gap-4 overflow-y-auto p-1 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label>Naam</Label>
+                  <Label>نام</Label>
                   <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
                 </div>
                 <div className="space-y-1.5">
@@ -434,6 +447,26 @@ export default function ProfilePage() {
       </div>
 
       <JobProfileSection />
+      <BusinessProfileSection />
+
+      <div className="mt-8">
+        <h2 className="mb-1 text-lg font-semibold">Profile Sections</h2>
+        <p dir="rtl" className="mb-4 font-urdu text-sm text-emerald-700">پروفائل سیکشنز — جس پر کلک کریں، اس کا فارم کھل جائے گا</p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <GeneralSection profile={profile} onSaved={loadProfile} />
+          <BirthSection profile={profile} onSaved={loadProfile} />
+          <FamilySection profile={profile} onSaved={loadProfile} />
+          <RelationSection profile={profile} onSaved={loadProfile} />
+          <DeathSection profile={profile} onSaved={loadProfile} />
+          <OccupationCard profile={profile} />
+          <ContactSection profile={profile} onSaved={loadProfile} />
+          <EducationSection profile={profile} onSaved={loadProfile} />
+          <ExperienceSection profile={profile} onSaved={loadProfile} />
+          <FavoritesSection profile={profile} onSaved={loadProfile} />
+          <PersonalSection profile={profile} onSaved={loadProfile} />
+          <AlertsSection profile={profile} onSaved={loadProfile} />
+        </div>
+      </div>
     </div>
   );
 }

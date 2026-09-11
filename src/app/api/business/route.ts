@@ -6,7 +6,7 @@ import { sanitizeInput } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   try {
-    await requireUser();
+    const user = await requireUser();
     const { searchParams } = new URL(req.url);
     const parsed = businessQuerySchema.safeParse(Object.fromEntries(searchParams.entries()));
     if (!parsed.success) {
@@ -14,7 +14,8 @@ export async function GET(req: NextRequest) {
     }
     const { q, industry, city, verified, familyOwned, featured, cursor, limit } = parsed.data;
 
-    const where: any = { isActive: true };
+    const mine = searchParams.get("mine") === "true";
+    const where: any = { isActive: true, ...(mine ? { userId: user.id } : {}) };
     if (q) {
       where.OR = [
         { name: { contains: q, mode: "insensitive" } },

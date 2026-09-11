@@ -92,7 +92,7 @@ export function JoinRequest({ clanId, clanName, subClans }: JoinRequestProps) {
                     {s.name}
                   </SelectItem>
                 ))}
-                <SelectItem value="other">Other (naam likhein)</SelectItem>
+                <SelectItem value="other">Other (نام لکھیں)</SelectItem>
               </SelectContent>
             </Select>
           </div>

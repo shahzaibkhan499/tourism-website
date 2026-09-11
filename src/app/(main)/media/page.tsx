@@ -136,7 +136,7 @@ export default function MediaPage() {
     <div>
       <PageHeader
         title="Media Library"
-        titleUrdu="میڈیا"
+        titleUrdu="میڈیا لائبریری"
         description="آپ کی تمام فائلیں ایک جگہ"
         actions={
           <Button

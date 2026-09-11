@@ -32,19 +32,20 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/events", label: "Events", icon: CalendarDays },
-  { href: "/community", label: "Community", icon: Users },
-  { href: "/rishta", label: "رشتہ", icon: Heart },
-  { href: "/jobs", label: "Jobs", icon: Briefcase },
-  { href: "/business", label: "Business", icon: Building2 },
-  { href: "/memories", label: "Memories", icon: BookOpen },
-  { href: "/media", label: "Media", icon: Camera },
-  { href: "/profile", label: "Profile", icon: User },
-  { href: "/settings", label: "Settings", icon: Settings },
-  { href: "/notifications", label: "Notifications", icon: Bell },
-  { href: "/buzurg", label: "Buzurg", icon: Accessibility },
-  { href: "/kids", label: "Kids", icon: Baby },
+  { href: "/dashboard", label: "Dashboard", urdu: "ڈیش بورڈ", icon: LayoutDashboard },
+  { href: "/events", label: "Events", urdu: "ایونٹس", icon: CalendarDays },
+  { href: "/community", label: "Community", urdu: "برادری", icon: Users },
+  { href: "/rishta", label: "Rishta", urdu: "رشتہ", icon: Heart },
+  { href: "/jobs", label: "Jobs", urdu: "نوکریاں", icon: Briefcase },
+  { href: "/business", label: "Business", urdu: "کاروبار", icon: Building2 },
+  { href: "/occupation", label: "Occupation", urdu: "روزگار", icon: Briefcase },
+  { href: "/memories", label: "Memories", urdu: "یادیں", icon: BookOpen },
+  { href: "/media", label: "Media", urdu: "میڈیا", icon: Camera },
+  { href: "/profile", label: "Profile", urdu: "پروفائل", icon: User },
+  { href: "/settings", label: "Settings", urdu: "ترتیبات", icon: Settings },
+  { href: "/notifications", label: "Notifications", urdu: "اطلاعات", icon: Bell },
+  { href: "/buzurg", label: "Buzurg", urdu: "بزرگ", icon: Accessibility },
+  { href: "/kids", label: "Kids", urdu: "بچے", icon: Baby },
 ];
 
 export function Sidebar({ isAdmin, mobile, onClose }: SidebarProps) {
@@ -54,7 +55,7 @@ export function Sidebar({ isAdmin, mobile, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "flex h-full w-64 flex-col border-r bg-white",
+        "flex h-full w-72 flex-col border-r bg-white",
         mobile ? "" : "hidden lg:flex"
       )}
     >
@@ -90,8 +91,11 @@ export function Sidebar({ isAdmin, mobile, onClose }: SidebarProps) {
                     : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 )}
               >
-                <item.icon className={cn("h-[18px] w-[18px]", active ? "text-emerald-600" : "text-gray-400")} />
-                {item.label}
+                <item.icon className={cn("h-[18px] w-[18px] shrink-0", active ? "text-emerald-600" : "text-gray-400")} />
+                <span className="flex flex-1 items-baseline justify-between gap-2">
+                  <span>{item.label}</span>
+                  <span dir="rtl" className="font-urdu text-[11px] text-gray-400">{item.urdu}</span>
+                </span>
                 {item.href === "/notifications" && unreadCount > 0 && (
                   <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
                     {unreadCount > 99 ? "99+" : unreadCount}
