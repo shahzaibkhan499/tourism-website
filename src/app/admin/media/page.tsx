@@ -150,7 +150,7 @@ export default function AdminMediaPage() {
         </div>
       ) : data?.media.length === 0 ? (
         <Card>
-          <CardContent className="py-12 text-center text-sm text-gray-500">Koi media nahi hai</CardContent>
+          <CardContent className="py-12 text-center text-sm text-gray-500">کوئی میڈیا نہیں ہے</CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
@@ -184,9 +184,9 @@ export default function AdminMediaPage() {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>File delete karein?</AlertDialogTitle>
+                        <AlertDialogTitle>فائل ڈیلیٹ کریں؟</AlertDialogTitle>
                         <AlertDialogDescription>
-                          {m.user?.name || "User"} ki file ({formatDate(m.createdAt)}) delete ho jayegi.
+                          {m.user?.name || "User"} کی فائل ({formatDate(m.createdAt)}) ڈیلیٹ ہو جائے گی۔
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>

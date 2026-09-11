@@ -197,7 +197,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             {data.recentReports.length === 0 ? (
-              <p className="py-6 text-center text-sm text-gray-500">Koi pending report nahi hai 🎉</p>
+              <p className="py-6 text-center text-sm text-gray-500">کوئی زیر التواء رپورٹ نہیں ہے 🎉</p>
             ) : (
               <div className="space-y-2">
                 {data.recentReports.map((r) => (

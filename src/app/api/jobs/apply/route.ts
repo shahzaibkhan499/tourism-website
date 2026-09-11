@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
           userId: business.userId,
           type: "job_application",
           title: "Nayi job application!",
-          message: `${user.name || "Kisi"} ne "${job.title}" ke liye apply kiya hai`,
+          message: `${user.name || "کسی"} نے "${job.title}" کے لیے درخواست دی ہے`,
           link: `/jobs/${job.id}`,
         },
       });

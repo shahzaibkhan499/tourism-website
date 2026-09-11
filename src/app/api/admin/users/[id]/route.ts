@@ -81,8 +81,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           data: {
             userId: id,
             type: "system",
-            title: "Account ban",
-            message: `آپ کا اکاؤنٹ بند کر دیا گیا ہے. Wajah: ${reason || "community guidelines ki khilaf warzi"}`,
+            title: "اکاؤنٹ بند کر دیا گیا",
+            message: `آپ کا اکاؤنٹ بند کر دیا گیا ہے۔ وجہ: ${reason || "کمیونٹی ہدایات کی خلاف ورزی"}`,
           },
         });
         break;
@@ -93,7 +93,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         });
         break;
       case "delete":
-        await prisma.user.delete({ where: { id } });
+        await deleteUserCascade(id);
         break;
       default:
         return apiError(400, "غلط کارروائی");
@@ -101,10 +101,54 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     await auditLog(admin.id, `ADMIN_${action.toUpperCase()}_USER`, "User", id, { email: target.email, reason }, getIp(req.headers));
 
-    return apiSuccess({ message: `User par action "${action}" kamyab raha` });
+    return apiSuccess({ message: `صارف پر کارروائی "${action}" کامیاب رہی` });
   } catch (error) {
     return handleApiError(error);
   }
+}
+
+// User rows are referenced by many tables without cascade (schema is frozen),
+// so a hard delete must clean up every reference inside one transaction.
+async function deleteUserCascade(id: string) {
+  await prisma.$transaction(async (tx) => {
+    // Detach audit history (keep the log, drop the FK reference)
+    await tx.auditLog.updateMany({ where: { adminId: id }, data: { adminId: null } });
+
+    // Reports made by or against this user
+    await tx.report.deleteMany({ where: { OR: [{ reporterId: id }, { reportedId: id }] } });
+
+    // Events created by this user (cascades their RSVPs)
+    await tx.event.deleteMany({ where: { creatorId: id } });
+    // RSVPs this user left on other people's events
+    await tx.eventRSVP.deleteMany({ where: { userId: id } });
+
+    // Memories (cascades attached media) and remaining uploads
+    await tx.memory.deleteMany({ where: { userId: id } });
+    await tx.media.deleteMany({ where: { userId: id } });
+
+    // Job profile + applications (both directions)
+    const jobProfile = await tx.jobProfile.findUnique({ where: { userId: id } });
+    if (jobProfile) {
+      await tx.jobApplication.deleteMany({ where: { profileId: jobProfile.id } });
+    }
+    await tx.jobApplication.deleteMany({ where: { applicantId: id } });
+    await tx.jobProfile.deleteMany({ where: { userId: id } });
+
+    // Businesses owned by this user (cascades their reviews)
+    await tx.business.deleteMany({ where: { userId: id } });
+
+    // Rishta profile + sent/received requests
+    const rishtaProfile = await tx.rishtaProfile.findUnique({ where: { userId: id } });
+    if (rishtaProfile) {
+      await tx.rishtaRequest.deleteMany({
+        where: { OR: [{ senderId: rishtaProfile.id }, { receiverId: rishtaProfile.id }] },
+      });
+    }
+    await tx.rishtaProfile.deleteMany({ where: { userId: id } });
+
+    // Finally the user row (sessions/accounts/notifications cascade)
+    await tx.user.delete({ where: { id } });
+  });
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
@@ -113,7 +157,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     const { id } = params;
     if (id === admin.id) return apiError(400, "آپ خود کو ڈیلیٹ نہیں کر سکتے");
 
-    await prisma.user.delete({ where: { id } });
+    await deleteUserCascade(id);
     await auditLog(admin.id, "ADMIN_DELETE_USER", "User", id, {}, getIp(req.headers));
     return apiSuccess({ message: "صارف ڈیلیٹ ہو گیا" });
   } catch (error) {

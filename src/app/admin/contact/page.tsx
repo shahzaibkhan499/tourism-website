@@ -115,7 +115,7 @@ export default function AdminContactPage() {
         <Card>
           <CardContent className="py-12 text-center text-sm text-gray-500">
             <Mail className="mx-auto mb-2 h-10 w-10 text-gray-300" />
-            Koi contact message nahi hai
+            کوئی رابطہ پیغام نہیں ہے
           </CardContent>
         </Card>
       ) : (
@@ -145,7 +145,7 @@ export default function AdminContactPage() {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Message delete karein?</AlertDialogTitle>
+                        <AlertDialogTitle>پیغام ڈیلیٹ کریں؟</AlertDialogTitle>
                         <AlertDialogDescription>یہ کارروائی واپس نہیں ہو سکتی۔</AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -179,7 +179,7 @@ export default function AdminContactPage() {
                   href={`mailto:${viewMessage.email}?subject=Re: ${encodeURIComponent(viewMessage.subject)}`}
                   className="inline-flex h-9 items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
                 >
-                  <Mail className="h-4 w-4" /> Reply Karein
+                  <Mail className="h-4 w-4" /> جواب دیں
                 </a>
                 <Button
                   variant="outline"

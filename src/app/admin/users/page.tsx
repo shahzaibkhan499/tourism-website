@@ -405,7 +405,7 @@ export default function AdminUsersPage() {
       <AlertDialog open={Boolean(banTarget)} onOpenChange={(o) => !o && setBanTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>User ban karein: {banTarget?.name}</AlertDialogTitle>
+            <AlertDialogTitle>صارف کو بند کریں: {banTarget?.name}</AlertDialogTitle>
             <AlertDialogDescription>Ban hone par user login nahi kar sakega.</AlertDialogDescription>
           </AlertDialogHeader>
           <Textarea
@@ -420,7 +420,7 @@ export default function AdminUsersPage() {
               className="bg-red-600 hover:bg-red-700"
               onClick={() => banTarget && performAction(banTarget.id, "ban", { reason: banReason })}
             >
-              Ban Karein
+              بند کریں
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -430,10 +430,10 @@ export default function AdminUsersPage() {
       <AlertDialog open={Boolean(deleteTarget)} onOpenChange={(o) => !o && setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>User permanently delete karein?</AlertDialogTitle>
+            <AlertDialogTitle>صارف کو مستقل طور پر ڈیلیٹ کریں؟</AlertDialogTitle>
             <AlertDialogDescription>
-              <strong>{deleteTarget?.name}</strong> ({deleteTarget?.email}) ka sara data delete ho jayega.
-              Confirm karne ke liye <strong>DELETE</strong> type karein.
+              <strong>{deleteTarget?.name}</strong> ({deleteTarget?.email}) کا سارا ڈیٹا ڈیلیٹ ہو جائے گا۔
+              تصدیق کے لیے <strong>DELETE</strong> لکھیں۔
             </AlertDialogDescription>
           </AlertDialogHeader>
           <Input
@@ -448,7 +448,7 @@ export default function AdminUsersPage() {
               disabled={deleteConfirm !== "DELETE"}
               onClick={() => deleteTarget && performAction(deleteTarget.id, "delete")}
             >
-              Delete Karein
+              ڈیلیٹ کریں
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

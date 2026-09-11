@@ -205,9 +205,9 @@ export default function AdminEventsPage() {
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle>Event delete karein?</AlertDialogTitle>
+                                  <AlertDialogTitle>ایونٹ ڈیلیٹ کریں؟</AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    &quot;{e.title}&quot; aur is ke sab RSVPs delete ho jayenge.
+                                    &quot;{e.title}&quot; اور اس کے تمام RSVPs ڈیلیٹ ہو جائیں گے۔
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>

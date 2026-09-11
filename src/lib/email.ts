@@ -67,11 +67,11 @@ export async function sendWelcomeEmail(to: string, name: string) {
         ${APP_NAME} par account banane ka shukriya. Ab aap apne khandaan ko digital bana sakte hain:
       </p>
       <ul style="color: #334155; line-height: 2;">
-        <li>📅 Family events banayein aur manage karein</li>
+        <li>📅 فیملی ایونٹس بنائیں اور ان کا انتظام کریں</li>
         <li>👥 Apni community aur clan se judein</li>
         <li>💚 Rishta profiles dekhein</li>
-        <li>💼 Jobs dhoondein ya post karein</li>
-        <li>📸 Memories aur tasveerein mehfooz karein</li>
+        <li>💼 جابز تلاش کریں یا پوسٹ کریں</li>
+        <li>📸 یادیں اور تصویریں محفوظ کریں</li>
       </ul>
       <a href="${APP_URL}/dashboard" style="display: inline-block; background: #059669; color: #ffffff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">Dashboard Kholen</a>
     `),
@@ -85,11 +85,11 @@ export async function sendResetPasswordEmail(to: string, token: string) {
     html: emailTemplate(`
       <h2 style="color: #0f172a;">Password reset ki request</h2>
       <p style="color: #334155; line-height: 1.7;">
-        Aapne password reset karne ki request ki hai. Neeche button par click karein:
+        آپ نے پاس ورڈ ری سیٹ کرنے کی درخواست کی ہے۔ نیچے بٹن پر کلک کریں:
       </p>
-      <a href="${APP_URL}/reset-password?token=${token}" style="display: inline-block; background: #059669; color: #ffffff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 16px 0;">Password Reset Karein</a>
+      <a href="${APP_URL}/reset-password?token=${token}" style="display: inline-block; background: #059669; color: #ffffff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 16px 0;">پاس ورڈ ری سیٹ کریں</a>
       <p style="color: #64748b; font-size: 13px;">
-        Agar aapne yeh request nahi ki thi to is email ko ignore kar dein. Yeh link 1 ghante mein expire ho jayega.
+        اگر آپ نے یہ درخواست نہیں کی تھی تو اس ای میل کو نظر انداز کر دیں۔ یہ لنک 1 گھنٹے میں ختم ہو جائے گا۔
       </p>
     `),
   });

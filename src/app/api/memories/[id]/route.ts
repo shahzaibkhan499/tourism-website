@@ -67,7 +67,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     if (memory.userId !== user.id && user.role !== "ADMIN") throw new Error("FORBIDDEN");
 
     await prisma.memory.delete({ where: { id } });
-    return apiSuccess({ message: "Memory delete ho gayi" });
+    return apiSuccess({ message: "میموری ڈیلیٹ ہو گئی" });
   } catch (error) {
     return handleApiError(error);
   }

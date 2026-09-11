@@ -200,7 +200,7 @@ export default function AdminClansPage() {
       });
       const data = await res.json();
       if (!res.ok) return toast.error(data.error || "کارروائی نہیں ہو سکی");
-      toast.success(`Request ${action === "APPROVE" ? "approve" : "reject"} ho gayi`);
+      toast.success(`Request ${action === "APPROVE" ? "منظور" : "مسترد"} ہو گئی`);
       fetchData();
     } catch {
       toast.error("Network error");
@@ -390,7 +390,7 @@ export default function AdminClansPage() {
               {requests.length === 0 ? (
                 <p className="py-12 text-center text-sm text-gray-500">
                   <Users className="mx-auto mb-2 h-10 w-10 text-gray-300" />
-                  Koi join request nahi hai
+                  کوئی جوائن درخواست نہیں ہے
                 </p>
               ) : (
                 <Table>
@@ -449,9 +449,9 @@ export default function AdminClansPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Naya {createEntity === "community" ? "Community" : createEntity === "clan" ? "Clan" : "Sub-Clan"} بنائیں
+              نئی {createEntity === "community" ? "کمیونٹی" : createEntity === "clan" ? "کلان" : "ذیلی کلان"} بنائیں
             </DialogTitle>
-            <DialogDescription>Details bharein aur save karein</DialogDescription>
+            <DialogDescription>تفصیلات بھریں اور محفوظ کریں</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-1.5">
@@ -513,7 +513,7 @@ export default function AdminClansPage() {
             </Button>
             <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={handleCreate} disabled={saving}>
               {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
-              Create Karein
+              بنائیں
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -523,7 +523,7 @@ export default function AdminClansPage() {
       <AlertDialog open={Boolean(deleteItem)} onOpenChange={(o) => !o && setDeleteItem(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete karein: {deleteItem?.name}?</AlertDialogTitle>
+            <AlertDialogTitle>ڈیلیٹ کریں: {deleteItem?.name}?</AlertDialogTitle>
             <AlertDialogDescription>
               {deleteItem?.entity === "community"
                 ? "کمیونٹی ڈیلیٹ کرنے سے پہلے اس کے کلانز ڈیلیٹ کرنے ہوں گے۔"

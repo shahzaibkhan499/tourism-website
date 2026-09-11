@@ -15,7 +15,7 @@ export function HowItWorks() {
     <section id="how-it-works" className="bg-gradient-to-b from-emerald-50 to-green-50/50 py-20">
       <div className="container">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Shuru Karna Kitna Aasan Hai?</h2>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">شروع کرنا کتنا آسان ہے؟</h2>
           <p className="mt-3 text-gray-600">Char simple steps — bas!</p>
         </div>
         <div className="relative mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">

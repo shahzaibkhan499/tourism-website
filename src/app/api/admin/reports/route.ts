@@ -60,8 +60,8 @@ export async function PATCH(req: NextRequest) {
           data: {
             userId: report.reporterId,
             type: "system",
-            title: "Report resolve ho gayi",
-            message: `Aapki report ka review ho gaya hai. ${adminNote || ""}`.trim(),
+            title: "رپورٹ حل ہو گئی",
+            message: `آپ کی رپورٹ کا جائزہ لیا جا چکا ہے۔ ${adminNote || ""}`.trim(),
           },
         });
         break;
@@ -75,7 +75,7 @@ export async function PATCH(req: NextRequest) {
             userId: report.reportedId,
             type: "system",
             title: "Warning!",
-            message: `Aapke khilaf report aayi hai. ${adminNote || "بار بار ایسی شکایت پر اکاؤنٹ بند ہو سکتا ہے۔"}`.trim(),
+            message: `آپ کے خلاف رپورٹ آئی ہے۔ ${adminNote || "بار بار ایسی شکایت پر اکاؤنٹ بند ہو سکتا ہے۔"}`.trim(),
           },
         });
         break;

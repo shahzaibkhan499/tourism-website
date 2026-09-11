@@ -277,7 +277,7 @@ export default function AdminReportsPage() {
                 <div className="text-xs font-semibold uppercase text-gray-400">Reported User</div>
                 <p className="mt-1 font-medium">{viewReport.reported?.name}</p>
                 <p className="text-gray-500">{viewReport.reported?.email}</p>
-                {viewReport.reported?.isBanned && <Badge variant="destructive" className="mt-1">Pehle se banned</Badge>}
+                {viewReport.reported?.isBanned && <Badge variant="destructive" className="mt-1">پہلے سے بند</Badge>}
               </div>
               <div>
                 <div className="text-xs font-semibold uppercase text-gray-400">Reason</div>

@@ -48,7 +48,7 @@ export function Footer() {
             </span>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-gray-400">
-            Pakistan ka pehla complete digital family platform. Apne khandaan ko jodein, yaadein mehfooz karein, aur
+            پاکستان کا پہلا مکمل ڈیجیٹل فیملی پلیٹ فارم۔ اپنے خاندان کو جوڑیں، یادیں محفوظ کریں، اور
             apni community ke saath barhein.
           </p>
         </div>

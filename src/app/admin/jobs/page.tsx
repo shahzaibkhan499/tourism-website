@@ -202,9 +202,9 @@ export default function AdminJobsPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Job delete karein?</AlertDialogTitle>
+                                <AlertDialogTitle>جاب ڈیلیٹ کریں؟</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  &quot;{j.title}&quot; aur is ki applications delete ho jayengi.
+                                  &quot;{j.title}&quot; اور اس کی درخواستیں ڈیلیٹ ہو جائیں گی۔
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>

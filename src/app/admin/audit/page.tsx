@@ -111,7 +111,7 @@ export default function AdminAuditPage() {
           ) : logs.length === 0 ? (
             <div className="py-12 text-center text-sm text-gray-500">
               <ScrollText className="mx-auto mb-2 h-10 w-10 text-gray-300" />
-              Koi audit entry nahi hai
+              کوئی آڈٹ اندراج نہیں ہے
             </div>
           ) : (
             <Table>

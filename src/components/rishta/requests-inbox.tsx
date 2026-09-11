@@ -75,7 +75,7 @@ export function RequestsInbox() {
         toast.error(json.error || "کارروائی نہیں ہو سکی");
         return;
       }
-      toast.success(action === "ACCEPTED" ? "Request qabool ho gayi! 🎉" : "Request reject kar di gayi");
+      toast.success(action === "ACCEPTED" ? "درخواست قبول ہو گئی! 🎉" : "درخواست مسترد کر دی گئی");
       setReceived((prev) => prev.map((r) => (r.id === requestId ? { ...r, status: action } : r)));
     } catch {
       toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
@@ -174,7 +174,7 @@ export function RequestsInbox() {
         </h2>
         {sent.length === 0 ? (
           <p className="rounded-xl border border-dashed p-6 text-center text-sm text-gray-500">
-            Aapne abhi tak koi rishta request nahi bheji
+            آپ نے ابھی تک کوئی رشتہ کی درخواست نہیں بھیجی
           </p>
         ) : (
           <div className="space-y-3">

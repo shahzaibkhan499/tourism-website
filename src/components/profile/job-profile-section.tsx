@@ -152,7 +152,7 @@ export function JobProfileSection() {
         toast.error(json.error || "جاب پروفائل محفوظ نہیں ہوئی");
         return;
       }
-      toast.success("Job profile save ho gayi! 🎉");
+      toast.success("جاب پروفائل محفوظ ہو گئی! 🎉");
       setOpen(false);
       setData(json as JobProfileData);
     } catch {
@@ -183,7 +183,7 @@ export function JobProfileSection() {
               <Briefcase className="h-4 w-4 text-amber-600" />
               Job Profile
             </CardTitle>
-            <CardDescription>Jobs ke liye aapki professional profile</CardDescription>
+            <CardDescription>جابز کے لیے آپ کی پیشہ ورانہ پروفائل</CardDescription>
           </div>
           <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
             <Pencil className="mr-1 h-3.5 w-3.5" />
@@ -286,7 +286,7 @@ export function JobProfileSection() {
         ) : (
           <CardContent>
             <p className="text-sm text-gray-500">
-              Abhi job profile nahi hai. بنائیں taake aap jobs par apply kar sakein.
+              ابھی جاب پروفائل نہیں ہے۔ بنائیں تاکہ آپ جابز پر درخواست دے سکیں۔
             </p>
           </CardContent>
         )}
@@ -296,7 +296,7 @@ export function JobProfileSection() {
         <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Job Profile {data ? "ترمیم کریں" : "بنائیں"}</DialogTitle>
-            <DialogDescription>Professional details bharein — jobs par apply karne ke liye zaroori</DialogDescription>
+            <DialogDescription>پیشہ ورانہ تفصیلات بھریں — جابز پر درخواست دینے کے لیے ضروری</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
@@ -312,7 +312,7 @@ export function JobProfileSection() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="jp-skills">Skills (comma se alag karein)</Label>
+                <Label htmlFor="jp-skills">مہارتیں (کوما سے الگ کریں)</Label>
                 <Input id="jp-skills" placeholder="React, Node.js, Prisma" value={skills} onChange={(e) => setSkills(e.target.value)} />
               </div>
               <div className="space-y-1.5">
@@ -373,7 +373,7 @@ export function JobProfileSection() {
                   <Plus className="mr-1 h-3.5 w-3.5" /> Add
                 </Button>
               </div>
-              {experience.length === 0 && <p className="text-xs text-gray-500">Abhi koi experience nahi add kiya</p>}
+              {experience.length === 0 && <p className="text-xs text-gray-500">ابھی کوئی تجربہ شامل نہیں کیا</p>}
               {experience.map((e, i) => (
                 <div key={i} className="space-y-2 rounded-lg border p-3">
                   <div className="grid gap-2 sm:grid-cols-2">
@@ -402,7 +402,7 @@ export function JobProfileSection() {
                   <Plus className="mr-1 h-3.5 w-3.5" /> Add
                 </Button>
               </div>
-              {education.length === 0 && <p className="text-xs text-gray-500">Abhi koi education nahi add ki</p>}
+              {education.length === 0 && <p className="text-xs text-gray-500">ابھی کوئی تعلیم شامل نہیں کی</p>}
               {education.map((e, i) => (
                 <div key={i} className="space-y-2 rounded-lg border p-3">
                   <div className="grid gap-2 sm:grid-cols-2">

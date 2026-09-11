@@ -74,9 +74,9 @@ export function JoinRequest({ clanId, clanName, subClans }: JoinRequestProps) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{clanName} Clan Join Karein</DialogTitle>
+          <DialogTitle>{clanName} کلان جوائن کریں</DialogTitle>
           <DialogDescription>
-            Apna sub-clan chunein. Approval admin ya moderator karega.
+            اپنا ذیلی کلان منتخب کریں۔ منظوری ایڈمن یا ماڈریٹر دے گا۔
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -98,7 +98,7 @@ export function JoinRequest({ clanId, clanName, subClans }: JoinRequestProps) {
           </div>
           {subClanId === "other" && (
             <div className="space-y-1.5">
-              <Label htmlFor="other-subclan">Naya Sub-Clan Naam</Label>
+              <Label htmlFor="other-subclan">نئے ذیلی کلان کا نام</Label>
               <Input
                 id="other-subclan"
                 placeholder="e.g. Karachi Branch"

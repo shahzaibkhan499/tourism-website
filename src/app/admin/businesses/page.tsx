@@ -228,9 +228,9 @@ export default function AdminBusinessesPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Business delete karein?</AlertDialogTitle>
+                                <AlertDialogTitle>بزنس ڈیلیٹ کریں؟</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  &quot;{b.name}&quot; aur is ki jobs/reviews permanently delete ho jayengi.
+                                  &quot;{b.name}&quot; اور اس کی جابز/ریویوز مستقل طور پر ڈیلیٹ ہو جائیں گی۔
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>

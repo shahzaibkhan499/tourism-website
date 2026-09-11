@@ -37,7 +37,7 @@ const defaultQuizQuestions: QuizQuestion[] = [
   {
     question: "عید ملن پارٹی کب ہوئی تھی؟",
     emoji: "🎉",
-    options: ["Eid ul Fitr", "Eid ul Adha", "Pakistan Day", "Naya Saal"],
+    options: ["Eid ul Fitr", "Eid ul Adha", "Pakistan Day", "نیا سال"],
     correct: 0,
   },
   {
@@ -196,7 +196,7 @@ export default function KidsPage() {
         <Card className="text-center">
           <CardContent className="p-10">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-yellow-100 text-4xl">🧒</div>
-            <h2 className="mt-5 text-2xl font-bold">Kids Mode ON Karein?</h2>
+            <h2 className="mt-5 text-2xl font-bold">کڈز موڈ آن کریں؟</h2>
             <p className="mx-auto mt-2 max-w-sm text-sm text-gray-600">
               فیملی کوئز، کامیابیاں اور پوائنٹس! بچوں کے لیے محفوظ اور مزیدار۔
             </p>
@@ -241,7 +241,7 @@ export default function KidsPage() {
           <div>
             <div className="flex items-center gap-2 text-2xl font-bold text-purple-700">
               <Star className="h-7 w-7 fill-yellow-400 text-yellow-400" />
-              Aapke Points: {kidsPoints}
+              آپ کے پوائنٹس: {kidsPoints}
             </div>
             <p className="mt-1 text-sm text-gray-600">
               Level: {currentLevel.emoji} {currentLevel.name} ({currentLevel.nameUrdu})
@@ -251,7 +251,7 @@ export default function KidsPage() {
           <div className="w-full sm:w-64">
             <Progress value={levelProgress} className="h-4" />
             <p className="mt-1 text-center text-xs text-gray-500">
-              {nextLevel ? `${nextLevel.min - kidsPoints} points aur chahiye` : "Max level!"}
+              {nextLevel ? `${nextLevel.min - kidsPoints} پوائنٹس اور چاہییں` : "Max level!"}
             </p>
           </div>
         </CardContent>
@@ -282,7 +282,7 @@ export default function KidsPage() {
                 {photoLoading ? "تصاویر لوڈ ہو رہی ہیں..." : "کوئز شروع کریں"}
               </Button>
               {photoQuiz && (
-                <p className="mt-2 text-xs text-gray-500">📸 Ye quiz aapki asli family photos par bana hai</p>
+                <p className="mt-2 text-xs text-gray-500">📸 یہ کوئز آپ کی اصلی فیملی تصاویر پر بنا ہے</p>
               )}
             </div>
           ) : quizDone ? (

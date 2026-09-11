@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
           userId: admin.id,
           type: "clan_update",
           title: "Nayi clan join request",
-          message: `${user.name || "Aik user"} ne ${clan.name} clan join karne ki request bheji hai`,
+          message: `${user.name || "ایک صارف"} ne ${clan.name} کلان جوائن کرنے کی درخواست بھیجی ہے`,
           link: "/admin/clans",
         },
       });
@@ -145,7 +145,7 @@ export async function PATCH(req: NextRequest) {
           userId: request.userId,
           type: "clan_update",
           title: "Clan request manzoor!",
-          message: `${request.clanName} clan join karne ki aapki request manzoor ho gayi. خوش آمدید!`,
+          message: `${request.clanName} کلان جوائن کرنے کی آپ کی درخواست منظور ہو گئی۔ خوش آمدید!`,
           link: "/community",
         },
       });
@@ -155,7 +155,7 @@ export async function PATCH(req: NextRequest) {
           userId: request.userId,
           type: "clan_update",
           title: "Clan request reject",
-          message: `${request.clanName} clan join karne ki aapki request reject ho gayi.`,
+          message: `${request.clanName} کلان جوائن کرنے کی آپ کی درخواست مسترد ہو گئی۔`,
           link: "/community",
         },
       });
@@ -167,7 +167,7 @@ export async function PATCH(req: NextRequest) {
       data: { value: JSON.stringify(queue) },
     });
 
-    return apiSuccess({ message: `Request ${action === "APPROVE" ? "approve" : "reject"} ho gayi` });
+    return apiSuccess({ message: `Request ${action === "APPROVE" ? "منظور" : "مسترد"} ہو گئی` });
   } catch (error) {
     return handleApiError(error);
   }

@@ -29,11 +29,11 @@ export function detectMediaType(mimeType: string): "IMAGE" | "VIDEO" | "AUDIO" |
 export function validateUpload(file: { type: string; size: number }): { ok: boolean; error?: string } {
   const type = detectMediaType(file.type);
   if (!ALLOWED_MIME_TYPES[type.toLowerCase() as keyof typeof ALLOWED_MIME_TYPES].includes(file.type)) {
-    return { ok: false, error: "Yeh file type allowed nahi hai" };
+    return { ok: false, error: "یہ فائل کی قسم اجازت یافتہ نہیں ہے" };
   }
   const maxSize = MAX_UPLOAD_SIZES[type.toLowerCase() as keyof typeof MAX_UPLOAD_SIZES];
   if (file.size > maxSize) {
-    return { ok: false, error: `File size ${Math.round(maxSize / 1024 / 1024)}MB se zyada nahi ho sakti` };
+    return { ok: false, error: `فائل سائز ${Math.round(maxSize / 1024 / 1024)}MB سے زیادہ نہیں ہو سکتی` };
   }
   return { ok: true };
 }

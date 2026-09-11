@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
         userId: receiver.userId,
         type: "rishta_request",
         title: "نئی رشتہ کی درخواست!",
-        message: `${user.name || "Kisi"} ne aapko rishta request bheji hai`,
+        message: `${user.name || "کسی"} نے آپ کو رشتہ کی درخواست بھیجی ہے`,
         link: `/rishta/${receiver.id}`,
       },
     });
@@ -139,8 +139,8 @@ export async function PATCH(req: NextRequest) {
         title: action === "ACCEPTED" ? "رشتہ کی درخواست قبول ہو گئی! 🎉" : "رشتہ کی درخواست پر جواب",
         message:
           action === "ACCEPTED"
-            ? `${user.name || "Kisi"} ne aapki rishta request qabool kar li hai`
-            : `${user.name || "Kisi"} ne aapki rishta request maazrat ke saath reject kar di hai`,
+            ? `${user.name || "کسی"} نے آپ کی رشتہ کی درخواست قبول کر لی ہے`
+            : `${user.name || "کسی"} نے آپ کی رشتہ کی درخواست معذرت کے ساتھ مسترد کر دی ہے`,
         link: `/rishta/${request.senderId}`,
       },
     });

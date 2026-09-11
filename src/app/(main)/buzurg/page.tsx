@@ -209,9 +209,9 @@ export default function BuzurgPage() {
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
               <Accessibility className="h-10 w-10 text-emerald-700" />
             </div>
-            <h2 className="mt-5 text-2xl font-bold">Buzurg Mode ON Karein?</h2>
+            <h2 className="mt-5 text-2xl font-bold">بزرگ موڈ آن کریں؟</h2>
             <p className="mx-auto mt-2 max-w-sm text-sm text-gray-600">
-              Bara font, bade buttons, sirf 4 aasan options. Video calls, family, tasveerein aur yaadein.
+              بڑا فونٹ، بڑے بٹن، صرف 4 آسان آپشنز۔ ویڈیو کالز، فیملی، تصویریں اور یادیں۔
             </p>
             <Button size="xl" className="mt-8 bg-emerald-600 hover:bg-emerald-700" onClick={() => setBuzurgMode(true)}>
               Buzurg Mode ON
@@ -257,7 +257,7 @@ export default function BuzurgPage() {
                   <Loader2 className="h-5 w-5 animate-spin" /> Family load ho rahi hai...
                 </p>
               ) : family.length === 0 ? (
-                <p className="py-6 text-center text-gray-500">Abhi koi family member nahi hai. Pehle clan join karein.</p>
+                <p className="py-6 text-center text-gray-500">ابھی کوئی فیملی ممبر نہیں ہے۔ پہلے کلان جوائن کریں۔</p>
               ) : (
                 family.map((m) => (
                   <button
@@ -328,7 +328,7 @@ export default function BuzurgPage() {
             {checkInDone ? <Check className="h-8 w-8" /> : <Phone className="h-8 w-8" />}
             <span className="text-2xl font-bold">{checkInDone ? "بیٹا بتا دیا! 💚" : "میں ٹھیک ہوں"}</span>
           </button>
-          <p className="mt-2 text-center text-sm text-gray-500">Is button se family ko pata chalega ke aap theek hain</p>
+          <p className="mt-2 text-center text-sm text-gray-500">اس بٹن سے فیملی کو پتہ چلے گا کہ آپ ٹھیک ہیں</p>
         </CardContent>
       </Card>
 
@@ -346,7 +346,7 @@ export default function BuzurgPage() {
               <span className="text-gray-500">—:—</span>
             </div>
           ))}
-          <p className="text-center text-xs text-gray-400">Prayer times apne shehar ke mutabiq settings mein set karein</p>
+          <p className="text-center text-xs text-gray-400">نماز کے اوقات اپنے شہر کے مطابق سیٹنگز میں سیٹ کریں</p>
         </CardContent>
       </Card>
 
@@ -373,7 +373,7 @@ export default function BuzurgPage() {
           ))}
           {playingSurah && (
             <p className="text-center text-sm text-emerald-700">
-              ▶ Surah chala raha hai (audio connect karne ke liye audio URL configure karein)
+              ▶ سورہ چل رہی ہے (آڈیو منسلک کرنے کے لیے آڈیو URL کنفیگر کریں)
             </p>
           )}
         </CardContent>

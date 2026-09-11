@@ -70,7 +70,7 @@ export async function DELETE(req: NextRequest) {
       where: { id: { in: mediaItems.map((m) => m.id) } },
     });
 
-    return apiSuccess({ message: `${mediaItems.length} file(s) delete ho gayi` });
+    return apiSuccess({ message: `${mediaItems.length} فائلیں ڈیلیٹ ہو گئیں` });
   } catch (error) {
     return handleApiError(error);
   }

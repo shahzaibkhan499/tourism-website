@@ -390,7 +390,7 @@ async function main() {
       title: "بچپن کی عید",
       description: "1998 کی عید — سب کزنز ایک ساتھ۔ کیا دن تھے!",
       date: new Date("1998-01-30"),
-      location: "Dada ka ghar, Lahore",
+      location: "دادا کا گھر، لاہور",
       category: "CHILDHOOD",
       isPublic: false,
       userId: demo.id,
@@ -500,7 +500,7 @@ async function main() {
     },
     {
       title: "Accountant — Family Business",
-      description: "Khan Textiles mein accountant ki asami. Family-owned business hai, honest aur mehnati candidate chahiye.",
+      description: "خان ٹیکسٹائلز میں اکاؤنٹنٹ کی آسامی۔ فیملی کی ملکیت والا بزنس ہے، ایماندار اور محنتی امیدوار چاہیے۔",
       requirements: "B.Com/M.Com, 2 saal tajurba, MS Excel expertise",
       type: "FULL_TIME",
       experience: "2-3 years",
@@ -538,7 +538,7 @@ async function main() {
       countryPreference: "Pakistan",
       maritalStatus: "NEVER_MARRIED",
       children: 0,
-      about: "Alhamdulillah, aik simple aur parhezgar larki. Parhai aur teaching se mohabbat hai. Family ke saath rehti hoon.",
+      about: "الحمدللہ، ایک سادہ اور پرہیزگار لڑکی۔ پڑھائی اور تدریس سے محبت ہے۔ فیملی کے ساتھ رہتی ہوں۔",
       familyBackground: "Deendar aur taleem yafta khandaan. Abbu retired government officer, Ammi housewife. 2 bhai, 1 behan.",
       expectations: "Deendar, taleem yafta aur zimmedar larka. Family values important hain.",
       photos: [],
@@ -574,7 +574,7 @@ async function main() {
 
   // ---------- Sample notifications ----------
   const notificationsData: Prisma.NotificationUncheckedCreateInput[] = [
-    { userId: demo.id, type: "system", title: "خوش آمدید! 🌳", message: "Digital Khandaan par account banane ka shukriya. Apna profile complete karein.", link: "/profile" },
+    { userId: demo.id, type: "system", title: "خوش آمدید! 🌳", message: "پلیٹ فارم پر اکاؤنٹ بنانے کا شکریہ۔ اپنی پروفائل مکمل کریں۔", link: "/profile" },
     { userId: demo.id, type: "event_reminder", title: "فیملی پکنک آنے والی ہے", message: "فیملی پکنک — جالو پارک 7 دن بعد ہے۔ RSVP کریں!", link: "/events" },
     { userId: demo2.id, type: "clan_update", title: "Memon community update", message: "Memon community mein 3 naye members shamil hue.", link: "/community" },
   ];
@@ -598,8 +598,8 @@ async function main() {
     { key: "privacy_policy", value: "پرائیویسی پالیسی یہاں لکھیں۔" },
     { key: "welcome_email_template", value: "Assalam-o-Alaikum {{name}}, Digital Khandaan mein khush aamdeed!" },
     { key: "event_reminder_template", value: "Kal {{event}} hai!" },
-    { key: "password_reset_template", value: "Password reset ke liye yeh link use karein: {{link}}" },
-    { key: "report_notification_template", value: "Aapki report {{status}} hui." },
+    { key: "password_reset_template", value: "پاس ورڈ ری سیٹ کے لیے یہ لنک استعمال کریں: {{link}}" },
+    { key: "report_notification_template", value: "آپ کی رپورٹ {{status}} ہوئی۔" },
   ];
 
   for (const s of settingsData) {

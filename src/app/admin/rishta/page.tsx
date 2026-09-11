@@ -225,9 +225,9 @@ export default function AdminRishtaPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Rishta profile delete karein?</AlertDialogTitle>
+                                <AlertDialogTitle>رشتہ پروفائل ڈیلیٹ کریں؟</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  {p.user?.name} ki profile permanently delete ho jayegi.
+                                  {p.user?.name} کی پروفائل مستقل طور پر ڈیلیٹ ہو جائے گی۔
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>

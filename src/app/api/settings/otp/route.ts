@@ -70,9 +70,9 @@ export async function POST(req: NextRequest) {
           <h2 style="color:#065f46;">Aapka OTP code</h2>
           <p style="font-size:15px;color:#374151;">Aapne apna ${
             type === "email" ? "email address" : "phone number"
-          } badalne ki request ki hai. Verification code yeh hai:</p>
+          } بدلنے کی درخواست کی ہے۔ تصدیقی کوڈ یہ ہے:</p>
           <div style="font-size:34px;font-weight:800;letter-spacing:8px;color:#059669;padding:18px 0;text-align:center;">${otp}</div>
-          <p style="font-size:13px;color:#6b7280;">Yeh code 10 minute mein expire ho jayega. Agar yeh request aapne nahi ki, to is email ko ignore kar dein.</p>
+          <p style="font-size:13px;color:#6b7280;">یہ کوڈ 10 منٹ میں ختم ہو جائے گا۔ اگر یہ درخواست آپ نے نہیں کی تو اس ای میل کو نظر انداز کر دیں۔</p>
         `),
       });
       if (!ok) return apiError(502, "ای میل بھیجنے میں مسئلہ آ گیا۔ دوبارہ کوشش کریں۔");

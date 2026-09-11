@@ -58,13 +58,13 @@ function ResetPasswordForm() {
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Naya Password Set Karein</CardTitle>
+        <CardTitle className="text-2xl">نیا پاس ورڈ سیٹ کریں</CardTitle>
         <CardDescription>Kam az kam 8 characters, ek number aur ek English harf ke saath</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="new-password">Naya Password</Label>
+            <Label htmlFor="new-password">نیا پاس ورڈ</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input

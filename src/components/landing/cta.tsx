@@ -17,9 +17,9 @@ export function CTA() {
           transition={{ duration: 0.5 }}
           className="mx-auto max-w-2xl text-center"
         >
-          <h2 className="text-3xl font-bold text-white sm:text-4xl">Abhi Shuru Karein</h2>
+          <h2 className="text-3xl font-bold text-white sm:text-4xl">ابھی شروع کریں</h2>
           <p className="mt-4 text-lg text-emerald-100">
-            Hazaron families pehle se {APP_NAME} par hain. Aaj hi apna khandaan jodein — bilkul free.
+            ہزاروں فیملیز پہلے سے {APP_NAME} پر ہیں۔ آج ہی اپنا خاندان جوڑیں — بالکل مفت۔
           </p>
           <div className="mt-8">
             <Button size="xl" className="bg-white text-emerald-700 shadow-lg hover:bg-emerald-50" asChild>

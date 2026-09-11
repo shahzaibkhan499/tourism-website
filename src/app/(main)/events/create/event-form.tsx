@@ -162,7 +162,7 @@ export default function EventForm() {
         return;
       }
       setValue("coverImage", data.url);
-      toast.success("Cover image upload ho gayi");
+      toast.success("کور تصویر اپ لوڈ ہو گئی");
     } catch {
       toast.error("اپ لوڈ میں مسئلہ آ گیا");
     } finally {
@@ -344,7 +344,7 @@ export default function EventForm() {
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div>
                 <div className="text-sm font-medium">Recurring Event</div>
-                <div className="text-xs text-gray-500">Ye event baar baar hoga</div>
+                <div className="text-xs text-gray-500">یہ ایونٹ بار بار ہوگا</div>
               </div>
               <Switch checked={isRecurring} onCheckedChange={(v) => setValue("isRecurring", v)} />
             </div>

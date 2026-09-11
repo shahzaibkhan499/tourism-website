@@ -143,7 +143,7 @@ export default function NotificationsPage() {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Sab notifications delete karein?</AlertDialogTitle>
+                  <AlertDialogTitle>تمام اطلاعات ڈیلیٹ کریں؟</AlertDialogTitle>
                   <AlertDialogDescription>یہ کارروائی واپس نہیں ہو سکتی۔</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

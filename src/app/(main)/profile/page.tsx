@@ -103,7 +103,7 @@ export default function ProfilePage() {
         toast.error(data.error || "پروفائل محفوظ نہیں ہو سکی");
         return;
       }
-      toast.success("Profile update ho gayi!");
+      toast.success("پروفائل اپ ڈیٹ ہو گئی!");
       setEditOpen(false);
       loadProfile();
     } catch {
@@ -133,7 +133,7 @@ export default function ProfilePage() {
         toast.error("پروفائل فوٹو سیٹ نہیں ہو سکی");
         return;
       }
-      toast.success("Profile photo update ho gayi!");
+      toast.success("پروفائل تصویر اپ ڈیٹ ہو گئی!");
       loadProfile();
     } catch {
       toast.error("اپ لوڈ میں مسئلہ آ گیا");
@@ -171,7 +171,7 @@ export default function ProfilePage() {
             <DialogContent className="max-w-xl">
               <DialogHeader>
                 <DialogTitle>Profile ترمیم کریں</DialogTitle>
-                <DialogDescription>Apni maloomat update karein</DialogDescription>
+                <DialogDescription>اپنی معلومات اپ ڈیٹ کریں</DialogDescription>
               </DialogHeader>
               <div className="grid max-h-[60vh] gap-4 overflow-y-auto p-1 sm:grid-cols-2">
                 <div className="space-y-1.5">
@@ -426,7 +426,7 @@ export default function ProfilePage() {
                 </p>
               </div>
               <Button size="sm" variant="outline" asChild>
-                <a href="/profile#job-profile">Update Karein</a>
+                <a href="/profile#job-profile">اپ ڈیٹ کریں</a>
               </Button>
             </CardContent>
           </Card>

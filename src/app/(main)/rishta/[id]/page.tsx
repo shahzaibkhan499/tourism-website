@@ -147,7 +147,7 @@ export default function RishtaDetailPage() {
         toast.error(data.error || "رپورٹ نہیں ہو سکی");
         return;
       }
-      toast.success("Report submit ho gayi");
+      toast.success("رپورٹ جمع ہو گئی");
     } catch {
       toast.error("Network error");
     }
@@ -262,9 +262,9 @@ export default function RishtaDetailPage() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Profile Report Karein</AlertDialogTitle>
+                    <AlertDialogTitle>Profile رپورٹ کریں</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Kya yeh profile fake ya inappropriate lagti hai? Report karne par hamari team review karegi.
+                      کیا یہ پروفائل جعلی یا نامناسب لگتی ہے؟ رپورٹ کرنے پر ہماری ٹیم جائزہ لے گی۔
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -273,7 +273,7 @@ export default function RishtaDetailPage() {
                       className="bg-red-600 hover:bg-red-700"
                       onClick={() => handleReport("یہ پروفائل جعلی یا نامناسب لگتی ہے")}
                     >
-                      Report Karein
+                      رپورٹ کریں
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -303,7 +303,7 @@ export default function RishtaDetailPage() {
       {!profile.isApproved && !profile.isOwner && (
         <div className="mt-6 flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
           <Lock className="h-5 w-5 shrink-0" />
-          Yeh profile abhi verified nahi hai. Photos aur kuch details sirf verification ke baad dikhti hain.
+          یہ پروفائل ابھی تصدیق شدہ نہیں ہے۔ تصاویر اور کچھ تفصیلات صرف تصدیق کے بعد دکھائی دیتی ہیں۔
         </div>
       )}
 

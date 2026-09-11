@@ -37,7 +37,7 @@ export function Hero() {
           className="mt-6 max-w-2xl text-lg text-gray-600"
         >
           Events, clans, rishta, jobs, memories aur bohat kuch — sab aik hi platform par.
-          Apni family ko jodein, yaadein mehfooz karein, aur apni community ke saath barhein.
+          اپنی فیملی کو جوڑیں، یادیں محفوظ کریں، اور اپنی کمیونٹی کے ساتھ بڑھیں۔
         </motion.p>
 
         <motion.div

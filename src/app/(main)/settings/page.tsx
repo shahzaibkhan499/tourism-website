@@ -334,7 +334,7 @@ export default function SettingsPage() {
                 <div className="flex gap-3">
                   <Input
                     type="email"
-                    placeholder="Naya email"
+                    placeholder="نیا ای میل"
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
                     disabled={otpSent === "email"}
@@ -369,7 +369,7 @@ export default function SettingsPage() {
               <CardHeader>
                 <CardTitle className="text-base">Change Phone</CardTitle>
                 <CardDescription>
-                  موجودہ فون: {profile?.phone || "nahi hai"} — OTP آپ کی رجسٹرڈ ای میل پر جائے گا
+                  موجودہ فون: {profile?.phone || "نہیں ہے"} — OTP آپ کی رجسٹرڈ ای میل پر جائے گا
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -431,7 +431,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label>Naya Password</Label>
+                    <Label>نیا پاس ورڈ</Label>
                     <Input
                       type={showPasswords ? "text" : "password"}
                       value={newPassword}
@@ -439,7 +439,7 @@ export default function SettingsPage() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label>Confirm Naya Password</Label>
+                    <Label>نئے پاس ورڈ کی تصدیق</Label>
                     <Input
                       type={showPasswords ? "text" : "password"}
                       value={confirmPassword}
@@ -493,7 +493,7 @@ export default function SettingsPage() {
             <Card className="border-red-200">
               <CardHeader>
                 <CardTitle className="text-base text-red-700">Danger Zone</CardTitle>
-                <CardDescription>Account permanently delete ho jayega</CardDescription>
+                <CardDescription>اکاؤنٹ مستقل طور پر ڈیلیٹ ہو جائے گا</CardDescription>
               </CardHeader>
               <CardContent>
                 <AlertDialog>
@@ -507,8 +507,8 @@ export default function SettingsPage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Kya aap bilkul yaqeeni hain?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Aapka account, data, memories, sab kuch permanently delete ho jayega. یہ کارروائی واپس نہیں ہو سکتی۔
-                        Confirm karne ke liye <strong>DELETE</strong> type karein.
+                        آپ کا اکاؤنٹ، ڈیٹا، یادیں، سب کچھ مستقل طور پر ڈیلیٹ ہو جائے گا۔ یہ کارروائی واپس نہیں ہو سکتی۔
+                        تصدیق کے لیے <strong>DELETE</strong> لکھیں۔
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <Input
@@ -523,7 +523,7 @@ export default function SettingsPage() {
                         disabled={deleteConfirm !== "DELETE"}
                         onClick={handleDeleteAccount}
                       >
-                        Hamesha ke liye Delete Karein
+                        ہمیشہ کے لیے ڈیلیٹ کریں
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -541,13 +541,13 @@ export default function SettingsPage() {
               <CardContent>
                 <RadioGroup defaultValue="public">
                   <label className="flex items-center gap-2">
-                    <RadioGroupItem value="public" /> Public — koi bhi dekh sakta hai
+                    <RadioGroupItem value="public" /> پبلک — کوئی بھی دیکھ سکتا ہے
                   </label>
                   <label className="flex items-center gap-2">
-                    <RadioGroupItem value="clan" /> Clan Only — sirf aapki clan
+                    <RadioGroupItem value="clan" /> صرف کلان — صرف آپ کی کلان
                   </label>
                   <label className="flex items-center gap-2">
-                    <RadioGroupItem value="private" /> Private — sirf aap
+                    <RadioGroupItem value="private" /> پرائیویٹ — صرف آپ
                   </label>
                 </RadioGroup>
               </CardContent>
@@ -635,7 +635,7 @@ export default function SettingsPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">Sirf OTP codes</div>
+                  <div className="text-sm font-medium">صرف OTP کوڈز</div>
                   <Switch
                     checked={notifPrefs.smsOtp}
                     onCheckedChange={(v) => setNotifPrefs({ ...notifPrefs, smsOtp: v })}
@@ -732,7 +732,7 @@ export default function SettingsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">Font Size</CardTitle>
-                <CardDescription>Buzurg users ke liye bara font recommended hai</CardDescription>
+                <CardDescription>بزرگ صارفین کے لیے بڑا فونٹ تجویز کیا جاتا ہے</CardDescription>
               </CardHeader>
               <CardContent>
                 <RadioGroup value={fontSize} onValueChange={(v) => setFontSize(v as "small" | "medium" | "large" | "xl")}>
@@ -787,14 +787,14 @@ export default function SettingsPage() {
                 ) : twoFaStep === "idle" ? (
                   <Button onClick={start2FASetup} className="bg-emerald-600 hover:bg-emerald-700">
                     <Smartphone className="mr-1 h-4 w-4" />
-                    2FA Enable Karein
+                    2FA فعال کریں
                   </Button>
                 ) : twoFaStep === "setup" ? (
                   <div className="space-y-4">
                     <p className="text-sm text-gray-600">
-                      1. Google Authenticator (ya koi bhi TOTP app) install karein.
+                      1. گوگل آتھنٹیکیٹر (یا کوئی بھی TOTP ایپ) انسٹال کریں۔
                       <br />
-                      2. Neeche QR code scan karein ya secret type karein.
+                      2. نیچے QR کوڈ اسکین کریں یا سیکرٹ لکھیں۔
                       <br />
                       3. App se 6-digit code yahan likhein.
                     </p>
@@ -819,7 +819,7 @@ export default function SettingsPage() {
                     </div>
                     <div className="flex gap-2">
                       <Button onClick={verify2FA} className="bg-emerald-600 hover:bg-emerald-700">
-                        Verify Karein
+                        تصدیق کریں
                       </Button>
                       <Button variant="outline" onClick={() => setTwoFaStep("idle")}>
                         Cancel
@@ -831,7 +831,7 @@ export default function SettingsPage() {
                     <Badge variant="success" className="text-sm">
                       2FA Enabled! 🎉
                     </Badge>
-                    <p className="text-sm font-semibold">Backup Codes (sirf ab dikh rahe hain — mehfooz jagah save karein):</p>
+                    <p className="text-sm font-semibold">بیک اپ کوڈز (صرف اب دکھ رہے ہیں — محفوظ جگہ رکھیں):</p>
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                       {backupCodes.map((code, i) => (
                         <code key={i} className="rounded-lg bg-gray-100 p-2 text-center font-mono text-xs">
@@ -848,7 +848,7 @@ export default function SettingsPage() {
                       }}
                     >
                       {copiedCodes ? <Check className="mr-1 h-4 w-4" /> : <Copy className="mr-1 h-4 w-4" />}
-                      Codes Copy Karein
+                      کوڈز کاپی کریں
                     </Button>
                     <Button variant="outline" className="ml-2" onClick={() => setTwoFaStep("idle")}>
                       Done
@@ -897,7 +897,7 @@ export default function SettingsPage() {
                               {s.device === "mobile" ? "Mobile" : s.device === "tablet" ? "Tablet" : "Desktop"}
                               {i === 0 && (
                                 <Badge variant="success" className="ml-2">
-                                  Abhi
+                                  موجودہ
                                 </Badge>
                               )}
                             </td>

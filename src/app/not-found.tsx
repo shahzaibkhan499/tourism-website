@@ -9,9 +9,9 @@ export default function NotFound() {
         <TreePine className="h-8 w-8" />
       </div>
       <h1 className="mt-6 text-6xl font-extrabold text-gray-900">404</h1>
-      <h2 className="mt-2 text-2xl font-semibold">Yeh page nahi mila</h2>
+      <h2 className="mt-2 text-2xl font-semibold">یہ صفحہ نہیں ملا</h2>
       <p className="mt-3 max-w-md text-gray-600">
-        Jo page aap dhond rahe hain woh mojood nahi hai ya hata diya gaya hai.
+        جو صفحہ آپ ڈھونڈ رہے ہیں وہ موجود نہیں ہے یا ہٹا دیا گیا ہے۔
       </p>
       <Button className="mt-8" asChild>
         <Link href="/">Wapis Home Par</Link>

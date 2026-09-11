@@ -37,9 +37,9 @@ export function Features() {
     <section id="features" className="bg-white py-20">
       <div className="container">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Sab Kuch Ek Platform Pe</h2>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">سب کچھ ایک پلیٹ فارم پر</h2>
           <p className="mt-3 text-gray-600">
-            12 powerful features jo aapke poore khandaan ko digital banati hain
+            12 طاقتور فیچرز جو آپ کے پورے خاندان کو ڈیجیٹل بناتے ہیں
           </p>
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

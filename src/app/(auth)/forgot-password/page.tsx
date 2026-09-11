@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
         {sent ? (
           <div className="text-center">
             <div className="text-5xl">📬</div>
-            <h3 className="mt-4 text-lg font-semibold">Email check karein!</h3>
+            <h3 className="mt-4 text-lg font-semibold">ای میل چیک کریں!</h3>
             <p className="mt-2 text-sm text-gray-600">
               Agar <strong>{email}</strong> hamare system mein mojood hai to reset link bhej diya gaya hai.
             </p>
@@ -86,7 +86,7 @@ export default function ForgotPasswordPage() {
             <p className="text-center text-sm text-gray-600">
               Yaad aa gaya?{" "}
               <Link href="/login" className="font-semibold text-emerald-600 hover:underline">
-                Login karein
+                لاگ ان کریں
               </Link>
             </p>
           </form>

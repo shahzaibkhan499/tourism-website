@@ -53,7 +53,7 @@ export async function DELETE(req: NextRequest) {
     await prisma.media.deleteMany({ where: { id: { in: idList } } });
     await auditLog(admin.id, "ADMIN_DELETE_MEDIA", "Media", idList.join(","), { count: items.length }, getIp(req.headers));
 
-    return apiSuccess({ message: `${items.length} media file(s) delete ho gayi` });
+    return apiSuccess({ message: `${items.length} میڈیا فائلیں ڈیلیٹ ہو گئیں` });
   } catch (error) {
     return handleApiError(error);
   }

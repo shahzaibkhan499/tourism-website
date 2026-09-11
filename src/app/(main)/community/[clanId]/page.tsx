@@ -191,7 +191,7 @@ export default function ClanDetailPage() {
           </CardHeader>
           <CardContent>
             {clan.subClans.length === 0 ? (
-              <p className="py-4 text-center text-sm text-gray-500">Koi sub-clan nahi hai</p>
+              <p className="py-4 text-center text-sm text-gray-500">کوئی ذیلی کلان نہیں ہے</p>
             ) : (
               <div className="space-y-2">
                 {clan.subClans.map((s) => (

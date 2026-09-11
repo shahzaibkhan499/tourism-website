@@ -82,7 +82,7 @@ export default function CreateRishtaPage() {
         return;
       }
       setValue("photos", [...photos, data.url]);
-      toast.success("Photo upload ho gayi");
+      toast.success("تصویر اپ لوڈ ہو گئی");
     } catch {
       toast.error("اپ لوڈ میں مسئلہ آ گیا");
     } finally {
@@ -280,7 +280,7 @@ export default function CreateRishtaPage() {
                 <div>
                   <div className="text-sm font-medium">Guardian Mode</div>
                   <div className="text-xs text-gray-500">
-                    Guardian mode ON karne par requests seedha guardian ke paas jayengi (female profiles ke liye recommended)
+                    گارڈین موڈ آن کرنے پر درخواستیں سیدھی گارڈین کے پاس جائیں گی (خواتین پروفائلز کے لیے تجویز کردہ)
                   </div>
                 </div>
                 <Switch checked={isGuardianMode} onCheckedChange={(v) => setValue("isGuardianMode", v)} />
@@ -337,7 +337,7 @@ export default function CreateRishtaPage() {
                 )}
               </div>
               <p className="text-xs text-gray-500">
-                Note: Photos sirf verified users ko dikhti hain. Non-verified logon ke liye photos blur rehti hain.
+                نوٹ: تصاویر صرف تصدیق شدہ صارفین کو دکھائی دیتی ہیں۔ غیر تصدیق شدہ صارفین کے لیے تصاویر دھندلی رہتی ہیں۔
               </p>
             </div>
 

@@ -216,9 +216,9 @@ export default function JobDetailPage() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Apply Karein — {job.title}</DialogTitle>
+                    <DialogTitle>درخواست دیں — {job.title}</DialogTitle>
                     <DialogDescription>
-                      Aapki job profile se details auto-fill ho jayengi. Cover letter likhein.
+                      آپ کی جاب پروفائل سے تفصیلات خود بھر جائیں گی۔ کور لیٹر لکھیں۔
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-3">
@@ -230,7 +230,7 @@ export default function JobDetailPage() {
                     />
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                       <Upload className="h-3.5 w-3.5" />
-                      Resume aapke job profile se use hoga (Profile &gt; Job Profile mein update karein)
+                      ریزیومے آپ کی جاب پروفائل سے استعمال ہوگا (پروفائل &gt; جاب پروفائل میں اپ ڈیٹ کریں)
                     </div>
                   </div>
                   <DialogFooter>

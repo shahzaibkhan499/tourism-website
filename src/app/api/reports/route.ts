@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return apiSuccess({ message: "Report submit ho gayi. Hamari team review karegi.", report }, 201);
+    return apiSuccess({ message: "رپورٹ جمع ہو گئی۔ ہماری ٹیم جائزہ لے گی۔", report }, 201);
   } catch (error) {
     return handleApiError(error);
   }

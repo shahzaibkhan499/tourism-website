@@ -60,7 +60,7 @@ export default function CreateBusinessPage() {
         return;
       }
       setValue(field, data.url);
-      toast.success("Image upload ho gayi");
+      toast.success("تصویر اپ لوڈ ہو گئی");
     } catch {
       toast.error("اپ لوڈ میں مسئلہ آ گیا");
     }
@@ -278,7 +278,7 @@ export default function CreateBusinessPage() {
                 onClick={() => setSocials([...socials, { platform: "facebook", url: "" }])}
               >
                 <Plus className="mr-1 h-3.5 w-3.5" />
-                Social Link Add Karein
+                سوشل لنک شامل کریں
               </Button>
             </div>
 

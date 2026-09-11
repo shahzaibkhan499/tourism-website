@@ -83,7 +83,7 @@ export default function MemoriesPage() {
         toast.error(data.error || "ڈیلیٹ نہیں ہو سکی");
         return;
       }
-      toast.success("Memory delete ho gayi");
+      toast.success("میموری ڈیلیٹ ہو گئی");
       fetchMemories();
     } catch {
       toast.error("Network error");
@@ -113,7 +113,7 @@ export default function MemoriesPage() {
           <div>
             <div className="text-sm font-semibold text-amber-800">On This Day!</div>
             <p className="text-xs text-amber-700">
-              {onThisDay.map((m) => m.title).join(" · ")} — aaj ke din yeh yaadein bani thin
+              {onThisDay.map((m) => m.title).join(" · ")} — آج کے دن یہ یادیں بنی تھیں
             </p>
           </div>
         </div>
@@ -236,9 +236,9 @@ export default function MemoriesPage() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Memory delete karein?</AlertDialogTitle>
+                              <AlertDialogTitle>میموری ڈیلیٹ کریں؟</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Yeh memory aur is ki sab media hamesha ke liye delete ho jayegi.
+                                یہ میموری اور اس کا سارا میڈیا ہمیشہ کے لیے ڈیلیٹ ہو جائے گا۔
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>

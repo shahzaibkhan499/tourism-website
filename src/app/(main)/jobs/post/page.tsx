@@ -60,7 +60,7 @@ export default function PostJobPage() {
         toast.error(result.error || "نوکری پوسٹ نہیں ہو سکی");
         return;
       }
-      toast.success("Job post ho gayi! 🎉");
+      toast.success("جاب پوسٹ ہو گئی! 🎉");
       router.push(`/jobs/${result.id}`);
     } catch {
       toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
@@ -79,7 +79,7 @@ export default function PostJobPage() {
 
       <div className="mb-4 flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
         <Building2 className="h-5 w-5 shrink-0" />
-        Job post karne ke liye business profile hona zaroori hai. Agar nahi hai to pehle{" "}
+        جاب پوسٹ کرنے کے لیے بزنس پروفائل ہونا ضروری ہے۔ اگر نہیں ہے تو پہلے{" "}
         <Link href="/business/create" className="font-semibold underline">
           business banayein
         </Link>
@@ -157,7 +157,7 @@ export default function PostJobPage() {
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div>
                 <div className="text-sm font-medium">Remote Job</div>
-                <div className="text-xs text-gray-500">Ye job ghar se ki ja sakti hai</div>
+                <div className="text-xs text-gray-500">یہ جاب گھر سے کی جا سکتی ہے</div>
               </div>
               <Switch checked={watch("isRemote")} onCheckedChange={(v) => setValue("isRemote", v)} />
             </div>

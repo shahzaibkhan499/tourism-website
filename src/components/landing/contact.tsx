@@ -39,9 +39,9 @@ export function ContactSection() {
     <section id="contact" className="bg-gray-50 py-20">
       <div className="container grid gap-12 lg:grid-cols-2">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Humse Rabta Karein</h2>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">ہم سے رابطہ کریں</h2>
           <p className="mt-3 text-gray-600">
-            Koi sawal hai? Suggestion dena chahte hain? Hum sunn ne ke liye hamesha tayyar hain.
+            کوئی سوال ہے؟ تجویز دینا چاہتے ہیں؟ ہم سننے کے لیے ہمیشہ تیار ہیں۔
           </p>
           <div className="mt-8 space-y-4">
             <div className="flex items-center gap-3 text-gray-600">

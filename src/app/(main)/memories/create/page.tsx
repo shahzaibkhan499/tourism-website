@@ -71,7 +71,7 @@ export default function CreateMemoryPage() {
         ...prev,
         { url: data.url, publicId: data.publicId, type: data.type, size: data.size, mimeType: data.mimeType },
       ]);
-      toast.success("Media upload ho gayi");
+      toast.success("میڈیا اپ لوڈ ہو گئی");
     } catch {
       toast.error("اپ لوڈ میں مسئلہ آ گیا");
     } finally {
@@ -149,7 +149,7 @@ export default function CreateMemoryPage() {
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div>
                 <div className="text-sm font-medium">Public Memory</div>
-                <div className="text-xs text-gray-500">Public memory aapki clan ke members dekh sakte hain</div>
+                <div className="text-xs text-gray-500">پبلک میموری آپ کی کلان کے ممبران دیکھ سکتے ہیں</div>
               </div>
               <Switch checked={watch("isPublic")} onCheckedChange={(v) => setValue("isPublic", v)} />
             </div>

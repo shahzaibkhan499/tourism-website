@@ -119,7 +119,7 @@ export default function RegisterPage() {
               />
             </svg>
           )}
-          Google se Sign Up Karein
+          گوگل سے سائن اپ کریں
         </Button>
 
         <div className="relative my-5">
@@ -254,9 +254,9 @@ export default function RegisterPage() {
         </form>
 
         <p className="mt-5 text-center text-sm text-gray-600">
-          Pehle se account hai?{" "}
+          پہلے سے اکاؤنٹ ہے؟{" "}
           <Link href="/login" className="font-semibold text-emerald-600 hover:underline">
-            Login karein
+            لاگ ان کریں
           </Link>
         </p>
       </CardContent>

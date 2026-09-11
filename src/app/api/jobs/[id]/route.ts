@@ -109,7 +109,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     if (job.business.userId !== user.id && user.role !== "ADMIN") throw new Error("FORBIDDEN");
 
     await prisma.jobPosting.delete({ where: { id } });
-    return apiSuccess({ message: "Job delete ho gayi" });
+    return apiSuccess({ message: "جاب ڈیلیٹ ہو گئی" });
   } catch (error) {
     return handleApiError(error);
   }

@@ -120,7 +120,7 @@ export default function BusinessDetailPage() {
         toast.error(data.error || "جائزہ جمع نہیں ہو سکا");
         return;
       }
-      toast.success("Review submit ho gayi! ⭐");
+      toast.success("ریویو جمع ہو گیا! ⭐");
       setComment("");
       loadBusiness();
     } catch {
@@ -262,7 +262,7 @@ export default function BusinessDetailPage() {
                         disabled={submitting}
                       >
                         {submitting && <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />}
-                        Review Submit Karein
+                        ریویو جمع کریں
                       </Button>
                     </>
                   )}
@@ -270,7 +270,7 @@ export default function BusinessDetailPage() {
               )}
 
               {business.reviews.length === 0 ? (
-                <p className="py-6 text-center text-sm text-gray-500">Abhi koi review nahi hai</p>
+                <p className="py-6 text-center text-sm text-gray-500">ابھی کوئی ریویو نہیں ہے</p>
               ) : (
                 <div className="space-y-4">
                   {business.reviews.map((review) => (
@@ -336,7 +336,7 @@ export default function BusinessDetailPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Rabta Karein</CardTitle>
+              <CardTitle className="text-base">رابطہ کریں</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {business.phone && (

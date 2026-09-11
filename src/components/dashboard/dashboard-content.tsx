@@ -166,7 +166,7 @@ export function DashboardContent({ user, stats, upcomingEvents, activities }: Da
           <CardContent>
             {upcomingEvents.length === 0 ? (
               <div className="py-8 text-center text-sm text-gray-500">
-                Koi upcoming event nahi hai.
+                کوئی آنے والا ایونٹ نہیں ہے۔
                 <Link href="/events/create" className="mt-1 block font-medium text-emerald-600 hover:underline">
                   Pehla event banayein →
                 </Link>
@@ -222,7 +222,7 @@ export function DashboardContent({ user, stats, upcomingEvents, activities }: Da
           <CardContent>
             {activities.length === 0 ? (
               <div className="py-8 text-center text-sm text-gray-500">
-                Abhi koi activity nahi hai. Platform explore karein!
+                ابھی کوئی سرگرمی نہیں ہے۔ پلیٹ فارم دریافت کریں!
               </div>
             ) : (
               <div className="space-y-4">

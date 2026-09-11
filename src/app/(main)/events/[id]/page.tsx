@@ -228,7 +228,7 @@ export default function EventDetailPage() {
           {/* RSVP */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Aap ka jawab?</CardTitle>
+              <CardTitle className="text-base">آپ کا جواب؟</CardTitle>
             </CardHeader>
             <CardContent>
               <RSVPButton
@@ -253,7 +253,7 @@ export default function EventDetailPage() {
             </CardHeader>
             <CardContent>
               {event.attendees.length === 0 ? (
-                <p className="py-4 text-center text-sm text-gray-500">Abhi koi confirm nahi hua</p>
+                <p className="py-4 text-center text-sm text-gray-500">ابھی کسی نے تصدیق نہیں کی</p>
               ) : (
                 <div className="flex flex-wrap gap-3">
                   {event.attendees.map((a) => (
@@ -293,7 +293,7 @@ export default function EventDetailPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Share Karein</CardTitle>
+              <CardTitle className="text-base">شیئر کریں</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button variant="outline" className="w-full" onClick={() => handleShare("whatsapp")}>
@@ -327,20 +327,20 @@ export default function EventDetailPage() {
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="w-full" disabled={deleting}>
                       {deleting ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Trash2 className="mr-1 h-4 w-4" />}
-                      Delete Karein
+                      ڈیلیٹ کریں
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>Kya aap yaqeeni delete karna chahte hain?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Yeh event hamesha ke liye delete ho jayega aur yeh action wapas nahi ho sakta.
+                        یہ ایونٹ ہمیشہ کے لیے ڈیلیٹ ہو جائے گا اور یہ عمل واپس نہیں ہو سکتا۔
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
                       <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={handleDelete}>
-                        Delete Karein
+                        ڈیلیٹ کریں
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

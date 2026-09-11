@@ -52,7 +52,7 @@ export async function PATCH(req: NextRequest) {
         where: { id, userId: user.id },
         data: { isRead: true },
       });
-      return apiSuccess({ message: "Notification read ho gayi" });
+      return apiSuccess({ message: "اطلاع پڑھ لی گئی" });
     }
 
     // Mark all as read

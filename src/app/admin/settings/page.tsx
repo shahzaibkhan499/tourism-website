@@ -80,7 +80,7 @@ export default function AdminSettingsPage() {
   const contentKeys = ["about_us", "terms_of_service", "privacy_policy"];
   const emailTemplateKeys = [
     { key: "welcome_email_template", label: "Welcome Email", desc: "نئے صارف کے اکاؤنٹ بننے پر" },
-    { key: "event_reminder_template", label: "Event Reminder", desc: "Event se pehle reminder" },
+    { key: "event_reminder_template", label: "Event Reminder", desc: "ایونٹ سے پہلے یاد دہانی" },
     { key: "password_reset_template", label: "Password Reset", desc: "پاس ورڈ ری سیٹ کے وقت" },
     { key: "report_notification_template", label: "Report Notification", desc: "رپورٹ کی صورتحال اپ ڈیٹ ہونے پر" },
   ];
@@ -132,7 +132,7 @@ export default function AdminSettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-sm font-medium">Maintenance Mode</div>
-                    <div className="text-xs text-gray-500">ON hone par site band ho jayegi</div>
+                    <div className="text-xs text-gray-500">آن ہونے پر سائٹ بند ہو جائے گی</div>
                   </div>
                   <Switch
                     checked={settings.maintenance_mode === "true"}

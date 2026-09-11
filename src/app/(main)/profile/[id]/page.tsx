@@ -78,7 +78,7 @@ export default function PublicProfilePage() {
         toast.error(data.error || "رپورٹ نہیں ہو سکی");
         return;
       }
-      toast.success("Report submit ho gayi");
+      toast.success("رپورٹ جمع ہو گئی");
     } catch {
       toast.error("Network error");
     }
@@ -153,15 +153,15 @@ export default function PublicProfilePage() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>User report karein?</AlertDialogTitle>
+                    <AlertDialogTitle>صارف کی رپورٹ کریں؟</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Hamari team report ka review karegi aur munasib action legi.
+                      ہماری ٹیم رپورٹ کا جائزہ لے گی اور مناسب کارروائی کرے گی۔
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={handleReport}>
-                      Report Karein
+                      رپورٹ کریں
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

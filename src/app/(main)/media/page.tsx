@@ -95,7 +95,7 @@ export default function MediaPage() {
         toast.error(data.error || "اپ لوڈ نہیں ہو سکا");
         return;
       }
-      toast.success("File upload ho gayi");
+      toast.success("فائل اپ لوڈ ہو گئی");
       fetchMedia();
     } catch {
       toast.error("اپ لوڈ میں مسئلہ آ گیا");
@@ -218,7 +218,7 @@ export default function MediaPage() {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>{selected.size} file(s) delete karein?</AlertDialogTitle>
+                  <AlertDialogTitle>{selected.size} فائلیں ڈیلیٹ کریں؟</AlertDialogTitle>
                   <AlertDialogDescription>یہ کارروائی واپس نہیں ہو سکتی۔</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -313,7 +313,7 @@ export default function MediaPage() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>File delete karein?</AlertDialogTitle>
+                              <AlertDialogTitle>فائل ڈیلیٹ کریں؟</AlertDialogTitle>
                               <AlertDialogDescription>یہ کارروائی واپس نہیں ہو سکتی۔</AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
