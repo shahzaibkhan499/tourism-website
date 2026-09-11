@@ -4,13 +4,23 @@ import { getToken } from "next-auth/jwt";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const useSecureCookies = Boolean(process.env.NEXTAUTH_URL?.startsWith("https://"));
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET ?? "",
-    secureCookie: useSecureCookies,
-    salt: useSecureCookies ? "__Secure-authjs.session-token" : "authjs.session-token",
-  });
+  const secret = process.env.NEXTAUTH_SECRET ?? "";
+  // Auth.js sets the __Secure- cookie when the request comes over https
+  // (e.g. Vercel, or the preview proxy), and the plain cookie otherwise.
+  // Try both so guards work in every environment.
+  const token =
+    (await getToken({
+      req: request,
+      secret,
+      secureCookie: true,
+      salt: "__Secure-authjs.session-token",
+    })) ??
+    (await getToken({
+      req: request,
+      secret,
+      secureCookie: false,
+      salt: "authjs.session-token",
+    }));
 
   const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register");
 
