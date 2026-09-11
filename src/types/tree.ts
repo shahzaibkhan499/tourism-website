@@ -187,6 +187,7 @@ export interface MemberCommentDto {
   updatedAt: string;
   user?: { id: string; name: string | null; image: string | null } | null;
   reactions?: CommentReactionDto[];
+  replies?: MemberCommentDto[];
   replyCount?: number;
 }
 
