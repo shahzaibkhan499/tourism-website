@@ -4,11 +4,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
+  BarChart3,
+  Calculator,
+  Copy,
+  Download,
   GitMerge,
   HeartHandshake,
   History,
   Search,
+  Send,
   Settings,
+  Upload,
   UserPlus,
   Users,
 } from "lucide-react";
@@ -33,6 +39,14 @@ import { EditMemberModal } from "@/components/tree/edit-member-modal";
 import { AddMarriageModal } from "@/components/tree/add-marriage-modal";
 import { AddRelationshipModal } from "@/components/tree/add-relationship-modal";
 import { DeleteMemberDialog } from "@/components/tree/delete-member-dialog";
+import { RelationshipCalculator } from "@/components/tree/relationship-calculator";
+import { MemberComparison } from "@/components/tree/member-comparison";
+import { DuplicateManager } from "@/components/tree/duplicate-manager";
+import { MergePreview } from "@/components/tree/merge-preview";
+import { InviteModal } from "@/components/tree/invite-modal";
+import { ImportModal } from "@/components/tree/import-modal";
+import { ExportModal } from "@/components/tree/export-modal";
+import { TreeStatsPanel } from "@/components/tree/tree-stats-panel";
 
 // ============================================================
 // TREE PAGE CLIENT — loads graph, wires viewer + sidebar +
@@ -68,6 +82,22 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
 
   const direction = useTreeStore((s) => s.direction);
   const malesFirst = useTreeStore((s) => s.malesFirst);
+
+  const setCalculatorOpen = useTreeStore((s) => s.setCalculatorOpen);
+  const setCompareOpen = useTreeStore((s) => s.setCompareOpen);
+  const setDuplicatesOpen = useTreeStore((s) => s.setDuplicatesOpen);
+  const setMergeOpen = useTreeStore((s) => s.setMergeOpen);
+  const setInviteOpen = useTreeStore((s) => s.setInviteOpen);
+  const setImportOpen = useTreeStore((s) => s.setImportOpen);
+  const setExportOpen = useTreeStore((s) => s.setExportOpen);
+  const calculatorOpen = useTreeStore((s) => s.calculatorOpen);
+  const compareOpen = useTreeStore((s) => s.compareOpen);
+  const duplicatesOpen = useTreeStore((s) => s.duplicatesOpen);
+  const mergeOpen = useTreeStore((s) => s.mergeOpen);
+  const inviteOpen = useTreeStore((s) => s.inviteOpen);
+  const importOpen = useTreeStore((s) => s.importOpen);
+  const exportOpen = useTreeStore((s) => s.exportOpen);
+  const [statsOpen, setStatsOpen] = useState(false);
 
   const [addMemberPresets, setAddMemberPresets] = useState<{ parentIds?: string[]; spouseId?: string; gender?: "MALE" | "FEMALE" }>({});
   const [marriagePreset, setMarriagePreset] = useState<string | undefined>(undefined);
@@ -178,6 +208,38 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
                 </Button>
               </>
             )}
+            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setCalculatorOpen(true)}>
+              <Calculator className="mr-1 h-3.5 w-3.5" />
+              رشتہ نکالیں
+            </Button>
+            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setCompareOpen(true)}>
+              <Copy className="mr-1 h-3.5 w-3.5" />
+              موازنہ
+            </Button>
+            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setDuplicatesOpen(true)}>
+              <Copy className="mr-1 h-3.5 w-3.5" />
+              ڈپلیکیٹس
+            </Button>
+            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setMergeOpen(true)}>
+              <GitMerge className="mr-1 h-3.5 w-3.5" />
+              انضمام
+            </Button>
+            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setInviteOpen(true)}>
+              <Send className="mr-1 h-3.5 w-3.5" />
+              دعوت
+            </Button>
+            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setImportOpen(true)}>
+              <Upload className="mr-1 h-3.5 w-3.5" />
+              امپورٹ
+            </Button>
+            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setExportOpen(true)}>
+              <Download className="mr-1 h-3.5 w-3.5" />
+              ایکسپورٹ
+            </Button>
+            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setStatsOpen(true)}>
+              <BarChart3 className="mr-1 h-3.5 w-3.5" />
+              اعداد و شمار
+            </Button>
             <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setSearchOpen(true)}>
               <Search className="mr-1 h-3.5 w-3.5" />
               تلاش
@@ -298,6 +360,22 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
         graph={graph}
         onDeleted={load}
       />
+
+      <RelationshipCalculator open={calculatorOpen} onOpenChange={setCalculatorOpen} treeId={tree.id} graph={graph} />
+
+      <MemberComparison open={compareOpen} onOpenChange={setCompareOpen} treeId={tree.id} graph={graph} />
+
+      <DuplicateManager open={duplicatesOpen} onOpenChange={setDuplicatesOpen} treeId={tree.id} onResolved={load} />
+
+      <MergePreview open={mergeOpen} onOpenChange={setMergeOpen} sourceTreeId={tree.id} onMerged={load} />
+
+      <InviteModal open={inviteOpen} onOpenChange={setInviteOpen} treeId={tree.id} />
+
+      <ImportModal open={importOpen} onOpenChange={setImportOpen} treeId={tree.id} onImported={load} />
+
+      <ExportModal open={exportOpen} onOpenChange={setExportOpen} treeId={tree.id} />
+
+      <TreeStatsPanel open={statsOpen} onOpenChange={setStatsOpen} treeId={tree.id} />
     </div>
   );
 }

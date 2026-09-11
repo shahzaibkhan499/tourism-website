@@ -95,6 +95,10 @@ export function assertCanDelete(access: TreeAccess): { status: number; message: 
   return access.canDelete ? null : { status: 403, message: "صرف مالک ہی درخت ڈیلیٹ کر سکتا ہے" };
 }
 
+export function assertCanInvite(access: TreeAccess): { status: number; message: string } | null {
+  return access.canInvite ? null : { status: 403, message: "آپ کو دعوت بھیجنے کی اجازت نہیں ہے" };
+}
+
 /**
  * Apply tree-level + member-level privacy to a member list.
  * Editors/owners always see everything.

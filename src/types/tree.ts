@@ -277,6 +277,15 @@ export interface DuplicateCandidate {
   score: number;
 }
 
+export interface MergeCommonMember {
+  sourceMemberId: string;
+  targetMemberId: string;
+  sourceName: string;
+  targetName: string;
+  score: number;
+  matchedBy: string[];
+}
+
 export interface TreeVersionDto {
   id: string;
   treeId: string;
@@ -339,6 +348,17 @@ export interface MarriageLinkDatum {
 
 export interface RelationshipPathResult {
   found: boolean;
+  fromMemberId?: string;
+  toMemberId?: string;
+  fromName?: string;
+  toName?: string;
+  names: string[];
+  directName: string | null;
+  pathIds: string[];
+  steps: { memberId: string; name: string; urdu: string; kind: string }[];
+  score: number;
+  sameBloodline: boolean;
+  message?: string;
   path?: { memberId: string; via: "parent" | "child" | "spouse"; member: TreeMemberDto }[];
   nameUrdu?: string;
   nameEnglish?: string;
@@ -346,14 +366,17 @@ export interface RelationshipPathResult {
 }
 
 export interface MemberComparisonResult {
-  member1: TreeMemberDto;
-  member2: TreeMemberDto;
-  sameAge: boolean;
-  ageDeltaYears: number | null;
-  commonBirthPlace: boolean;
-  commonCity: boolean;
-  commonGeneration: boolean;
-  sharedAncestors: TreeMemberDto[];
+  member1: { id: string; name: string; photo: string | null; dateOfBirth: string | null };
+  member2: { id: string; name: string; photo: string | null; dateOfBirth: string | null };
+  rows: { key: string; label: string; value1: string | null; value2: string | null; same: boolean }[];
+  similarity: number;
+  sameCount: number;
+  sameAge?: boolean;
+  ageDeltaYears?: number | null;
+  commonBirthPlace?: boolean;
+  commonCity?: boolean;
+  commonGeneration?: boolean;
+  sharedAncestors?: TreeMemberDto[];
 }
 
 export interface GcMember {
