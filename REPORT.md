@@ -58,35 +58,35 @@ Viewer (D3 SVG zoom/pan/pinch), GenoPro-style layout (multi-wife mother columns,
 
 ## ⚠️ 2. WHAT WAS NOT MADE (gaps)
 
-1. **Marriage edit/divorce UI** (Step 16) — APIs work, `AddMarriageModal` is add-only; no edit/divorce buttons yet.
-2. **Relationship type-change/remove UI** (Step 17) — API exists, no UI control yet.
-3. **Verification badges UI** (23a) — verify API + records work; badges not shown on member cards yet.
-4. **Drag-to-reorder siblings UI** (11b) — PUT reorder API verified; no drag handles yet.
-5. **Step 38 — Lazy loading** (4-generation default, expand-on-click) — viewer renders full tree; only a 200+ member notice.
-6. **Step 39 — Canvas fallback** (1000+ nodes) — not built.
-7. **Step 43 — Web Worker / virtualization / LOD** — not built.
-8. **Step 40 extras** — Ctrl+F, +/−, arrows, R, Esc done; N/S/P/B shortcuts not.
-9. **Step 41 bottom sheet** — pinch-zoom done via d3; mobile bottom-sheet layout not.
-10. **Step 42 dark mode** — app-wide dark mode exists; tree components use fixed light styling.
-11. **Redo** — Undo works; no redo (spec lists Undo/Redo in 30a but only `/undo` endpoint).
-12. **Deployment** — 3 commits local-only; needs fresh PAT + push + live verification.
+All Step 16/17/23a/11b UI gaps and Steps 38–44 are now **CLOSED** (commit a9248dc):
+
+1. ✅ Marriage edit/divorce UI (Step 16) — `edit-marriage-modal` + `marriage-manager` (dates/status/type edit, divorce via DIVORCED, delete with confirm).
+2. ✅ Relationship type-change/remove UI (Step 17) — `relationship-manager` (type change → ADOPTED etc., remove with confirm, cycle guard in API).
+3. ✅ Verification badges UI (23a) — `verify-section` (verify/dispute buttons + badge counts on member panel).
+4. ✅ Drag-to-reorder siblings UI (11b) — `sibling-reorder-dialog` (HTML5 drag + up/down arrows, boundary-disabled, PUT reorder).
+5. ✅ Step 38 — generation-depth filter (`نسل N تک / تمام نسلیں`, default depth 4 for >200 members, "+N مزید ممبرز" button).
+6. ✅ Step 39 — `canvas-tree-viewer` (dot grid, buses, marriage lines, LOD zoom tiers 0.5/0.6, click/context-menu hit-test; auto for >1000 members).
+7. ✅ Step 43 — `tree-layout.worker.ts` (web worker for ≥1000 members, main-thread fallback) + SVG LOD (names/dates hidden below zoom 0.45).
+8. ✅ Step 40 — N/P (search prev/next), B (fit), S (detail panel), Ctrl+F; +/−/arrows/R/Esc already done.
+9. ✅ Step 41 — mobile bottom sheet detail panel (<1024px) + horizontal-scroll toolbars on small screens.
+10. ✅ Step 42 — dark mode via `use-dark-mode` (MutationObserver) + `TREE_THEME` palettes across viewer/node/canvas/controls.
+11. **Redo** — Undo works (13/13 edge tests); no redo (spec 30a mentions Undo/Redo but only `/undo` endpoint was specified).
+12. **Deployment** — 4 commits local-only (0338547, ecfd81d, cb91211, a9248dc); needs fresh PAT + push + live verification.
 
 ---
 
-## 🔜 3. WHAT STILL REMAINS (Steps 38–44 + ship)
+## 🔜 3. WHAT STILL REMAINS (ship phase)
 
-- Step 38: lazy generation depth + expand nodes
-- Step 39: canvas renderer fallback
-- Step 40: remaining keyboard shortcuts
-- Step 41: mobile bottom sheet + polish
-- Step 42: dark mode for tree components
-- Step 43: performance (worker/virtualization/LOD)
-- Step 44: formal edge-case suite (A–E partially done already)
-- Step 16/17/23a/11b UI gaps listed above
-- **Push to GitHub → Vercel deploy → live page-by-page test** (Neon already migrated)
+- **Push to GitHub → Vercel deploy → live page-by-page verification** (Neon already migrated; needs fresh PAT)
+- Optional: redo endpoint (spec 30a only defined `/undo`)
 - Prior backlog: public-profile header privacy gap (outside tree module)
 
 ---
 
-## 🧪 Runtime test highlights (this turn)
-Relationship calc (بیوی / امی والدہ / چھوٹا بھائی), compare 40%, verify ✓, duplicates 95/70/70, history 10 items, stats 8m/2gen/3mar, privacy tree+member ✓, invite→accept→VIEWER→write 403 ✓, collaborate roles ✓, merge 8 copied/8 rels/3 marriages ✓, export 4 formats 200 ✓, GEDCOM+CSV import ✓, undo ✓, browser: 6 pages zero errors.
+## 🧪 Runtime test highlights (Steps 38–44 turn)
+
+- **Edge suite 13/13 PASS** (empty tree, 5-gen chain, cycle→400, 3rd parent→400, self-marriage→400, divorce PUT ✓, delete-last-member ✓, empty-tree exports ×4, empty/wrong-ext import→400, self-merge→400, relationship type/remove ✓, undo-with-no-versions→proper response, undo-after-delete restores member).
+- **Browser polish suite — all green:** main toolbar, node-click sidebar + verify action (badge 1 ✓), sibling reorder dialog + arrow move + save → API order K2,K1,K3 ✓, marriage manager + edit modal (شادی میں ترمیم) ✓, relationship manager ✓, gen-depth select options ✓, dark mode bg rgb(11,18,32) ✓, mobile bottom sheet (390px) ✓ — zero console/page errors.
+- **Full-page regression (tree-all-pages):** MAIN 14 nodes + toolbar, STATS modal (charts), SETTINGS, COLLABORATE, HISTORY, INVITE-PAGE (قبول ہو چکی ہے) — all true, zero errors.
+- **Bugs found & fixed this turn:** undo 500 on missing snapshot; restoreSnapshot robustness (member upsert + dangling refs); tree-viewer fit (svg viewBox now tracks wrapper → nodes no longer clipped bottom/right); reorder button moved to siblings section; reorder arrows boundary-disabled; mobile toolbar overflow.
+- Prior: relationship calc (بیوی/امی والدہ/چھوٹا بھائی), compare 40%, duplicates 95/70/70, merge 8/8/3, export 4 formats, GEDCOM+CSV import, invite→VIEWER→403, privacy, stats, undo IMPORT.
