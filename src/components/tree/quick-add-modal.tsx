@@ -45,6 +45,7 @@ const quickAddSchema = z.object({
   lastName: z.string().trim().max(100).optional(),
   dateOfBirth: z.string().trim().optional(),
   motherId: z.string().trim().optional(),
+  fatherName: z.string().trim().max(100).optional(),
 });
 
 type QuickAddForm = z.infer<typeof quickAddSchema>;
@@ -68,6 +69,10 @@ export function QuickAddModal({ open, onOpenChange, treeId, graph, memberId, rel
   const spouses = useMemo(() => (member ? graph.spousesOf(member.id).map((s) => s.spouse) : []), [member, graph]);
   const needsMother = relationType === "SON" || relationType === "DAUGHTER";
   const showMotherSelect = needsMother && spouses.length > 1;
+  // FIX — sibling of a parentless member: the only way to connect the new
+  // sibling to the tree is a shared father (GenoPro-style). Ask for his name.
+  const hasParents = member ? (graph.parentIdsOf.get(member.id) ?? []).length > 0 : true;
+  const needsFather = (relationType === "BROTHER" || relationType === "SISTER") && !hasParents;
 
   const {
     register,
@@ -77,10 +82,14 @@ export function QuickAddModal({ open, onOpenChange, treeId, graph, memberId, rel
     formState: { errors },
   } = useForm<QuickAddForm>({
     resolver: zodResolver(quickAddSchema),
-    defaultValues: { firstName: "", lastName: "", dateOfBirth: "", motherId: "" },
+    defaultValues: { firstName: "", lastName: "", dateOfBirth: "", motherId: "", fatherName: "" },
   });
 
   const onSubmit = async (values: QuickAddForm) => {
+    if (needsFather && !(values.fatherName ?? "").trim()) {
+      toast.error(T.tree.fatherNameRequired);
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await fetch(`/api/tree/${treeId}/members/quick-add`, {
@@ -93,6 +102,7 @@ export function QuickAddModal({ open, onOpenChange, treeId, graph, memberId, rel
           lastName: values.lastName || undefined,
           dateOfBirth: values.dateOfBirth ? new Date(values.dateOfBirth).toISOString() : undefined,
           motherId: values.motherId || undefined,
+          fatherName: values.fatherName || undefined,
         }),
       });
       const data = await res.json();
@@ -160,6 +170,20 @@ export function QuickAddModal({ open, onOpenChange, treeId, graph, memberId, rel
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+          )}
+
+          {needsFather && (
+            <div className="space-y-1.5 rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/40">
+              <p className="text-xs text-amber-800 dark:text-amber-300">
+                {T.tree.siblingNeedsFather.replaceAll("{relation}", rel.en)}
+              </p>
+              <Label htmlFor="qa-fatherName">{T.tree.fatherNameLabel} *</Label>
+              <Input
+                id="qa-fatherName"
+                placeholder={T.tree.fatherNamePlaceholder}
+                {...register("fatherName")}
+              />
             </div>
           )}
 

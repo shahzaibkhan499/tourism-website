@@ -92,7 +92,12 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
     if (!svg || !wrap || !zoom) return;
     const cw = wrap.clientWidth || 900;
     const ch = wrap.clientHeight || 600;
-    const k = Math.min(cw / viewW, ch / viewH, 1);
+    // Minimum fit zoom (GenoPro-style readability): a wide tree must never
+    // shrink into unreadable confetti on small screens — fit clamps at
+    // MIN_FIT_K and the user pans instead. Matches the LOD threshold so
+    // names stay visible on initial fit.
+    const MIN_FIT_K = 0.45;
+    const k = Math.min(Math.max(Math.min(cw / viewW, ch / viewH), MIN_FIT_K), 1);
     const tx = (cw - viewW * k) / 2;
     const ty = (ch - viewH * k) / 2;
     viewRef.current = { x: tx, y: ty, k };

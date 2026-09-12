@@ -23,6 +23,7 @@ const quickAddSchema = z.object({
   lastName: z.string().trim().max(100).optional(),
   dateOfBirth: z.string().optional(),
   motherId: z.string().min(1).optional(),
+  fatherName: z.string().trim().min(1, "والد کا نام لکھنا ضروری ہے").max(100).optional(),
 });
 
 const GENDER_OF: Record<z.infer<typeof quickAddSchema>["relationshipType"], "MALE" | "FEMALE"> = {
@@ -89,6 +90,17 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
       motherId = d.motherId;
     }
 
+    // FIX — BROTHER/SISTER of a member with NO parents: without a shared
+    // parent the new sibling would be created with zero relationships and
+    // stay alone in the tree. Require the father's name (GenoPro-style)
+    // BEFORE the transaction so nothing is committed on failure.
+    if (d.relationshipType === "BROTHER" || d.relationshipType === "SISTER") {
+      const selectedParents = await prisma.relationship.count({ where: { childId: selected.id, treeId } });
+      if (selectedParents === 0 && !d.fatherName) {
+        return apiError(400, "والد کا نام لکھنا ضروری ہے — father name required to connect");
+      }
+    }
+
     // Sort order = after existing siblings in the new parent set
     let sortOrder = 1;
     if (d.relationshipType === "BROTHER" || d.relationshipType === "SISTER") {
@@ -137,8 +149,27 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
 
       if (d.relationshipType === "BROTHER" || d.relationshipType === "SISTER") {
         const parentRels = await tx.relationship.findMany({ where: { childId: selected.id, treeId } });
-        for (const r of parentRels) {
-          await tx.relationship.create({ data: { treeId, parentId: r.parentId, childId: m.id, type: r.type } });
+        if (parentRels.length === 0) {
+          // FIX — parentless sibling: create a shared father so both the
+          // selected member and the new sibling connect to the tree
+          // (fatherName was validated before the transaction).
+          const father = await tx.familyMember.create({
+            data: {
+              treeId,
+              firstName: sanitizeInput((d.fatherName as string).trim()),
+              lastName: d.lastName ? sanitizeInput(d.lastName) : "",
+              gender: "MALE",
+              generation: Math.max(0, selected.generation - 1),
+              sortOrder: 0,
+              showInPublic: true,
+            },
+          });
+          await tx.relationship.create({ data: { treeId, parentId: father.id, childId: selected.id, type: "BIOLOGICAL" } });
+          await tx.relationship.create({ data: { treeId, parentId: father.id, childId: m.id, type: "BIOLOGICAL" } });
+        } else {
+          for (const r of parentRels) {
+            await tx.relationship.create({ data: { treeId, parentId: r.parentId, childId: m.id, type: r.type } });
+          }
         }
       }
 
