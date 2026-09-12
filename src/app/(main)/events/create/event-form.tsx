@@ -90,7 +90,7 @@ export default function EventForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      type: "",
+      type: "" as FormData["type"],
       date: "",
       endDate: "",
       time: "",
@@ -120,7 +120,7 @@ export default function EventForm() {
         if (cancelled) return;
         reset({
           title: data.title || "",
-          type: data.type || "",
+          type: (data.type || "") as FormData["type"],
           date: toDateInput(data.date),
           endDate: data.endDate ? toDateInput(data.endDate) : "",
           time: toTimeInput(data.date),
@@ -237,7 +237,7 @@ export default function EventForm() {
 
             <div className="space-y-1.5">
               <Label>Event Type *</Label>
-              <Select onValueChange={(v) => setValue("type", v)} value={watch("type") || undefined}>
+              <Select onValueChange={(v) => setValue("type", v as FormData["type"])} value={watch("type") || undefined}>
                 <SelectTrigger>
                   <SelectValue placeholder="Event type chunein" />
                 </SelectTrigger>

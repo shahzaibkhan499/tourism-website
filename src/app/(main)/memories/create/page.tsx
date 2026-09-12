@@ -133,7 +133,7 @@ export default function CreateMemoryPage() {
 
             <div className="space-y-1.5">
               <Label>Category</Label>
-              <Select value={watch("category") || "OTHER"} onValueChange={(v) => setValue("category", v)}>
+              <Select value={watch("category") || "OTHER"} onValueChange={(v) => setValue("category", v as "CHILDHOOD" | "WEDDING" | "GATHERING" | "TRAVEL" | "ACHIEVEMENT" | "OLD_PHOTO" | "RELIGIOUS" | "FESTIVAL" | "DAILY_LIFE" | "OTHER")}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

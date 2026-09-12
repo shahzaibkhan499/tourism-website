@@ -163,7 +163,7 @@ export default function PostJobPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label>Job Type</Label>
-                <Select value={watch("type")} onValueChange={(v) => setValue("type", v)}>
+                <Select value={watch("type")} onValueChange={(v) => setValue("type", v as "FULL_TIME" | "PART_TIME" | "CONTRACT" | "FREELANCE" | "INTERNSHIP" | "REMOTE")}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

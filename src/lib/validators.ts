@@ -99,7 +99,15 @@ export const occupationSectionSchema = z.object({
 
 export const eventSchema = z.object({
   title: z.string().min(2, "Title kam az kam 2 huroof ka ho"),
-  type: z.string().min(1, "Event type chunein"),
+  // strict enum — invalid values must 400, not crash Prisma with a 500
+  type: z.enum([
+    "BIRTH", "AQEEQA", "BISMILLAH", "KHATAM_QURAN", "ENGAGEMENT", "MEHNDI",
+    "NIKKAH", "BARAAT", "WALIMA", "RUKHSATI", "DEATH", "CHEHLUM", "BARSI",
+    "EID_UL_FITR", "EID_UL_ADHA", "SHAB_E_QADR", "SHAB_E_MERAJ", "MILAD_UN_NABI",
+    "RAMADAN_IFTAR", "FAMILY_REUNION", "GRADUATION", "JOB_CELEBRATION",
+    "WELCOME_HOME", "PANCHAYAT", "INDEPENDENCE_DAY", "PAKISTAN_DAY",
+    "QUAID_E_AZAM_DAY", "IQBAL_DAY", "BASANT", "CHAND_RAAT", "EID_MILAN", "OTHER",
+  ]),
   date: z.string().min(1, "تاریخ منتخب کریں"),
   endDate: z.string().optional().nullable(),
   time: z.string().optional().nullable(),
@@ -220,7 +228,7 @@ export const jobPostingSchema = z.object({
   title: z.string().min(2, "Title kam az kam 2 huroof ka ho"),
   description: z.string().min(10, "Description kam az kam 10 characters ka ho"),
   requirements: z.string().optional().nullable(),
-  type: z.string().default("FULL_TIME"),
+  type: z.enum(["FULL_TIME", "PART_TIME", "CONTRACT", "FREELANCE", "INTERNSHIP", "REMOTE"]).default("FULL_TIME"),
   experience: z.string().optional().nullable(),
   salaryMin: z.coerce.number().int().min(0).optional().nullable(),
   salaryMax: z.coerce.number().int().min(0).optional().nullable(),
@@ -333,7 +341,9 @@ export const memorySchema = z.object({
   description: z.string().max(3000).optional().nullable(),
   date: z.string().optional().nullable(),
   location: z.string().optional().nullable(),
-  category: z.string().default("OTHER"),
+  category: z
+    .enum(["CHILDHOOD", "WEDDING", "GATHERING", "TRAVEL", "ACHIEVEMENT", "OLD_PHOTO", "RELIGIOUS", "FESTIVAL", "DAILY_LIFE", "OTHER"])
+    .default("OTHER"),
   isPublic: z.boolean().default(false),
   media: z
     .array(
