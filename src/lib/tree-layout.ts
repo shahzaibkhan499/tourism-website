@@ -188,53 +188,22 @@ export function layoutTree(
       }
       const childrenWidth = Math.max(childCursor - colCursor, 0);
 
-      // Spouse's OTHER marriages get extra columns on the spouse's side
-      const otherMarriages = (graph.marriagesOf.get(spouseId) ?? []).filter((x) => !u.marriage || x.id !== u.marriage.id);
       let extraWidth = 0;
-      for (const om of otherMarriages) {
-        const otherSpouseId = om.spouse1Id === spouseId ? om.spouse2Id : om.spouse1Id;
-        const otherChildren = sortFor(otherSpouseId, familyChildren([spouseId, otherSpouseId]));
-        if (visited.has(otherSpouseId)) continue;
-        visited.add(otherSpouseId);
-        placed.set(otherSpouseId, { x: childCursor + 0.5, y: depth, depth });
-        let ocCursor = childCursor + 1;
-        const ocXs: number[] = [];
-        for (const c of otherChildren) {
-          if (visited.has(c)) continue;
-          const u = placeUnit(c, depth + 1, ocCursor);
-          if (u.width > 0) {
-            ocXs.push(u.anchorX);
-            ocCursor += u.width;
-          }
-        }
-        const ocWidth = Math.max(ocCursor - childCursor, 1);
-        if (ocXs.length > 0) {
-          const newX = (Math.min(...ocXs) + Math.max(...ocXs)) / 2;
-          placed.set(otherSpouseId, { x: newX, y: depth, depth });
-        }
-        buses.push({
-          family: graph.familyByKey.get(familyKey([spouseId, otherSpouseId])) ?? {
-            key: familyKey([spouseId, otherSpouseId]),
-            parentIds: [spouseId, otherSpouseId],
-            childIds: otherChildren,
-            marriage: null,
-          },
-          type: "BIOLOGICAL",
-        });
-        extraWidth += ocWidth;
-        childCursor = ocCursor;
-      }
-
-      // Spouse's OTHER marriage-less families (co-parents without a marriage
-      // record) get columns on the spouse's side too — otherwise a member who
-      // was pulled into this unit as a spouse would lose their other families.
-      for (const fam of familiesOf.get(spouseId) ?? []) {
-        const otherId = fam.parentIds.find((x) => x !== spouseId);
-        if (!otherId || otherId === memberId) continue;
-        if (visited.has(otherId)) continue;
-        const otherChildren = sortFor(otherId, fam.childIds);
-        visited.add(otherId);
-        placed.set(otherId, { x: childCursor + 0.5, y: depth, depth });
+      // Shared helper — ONE implementation for placing a co-parent column
+      // beside the spouse column, used for BOTH:
+      //   a) the spouse's other marriages (real marriage line), and
+      //   b) the spouse's marriage-less families (synthetic join line).
+      // Geometry is identical: co-parent column + children + their own
+      // single-parent children + the family bus + the join line.
+      const placeCoParent = (
+        coParentId: string,
+        childrenIds: string[],
+        marriage: (typeof marriages)[number] | null
+      ) => {
+        if (visited.has(coParentId)) return;
+        visited.add(coParentId);
+        placed.set(coParentId, { x: childCursor + 0.5, y: depth, depth });
+        const otherChildren = sortFor(coParentId, childrenIds);
         let ocCursor = childCursor + 1;
         const ocXs: number[] = [];
         for (const c of otherChildren) {
@@ -248,10 +217,10 @@ export function layoutTree(
         const ocWidth = Math.max(ocCursor - childCursor, 1);
         if (ocXs.length > 0) {
           const newX = (Math.min(...ocXs) + Math.max(...ocXs)) / 2;
-          placed.set(otherId, { x: newX, y: depth, depth });
+          placed.set(coParentId, { x: newX, y: depth, depth });
         }
-        // other parent's own single-parent children
-        for (const c of sortFor(otherId, childrenOf(otherId)).filter(
+        // co-parent's own single-parent children
+        for (const c of sortFor(coParentId, childrenOf(coParentId)).filter(
           (cc) => (graph.parentIdsOf.get(cc) ?? []).length === 1
         )) {
           if (visited.has(c)) continue;
@@ -259,9 +228,9 @@ export function layoutTree(
           ocCursor += cu.width;
           if (cu.width > 0) {
             buses.push({
-              family: graph.familyByKey.get(familyKey([otherId])) ?? {
-                key: familyKey([otherId]),
-                parentIds: [otherId],
+              family: graph.familyByKey.get(familyKey([coParentId])) ?? {
+                key: familyKey([coParentId]),
+                parentIds: [coParentId],
                 childIds: [c],
                 marriage: null,
               },
@@ -270,24 +239,43 @@ export function layoutTree(
           }
         }
         buses.push({
-          family: graph.familyByKey.get(familyKey([spouseId, otherId])) ?? {
-            key: familyKey([spouseId, otherId]),
-            parentIds: [spouseId, otherId],
+          family: graph.familyByKey.get(familyKey([spouseId, coParentId])) ?? {
+            key: familyKey([spouseId, coParentId]),
+            parentIds: [spouseId, coParentId],
             childIds: otherChildren,
             marriage: null,
           },
           type: "BIOLOGICAL",
         });
+        // join line between the two co-parents: the real marriage line when a
+        // marriage exists, otherwise a synthetic one (GenoPro always joins
+        // co-parents visually)
         marriageLines.push({
-          id: `syn:${spouseId}:${otherId}`,
+          id: marriage ? marriage.id : `syn:${spouseId}:${coParentId}`,
           s1: spouseId,
-          s2: otherId,
-          status: "MARRIED",
-          type: "NIKKAH",
+          s2: coParentId,
+          status: marriage ? marriage.status : ("MARRIED" as const),
+          type: marriage ? marriage.type : ("NIKKAH" as const),
           offset: 0,
         });
         extraWidth += ocWidth;
         childCursor = ocCursor;
+      };
+
+      // Spouse's OTHER marriages get extra columns on the spouse's side
+      const otherMarriages = (graph.marriagesOf.get(spouseId) ?? []).filter((x) => !u.marriage || x.id !== u.marriage.id);
+      for (const om of otherMarriages) {
+        const otherSpouseId = om.spouse1Id === spouseId ? om.spouse2Id : om.spouse1Id;
+        placeCoParent(otherSpouseId, familyChildren([spouseId, otherSpouseId]), om);
+      }
+
+      // Spouse's OTHER marriage-less families (co-parents without a marriage
+      // record) get columns on the spouse's side too — otherwise a member who
+      // was pulled into this unit as a spouse would lose their other families.
+      for (const fam of familiesOf.get(spouseId) ?? []) {
+        const otherId = fam.parentIds.find((x) => x !== spouseId);
+        if (!otherId || otherId === memberId) continue;
+        placeCoParent(otherId, fam.childIds, null);
       }
 
       // Spouse node sits centered above its children row
