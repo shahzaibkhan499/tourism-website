@@ -4,32 +4,22 @@ import { useEffect } from "react";
 import { useAppStore } from "@/stores/app-store";
 
 // ============================================================
-// THEME APPLIER — syncs the app theme (light/dark/system)
-// from the persisted app store onto <html>, toggling the
-// Tailwind `dark` class used across all pages (incl. tree SVG).
+// THEME APPLIER — keeps the site in its original LIGHT look by
+// default. The `dark` class is applied ONLY when the user has
+// explicitly chosen "Dark" in Settings > Theme. "system" and
+// "light" both keep the site exactly as it looked before.
 // ============================================================
 function resolveDark(theme: "light" | "dark" | "system"): boolean {
-  if (theme === "dark") return true;
-  if (theme === "light") return false;
-  if (typeof window !== "undefined" && window.matchMedia) {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-  return false;
+  return theme === "dark";
 }
 
 export function ThemeApplier() {
   const theme = useAppStore((s) => s.theme);
 
   useEffect(() => {
-    const apply = () => {
-      const dark = resolveDark(useAppStore.getState().theme);
-      document.documentElement.classList.toggle("dark", dark);
-      document.documentElement.style.colorScheme = dark ? "dark" : "light";
-    };
-    apply();
-    const mq = window.matchMedia?.("(prefers-color-scheme: dark)");
-    mq?.addEventListener?.("change", apply);
-    return () => mq?.removeEventListener?.("change", apply);
+    const dark = resolveDark(useAppStore.getState().theme);
+    document.documentElement.classList.toggle("dark", dark);
+    document.documentElement.style.colorScheme = dark ? "dark" : "light";
   }, [theme]);
 
   return null;
