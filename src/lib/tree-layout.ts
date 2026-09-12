@@ -122,6 +122,10 @@ export function layoutTree(
           if (u.width > 0) {
             childXs.push(u.anchorX);
             childCursor += u.width;
+          } else if (placed.has(c)) {
+            // child already laid out elsewhere (pulled into another family unit) —
+            // still route the parent→child drop to its actual position
+            childXs.push(placed.get(c)!.x);
           }
         }
         width = Math.max(childCursor - cursor, 1);
@@ -216,6 +220,71 @@ export function layoutTree(
             marriage: null,
           },
           type: "BIOLOGICAL",
+        });
+        extraWidth += ocWidth;
+        childCursor = ocCursor;
+      }
+
+      // Spouse's OTHER marriage-less families (co-parents without a marriage
+      // record) get columns on the spouse's side too — otherwise a member who
+      // was pulled into this unit as a spouse would lose their other families.
+      for (const fam of familiesOf.get(spouseId) ?? []) {
+        const otherId = fam.parentIds.find((x) => x !== spouseId);
+        if (!otherId || otherId === memberId) continue;
+        if (visited.has(otherId)) continue;
+        const otherChildren = sortFor(otherId, fam.childIds);
+        visited.add(otherId);
+        placed.set(otherId, { x: childCursor + 0.5, y: depth, depth });
+        let ocCursor = childCursor + 1;
+        const ocXs: number[] = [];
+        for (const c of otherChildren) {
+          if (visited.has(c)) continue;
+          const cu = placeUnit(c, depth + 1, ocCursor);
+          if (cu.width > 0) {
+            ocXs.push(cu.anchorX);
+            ocCursor += cu.width;
+          }
+        }
+        const ocWidth = Math.max(ocCursor - childCursor, 1);
+        if (ocXs.length > 0) {
+          const newX = (Math.min(...ocXs) + Math.max(...ocXs)) / 2;
+          placed.set(otherId, { x: newX, y: depth, depth });
+        }
+        // other parent's own single-parent children
+        for (const c of sortFor(otherId, childrenOf(otherId)).filter(
+          (cc) => (graph.parentIdsOf.get(cc) ?? []).length === 1
+        )) {
+          if (visited.has(c)) continue;
+          const cu = placeUnit(c, depth + 1, ocCursor);
+          ocCursor += cu.width;
+          if (cu.width > 0) {
+            buses.push({
+              family: graph.familyByKey.get(familyKey([otherId])) ?? {
+                key: familyKey([otherId]),
+                parentIds: [otherId],
+                childIds: [c],
+                marriage: null,
+              },
+              type: "BIOLOGICAL",
+            });
+          }
+        }
+        buses.push({
+          family: graph.familyByKey.get(familyKey([spouseId, otherId])) ?? {
+            key: familyKey([spouseId, otherId]),
+            parentIds: [spouseId, otherId],
+            childIds: otherChildren,
+            marriage: null,
+          },
+          type: "BIOLOGICAL",
+        });
+        marriageLines.push({
+          id: `syn:${spouseId}:${otherId}`,
+          s1: spouseId,
+          s2: otherId,
+          status: "MARRIED",
+          type: "NIKKAH",
+          offset: 0,
         });
         extraWidth += ocWidth;
         childCursor = ocCursor;
