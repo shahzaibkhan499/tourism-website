@@ -144,9 +144,18 @@ export async function exportTree(treeId: string, format: "gedcom" | "json" | "pd
   const W = Math.max(layout.bounds.width + pad * 2, 400);
   const H = Math.max(layout.bounds.height + pad * 2, 300);
 
-  const buildSvg = (): string => {
+  // sharp/librsvg hard-limit: SVG inputs larger than 32767px on either edge
+  // fail ("Input SVG image exceeds 32767x32767 pixel limit"). Huge trees
+  // (e.g. 1000+ members = 200,000px wide) are scaled down to a safe render
+  // size via the SVG viewBox: content coordinates stay identical, only the
+  // rasterized pixel size shrinks. Caps keep serverless memory bounded.
+  const MAX_EDGE = 16000;
+  const MAX_PIXELS = 48_000_000;
+  const pngScale = Math.min(1, MAX_EDGE / Math.max(W, H), Math.sqrt(MAX_PIXELS / Math.max(1, W * H)));
+
+  const buildSvg = (renderW: number = W, renderH: number = H): string => {
     const parts: string[] = [];
-    parts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`);
+    parts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${renderW}" height="${renderH}" viewBox="0 0 ${W} ${H}">`);
     parts.push(`<rect width="${W}" height="${H}" fill="#fafafa"/>`);
     // buses
     for (const b of layout.buses) {
@@ -192,7 +201,7 @@ export async function exportTree(treeId: string, format: "gedcom" | "json" | "pd
   };
 
   if (format === "png") {
-    const svg = Buffer.from(buildSvg(), "utf-8");
+    const svg = Buffer.from(buildSvg(Math.max(1, Math.round(W * pngScale)), Math.max(1, Math.round(H * pngScale))), "utf-8");
     const png = await sharp(svg).png().toBuffer();
     return { data: png, filename: `${safeName}.png`, contentType: "image/png" };
   }
@@ -200,7 +209,14 @@ export async function exportTree(treeId: string, format: "gedcom" | "json" | "pd
   // PDF via pdf-lib — pure JS, standard fonts embedded, no runtime font
   // modules (pdfkit's "#standard-fonts" imports break on serverless).
   const pdfDoc = await PDFDocument.create();
-  const page = pdfDoc.addPage([Math.min(W + 40, 14400), Math.min(H + 40, 14400)]);
+  // PDF spec caps page size at 14400pt. Huge trees (1000+ members) produce
+  // much wider layouts — draw at full coordinates, then scale the content
+  // down to fit the page (scaleContent anchors at bottom-left, content
+  // stays fully visible).
+  const pageW = Math.min(W + 40, 14400);
+  const pageH = Math.min(H + 40, 14400);
+  const pdfScale = Math.min(1, pageW / (W + 40), pageH / (H + 40));
+  const page = pdfDoc.addPage([pageW, pageH]);
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const hex = (h: string) => {
     const v = h.replace("#", "");
@@ -268,6 +284,7 @@ export async function exportTree(treeId: string, format: "gedcom" | "json" | "pd
   }
   page.drawText(win(data.tree.name), { x: 40, y: py(20), size: 16, font, color: hex("#111827") });
   page.drawText(`Digital Family Tree — ${new Date().toLocaleDateString("en-GB")} — ${data.members.length} members`, { x: 40, y: py(40), size: 10, font, color: hex("#6b7280") });
+  if (pdfScale < 1) page.scaleContent(pdfScale, pdfScale);
   const pdf = Buffer.from(await pdfDoc.save());
   return { data: pdf, filename: `${safeName}.pdf`, contentType: "application/pdf" };
 }
