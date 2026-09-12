@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import PDFDocument from "pdfkit";
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { prisma } from "@/lib/db";
 import { buildTreeGraph } from "@/lib/tree-graph";
 import { layoutTree } from "@/lib/tree-layout";
@@ -197,35 +197,47 @@ export async function exportTree(treeId: string, format: "gedcom" | "json" | "pd
     return { data: png, filename: `${safeName}.png`, contentType: "image/png" };
   }
 
-  // PDF via pdfkit
-  const doc = new PDFDocument({ size: [Math.min(W + 40, 14400), Math.min(H + 40, 14400)], margin: 0 });
-  const chunks: Buffer[] = [];
-  doc.on("data", (c) => chunks.push(c));
-  const done = new Promise<Buffer>((resolve) => doc.on("end", () => resolve(Buffer.concat(chunks))));
-  doc.rect(0, 0, W, H).fill("#fafafa");
-  doc.lineCap("round").lineJoin("round");
+  // PDF via pdf-lib — pure JS, standard fonts embedded, no runtime font
+  // modules (pdfkit's "#standard-fonts" imports break on serverless).
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage([Math.min(W + 40, 14400), Math.min(H + 40, 14400)]);
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const hex = (h: string) => {
+    const v = h.replace("#", "");
+    return rgb(parseInt(v.slice(0, 2), 16) / 255, parseInt(v.slice(2, 4), 16) / 255, parseInt(v.slice(4, 6), 16) / 255);
+  };
+  // pdf-lib y-axis is bottom-up; layout coords are top-down
+  const py = (y: number) => H - y;
+  // WinAnsi-safe text (Helvetica standard encoding — no Urdu/emoji glyphs)
+  const win = (t: string) =>
+    Array.from(t).map((ch) => (ch.charCodeAt(0) >= 0x20 && ch.charCodeAt(0) < 0xff ? ch : "?")).join("");
+
+  page.drawRectangle({ x: 0, y: 0, width: W, height: H, color: hex("#fafafa") });
   for (const b of layout.buses) {
     const meta = REL_TYPE_META[b.type] ?? REL_TYPE_META.BIOLOGICAL;
-    const dashPattern = meta.dash ? meta.dash.split(",").map(Number) : null;
-    doc.strokeColor(meta.stroke).lineWidth(2);
-    if (dashPattern) (doc as any).dash(dashPattern);
-    doc.moveTo(b.points[0].x + pad, b.points[0].y + pad);
-    for (const p of b.points.slice(1)) doc.lineTo(p.x + pad, p.y + pad);
-    doc.stroke();
-    if (dashPattern) doc.undash();
+    const dash = meta.dash ? meta.dash.split(",").map(Number) : undefined;
+    for (let i = 0; i + 1 < b.points.length; i++) {
+      page.drawLine({
+        start: { x: b.points[i].x + pad, y: py(b.points[i].y + pad) },
+        end: { x: b.points[i + 1].x + pad, y: py(b.points[i + 1].y + pad) },
+        thickness: 2,
+        color: hex(meta.stroke),
+        dashArray: dash,
+        lineCap: 1,
+      });
+    }
   }
   for (const m of layout.marriages) {
     const color = m.status === "MARRIED" ? MARRIAGE_COLOR : "#9ca3af";
     const x1 = Math.min(m.x1, m.x2) + pad;
     const x2 = Math.max(m.x1, m.x2) + pad;
-    doc.strokeColor(color).lineWidth(1.5);
-    doc.moveTo(x1, m.y1 + pad - 3).lineTo(x2, m.y1 + pad - 3).stroke();
-    doc.moveTo(x1, m.y1 + pad + 3).lineTo(x2, m.y1 + pad + 3).stroke();
+    const yy = m.y1 + pad;
+    page.drawLine({ start: { x: x1, y: py(yy - 3) }, end: { x: x2, y: py(yy - 3) }, thickness: 1.5, color: hex(color) });
+    page.drawLine({ start: { x: x1, y: py(yy + 3) }, end: { x: x2, y: py(yy + 3) }, thickness: 1.5, color: hex(color) });
     if (m.status === "DIVORCED") {
       const mx = (m.x1 + m.x2) / 2 + pad;
-      doc.strokeColor("#6b7280").lineWidth(2);
-      doc.moveTo(mx - 5, m.y1 + pad - 5).lineTo(mx + 5, m.y1 + pad + 5).stroke();
-      doc.moveTo(mx - 5, m.y1 + pad + 5).lineTo(mx + 5, m.y1 + pad - 5).stroke();
+      page.drawLine({ start: { x: mx - 5, y: py(yy - 5) }, end: { x: mx + 5, y: py(yy + 5) }, thickness: 2, color: hex("#6b7280") });
+      page.drawLine({ start: { x: mx - 5, y: py(yy + 5) }, end: { x: mx + 5, y: py(yy - 5) }, thickness: 2, color: hex("#6b7280") });
     }
   }
   for (const n of Array.from(layout.nodes.values())) {
@@ -235,17 +247,28 @@ export async function exportTree(treeId: string, format: "gedcom" | "json" | "pd
     const border = deceased ? DECEASED_COLOR : GENDER_COLORS[member.gender] ?? "#6b7280";
     const x = n.cx - NODE_W / 2 + pad;
     const y = n.cy - NODE_H / 2 + pad;
-    doc.roundedRect(x, y, NODE_W, NODE_H, 12).fillAndStroke("#ffffff", border).lineWidth(3);
-    doc.strokeColor(border).lineWidth(1.5).circle(x + 30, y + 28, 20).stroke();
-    doc.fillColor(border).fontSize(13).text(initials(member), x + 18, y + 21, { width: 24, align: "center" });
-    doc.fillColor("#111827").fontSize(14).text(fullName(member).slice(0, 16), x + 58, y + 20, { width: NODE_W - 70 });
+    // rounded node card via svg path (drawRectangle has no radius option)
+    page.drawSvgPath(
+      `M 12 0 H ${NODE_W - 12} A 12 12 0 0 1 ${NODE_W} 12 V ${NODE_H - 12} A 12 12 0 0 1 ${NODE_W - 12} ${NODE_H} H 12 A 12 12 0 0 1 0 ${NODE_H - 12} V 12 A 12 12 0 0 1 12 0 Z`,
+      { x, y: py(y + NODE_H), borderColor: hex(border), borderWidth: 3, color: hex("#ffffff") }
+    );
+    page.drawCircle({ x: x + 30, y: py(y + 28), size: 40, borderColor: hex(border), borderWidth: 1.5 });
+    const initialsText = win(initials(member));
+    const iw = font.widthOfTextAtSize(initialsText, 13);
+    page.drawText(initialsText, { x: x + 30 - iw / 2, y: py(y + 21), size: 13, font, color: hex(border) });
+    const nameText = win(fullName(member)).slice(0, 16);
+    page.drawText(nameText, { x: x + 58, y: py(y + 20), size: 14, font, color: hex("#111827") });
     const dates = member.dateOfBirth ? `${new Date(member.dateOfBirth).getFullYear()}${member.dateOfDeath ? "–" + new Date(member.dateOfDeath).getFullYear() : ""}` : "";
-    if (dates) doc.fillColor("#6b7280").fontSize(12).text(dates, x + 58, y + 40);
+    if (dates) page.drawText(dates, { x: x + 58, y: py(y + 40), size: 12, font, color: hex("#6b7280") });
+    if (deceased) {
+      // small gray candle marker (standard fonts have no emoji glyphs)
+      const cx = x + NODE_W - 16, cy = py(y + NODE_H - 10);
+      page.drawCircle({ x: cx, y: cy, size: 10, borderColor: hex("#9ca3af"), borderWidth: 1 });
+    }
   }
-  doc.fillColor("#111827").fontSize(16).text(data.tree.name, 40, 20);
-  doc.fillColor("#6b7280").fontSize(10).text(`Digital Family Tree — ${new Date().toLocaleDateString("en-GB")} — ${data.members.length} members`, 40, 40);
-  doc.end();
-  const pdf = await done;
+  page.drawText(win(data.tree.name), { x: 40, y: py(20), size: 16, font, color: hex("#111827") });
+  page.drawText(`Digital Family Tree — ${new Date().toLocaleDateString("en-GB")} — ${data.members.length} members`, { x: 40, y: py(40), size: 10, font, color: hex("#6b7280") });
+  const pdf = Buffer.from(await pdfDoc.save());
   return { data: pdf, filename: `${safeName}.pdf`, contentType: "application/pdf" };
 }
 
