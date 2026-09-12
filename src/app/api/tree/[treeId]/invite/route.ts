@@ -4,6 +4,7 @@ import { apiError, apiSuccess, handleApiError, requireUser } from "@/lib/api";
 import { inviteCreateSchema } from "@/lib/tree-validators";
 import { assertCanInvite, logTreeAccess, resolveTreeAccess } from "@/lib/tree-access";
 import { sanitizeInput } from "@/lib/utils";
+import { getSiteUrl } from "@/lib/site-url";
 
 type RouteCtx = { params: { treeId: string } };
 
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
 
     await logTreeAccess(params.treeId, user.id, "INVITE_SENT", req);
 
-    const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/tree/invite/${invite.token}`;
+    const inviteUrl = `${getSiteUrl()}/tree/invite/${invite.token}`;
 
     return apiSuccess(
       {

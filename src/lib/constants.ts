@@ -4,7 +4,8 @@
 // ============================================================
 
 export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "Digital Family Tree";
-export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:4001";
+import { getSiteUrl } from "@/lib/site-url";
+export const APP_URL = getSiteUrl();
 export const APP_DESCRIPTION =
   process.env.NEXT_PUBLIC_APP_DESCRIPTION || "A modern digital family tree platform foundation";
 

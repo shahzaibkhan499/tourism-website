@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants";
+import { getSiteUrl } from "@/lib/site-url";
 
 // ============================================================
 // SEO HELPERS — metadata builder + JSON-LD structured data.
@@ -8,7 +9,7 @@ import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants";
 // Event/Person/BreadcrumbList schemas.
 // ============================================================
 
-export const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+export const SITE_URL = getSiteUrl();
 
 export function buildMetadata(opts: {
   title: string; // English

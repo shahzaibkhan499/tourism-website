@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
+import { getSiteUrl } from "@/lib/site-url";
 
 // ============================================================
 // ROBOTS.TXT — public pages crawlable; auth/admin/API excluded.
 // ============================================================
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const siteUrl = getSiteUrl();
   return {
     rules: [
       {

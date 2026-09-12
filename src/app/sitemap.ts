@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
+import { getSiteUrl } from "@/lib/site-url";
 
 // ============================================================
 // SITEMAP.XML — all public pages of the platform.
 // Authenticated module pages are intentionally excluded.
 // ============================================================
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const siteUrl = getSiteUrl();
   const now = new Date();
 
   const publicPages: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [

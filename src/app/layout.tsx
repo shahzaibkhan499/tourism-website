@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants";
 import { JsonLd, organizationLd, webSiteLd } from "@/lib/seo";
+import { getSiteUrl } from "@/lib/site-url";
 import { Providers } from "@/components/providers";
 import { AudioInitializer } from "@/components/shared/audio-initializer";
 import { ThemeApplier } from "@/components/shared/theme-applier";
@@ -11,20 +12,20 @@ import { ThemeApplier } from "@/components/shared/theme-applier";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const urdu = Noto_Nastaliq_Urdu({ subsets: ["arabic"], weight: ["400", "700"], variable: "--font-urdu", display: "swap" });
 
-// Parse NEXT_PUBLIC_APP_URL safely: if the env value is malformed
-// (missing https://, extra characters, etc.) we fall back to localhost
-// instead of crashing the production build.
-function safeUrl(raw: string | undefined, fallback: string): URL {
+// Robust production origin for metadataBase (canonical/OG URLs).
+// getSiteUrl rejects polluted env values (quotes, placeholders)
+// and prefers Vercel's auto-injected production URL, so OG/canonical
+// tags are always real — never localhost or a placeholder domain.
+function safeUrl(): URL {
   try {
-    const candidate = (raw ?? "").trim();
-    return new URL(candidate || fallback);
+    return new URL(getSiteUrl());
   } catch {
-    return new URL(fallback);
+    return new URL("http://localhost:3000");
   }
 }
 
 export const metadata: Metadata = {
-  metadataBase: safeUrl(process.env.NEXT_PUBLIC_APP_URL, "http://localhost:3000"),
+  metadataBase: safeUrl(),
   title: {
     default: `${APP_NAME} — آپ کا ڈیجیٹل خاندان`,
     template: `%s | ${APP_NAME}`,
