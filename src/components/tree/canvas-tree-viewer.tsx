@@ -313,7 +313,9 @@ export const CanvasTreeViewer = forwardRef<CanvasViewerApi, CanvasTreeViewerProp
     if (!canvas || !wrap || !zoom || !lay) return;
     const cw = wrap.clientWidth;
     const ch = wrap.clientHeight;
-    const k = Math.min(cw / (lay.bounds.width + PAD * 2), ch / (lay.bounds.height + PAD * 2), 1);
+    // clamp to the d3 zoom extent floor — a fit-k below the extent makes the
+    // first user zoom gesture jump to a wildly different region (empty canvas)
+    const k = Math.max(Math.min(cw / (lay.bounds.width + PAD * 2), ch / (lay.bounds.height + PAD * 2), 1), 0.1);
     const tx = (cw - lay.bounds.width * k) / 2;
     const ty = (ch - lay.bounds.height * k) / 2;
     viewRef.current = { x: tx, y: ty, k };

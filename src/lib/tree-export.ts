@@ -216,6 +216,26 @@ export async function exportTree(treeId: string, format: "gedcom" | "json" | "pd
   const pageW = Math.min(W + 40, 14400);
   const pageH = Math.min(H + 40, 14400);
   const pdfScale = Math.min(1, pageW / (W + 40), pageH / (H + 40));
+
+  // Huge tree (fits neither the sharp raster limit nor the PDF 14400pt page
+  // cap): vector PDF drawing of 1000+ nodes times out on serverless. Embed
+  // the scaled PNG raster into a PDF page instead — identical visuals, fast.
+  if (pdfScale < 1) {
+    const png = await sharp(
+      Buffer.from(buildSvg(Math.max(1, Math.round(W * pngScale)), Math.max(1, Math.round(H * pngScale))), "utf-8")
+    )
+      .png()
+      .toBuffer();
+    const img = await pdfDoc.embedPng(png);
+    const s = Math.min(14400 / (W + 40), 14400 / (H + 40));
+    const pw = Math.max(1, Math.round((W + 40) * s));
+    const ph = Math.max(1, Math.round((H + 40) * s));
+    const rasterPage = pdfDoc.addPage([pw, ph]);
+    rasterPage.drawImage(img, { x: 0, y: 0, width: pw, height: ph });
+    const pdf = Buffer.from(await pdfDoc.save());
+    return { data: pdf, filename: `${safeName}.pdf`, contentType: "application/pdf" };
+  }
+
   const page = pdfDoc.addPage([pageW, pageH]);
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const hex = (h: string) => {
@@ -284,7 +304,6 @@ export async function exportTree(treeId: string, format: "gedcom" | "json" | "pd
   }
   page.drawText(win(data.tree.name), { x: 40, y: py(20), size: 16, font, color: hex("#111827") });
   page.drawText(`Digital Family Tree — ${new Date().toLocaleDateString("en-GB")} — ${data.members.length} members`, { x: 40, y: py(40), size: 10, font, color: hex("#6b7280") });
-  if (pdfScale < 1) page.scaleContent(pdfScale, pdfScale);
   const pdf = Buffer.from(await pdfDoc.save());
   return { data: pdf, filename: `${safeName}.pdf`, contentType: "application/pdf" };
 }
