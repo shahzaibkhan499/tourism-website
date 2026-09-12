@@ -133,42 +133,82 @@ export const CanvasTreeViewer = forwardRef<CanvasViewerApi, CanvasTreeViewerProp
     ctx.translate(v.x, v.y);
     ctx.scale(v.k, v.k);
 
-    // buses
+    const casing = dark ? "#030712" : "#ffffff";
+
+    // buses (casing pass + colored pass)
     for (const b of lay.buses) {
       const meta = REL_TYPE_META[b.type] ?? REL_TYPE_META.BIOLOGICAL;
-      ctx.beginPath();
-      b.points.forEach((p, i) => (i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)));
-      ctx.strokeStyle = meta.stroke;
-      ctx.lineWidth = 2 / v.k;
-      if (meta.dash) ctx.setLineDash(meta.dash.split(",").map(Number).map((n) => n / v.k));
-      else ctx.setLineDash([]);
-      ctx.stroke();
+      const dash = meta.dash ? meta.dash.split(",").map(Number).map((n) => n / v.k) : [];
+      const passes: Array<{ stroke: string; width: number }> = [
+        { stroke: casing, width: 4.5 / v.k },
+        { stroke: meta.stroke, width: 2 / v.k },
+      ];
+      for (const pass of passes) {
+        ctx.beginPath();
+        b.points.forEach((p, i) => (i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)));
+        ctx.strokeStyle = pass.stroke;
+        ctx.lineWidth = pass.width;
+        ctx.setLineDash(dash);
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.stroke();
+      }
     }
     ctx.setLineDash([]);
 
-    // marriages
+    // marriages (double lines 6px apart, perpendicular to direction)
     for (const m of lay.marriages) {
-      const color = m.status === "MARRIED" ? "#f472b6" : "#9ca3af";
+      const horizontal = Math.abs(m.x2 - m.x1) >= Math.abs(m.y2 - m.y1);
+      const isDivorced = m.status === "DIVORCED" || m.status === "SEPARATED";
+      const isEngaged = m.status === "ENGAGED";
+      const isWidowed = m.status === "WIDOWED";
+      const color = isDivorced || isWidowed ? "#9ca3af" : "#ec4899";
+      const dash = isDivorced || isEngaged ? [5 / v.k, 4 / v.k] : [];
       const x1 = Math.min(m.x1, m.x2);
       const x2 = Math.max(m.x1, m.x2);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.5 / v.k;
-      ctx.beginPath();
-      ctx.moveTo(x1, m.y1 - 3);
-      ctx.lineTo(x2, m.y1 - 3);
-      ctx.moveTo(x1, m.y1 + 3);
-      ctx.lineTo(x2, m.y1 + 3);
-      ctx.stroke();
-      if (m.status === "DIVORCED") {
-        const mx = (m.x1 + m.x2) / 2;
-        ctx.strokeStyle = "#6b7280";
-        ctx.lineWidth = 2 / v.k;
+      const y1 = Math.min(m.y1, m.y2);
+      const y2 = Math.max(m.y1, m.y2);
+      const pairs = horizontal
+        ? [
+            [x1, y1 - 3, x2, y2 - 3],
+            [x1, y1 + 3, x2, y2 + 3],
+          ]
+        : [
+            [x1 - 3, y1, x2 - 3, y2],
+            [x1 + 3, y1, x2 + 3, y2],
+          ];
+      const mPasses: Array<{ stroke: string; width: number }> = [
+        { stroke: casing, width: 4.5 / v.k },
+        { stroke: color, width: 2 / v.k },
+      ];
+      for (const pass of mPasses) {
         ctx.beginPath();
-        ctx.moveTo(mx - 5, m.y1 - 5);
-        ctx.lineTo(mx + 5, m.y1 + 5);
-        ctx.moveTo(mx - 5, m.y1 + 5);
-        ctx.lineTo(mx + 5, m.y1 - 5);
+        for (const [ax, ay, bx, by] of pairs) {
+          ctx.moveTo(ax, ay);
+          ctx.lineTo(bx, by);
+        }
+        ctx.strokeStyle = pass.stroke;
+        ctx.lineWidth = pass.width;
+        ctx.setLineDash(dash);
         ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      if (isDivorced) {
+        const mx = (m.x1 + m.x2) / 2;
+        const my = (m.y1 + m.y2) / 2;
+        ctx.strokeStyle = "#ef4444";
+        ctx.lineWidth = 2.5 / v.k;
+        ctx.beginPath();
+        ctx.moveTo(mx - 5, my - 5);
+        ctx.lineTo(mx + 5, my + 5);
+        ctx.moveTo(mx - 5, my + 5);
+        ctx.lineTo(mx + 5, my - 5);
+        ctx.stroke();
+      }
+      if (isEngaged) {
+        ctx.font = `${11 / v.k}px sans-serif`;
+        ctx.textAlign = "center";
+        ctx.fillText("💍", (m.x1 + m.x2) / 2, horizontal ? (m.y1 + m.y2) / 2 - 10 / v.k : (m.y1 + m.y2) / 2 - 4 / v.k);
       }
     }
 
@@ -336,7 +376,7 @@ export const CanvasTreeViewer = forwardRef<CanvasViewerApi, CanvasTreeViewerProp
   };
 
   return (
-    <div ref={wrapRef} className="relative h-[72vh] w-full overflow-hidden rounded-xl border bg-[#fafafa] dark:border-gray-700 dark:bg-[#0b1220]">
+    <div ref={wrapRef} className="relative h-[72vh] w-full overflow-hidden rounded-xl border border-gray-200 bg-[#fafafa] dark:border-gray-800 dark:bg-[#030712]">
       <canvas
         ref={canvasRef}
         className="h-full w-full touch-none select-none"

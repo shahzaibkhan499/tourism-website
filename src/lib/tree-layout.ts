@@ -81,6 +81,19 @@ export function layoutTree(
   const familyChildren = (parentIds: string[]) =>
     graph.familyByKey.get(familyKey(parentIds))?.childIds ?? [];
 
+  // Reverse index: member -> 2-parent families it belongs to.
+  // A couple that shares children must be laid out as one unit even when
+  // they have no marriage record (e.g. Father/Mother quick-added).
+  const familiesOf = new Map<string, TreeFamily[]>();
+  for (const fam of graph.families) {
+    if (fam.parentIds.length !== 2) continue;
+    for (const pid of fam.parentIds) {
+      const arr = familiesOf.get(pid) ?? [];
+      arr.push(fam);
+      familiesOf.set(pid, arr);
+    }
+  }
+
   const sortFor = (parentId: string, ids: string[]) =>
     sortSiblings(ids, graph.memberById, graph.relTypeOf, parentId, malesFirst);
 
@@ -96,7 +109,8 @@ export function layoutTree(
       (c) => (graph.parentIdsOf.get(c) ?? []).length === 1
     );
 
-    if (marriages.length === 0) {
+    const familyUnits = familiesOf.get(memberId) ?? [];
+    if (marriages.length === 0 && familyUnits.length === 0) {
       // Single person unit: either a lone node or node above its direct children
       let width = 1;
       let anchorX = cursor + 0.5;
@@ -128,19 +142,34 @@ export function layoutTree(
       return { width, anchorX, anchorY: depth };
     }
 
-    // Married unit: one column per marriage.
-    // Spec visual: Wife1 COLUMN | HUSBAND | Wife2 COLUMN | Wife3 ...
-    // anchor gets its own 1-slot column: before the only spouse (n==1)
-    // or right after the first spouse column (n>1).
-    const single = marriages.length === 1;
-    const spouseColumns: { spouseId: string; spouseX: number; childrenIds: string[]; marriageIdx: number }[] = [];
+    // Couple units: one column per marriage OR per marriage-less family
+    // (parents who share children but have no marriage record — e.g. added
+    // via Father/Mother quick-add). Spec visual: Wife1 COLUMN | ANCHOR |
+    // Wife2 COLUMN ...; the anchor gets its own 1-slot column: before the
+    // only spouse (n==1) or right after the first spouse column (n>1).
+    type CoupleUnit = { otherId: string; childrenIds: string[]; marriage: (typeof marriages)[number] | null };
+    const units: CoupleUnit[] = [];
+    for (const m of marriages) {
+      const otherId = m.spouse1Id === memberId ? m.spouse2Id : m.spouse1Id;
+      units.push({ otherId, childrenIds: familyChildren([memberId, otherId]), marriage: m });
+    }
+    for (const fam of familyUnits) {
+      const otherId = fam.parentIds.find((x) => x !== memberId);
+      if (!otherId) continue;
+      if (visited.has(otherId)) continue; // other parent already laid out this family
+      if (units.some((u) => u.otherId === otherId)) continue; // already a marriage with this co-parent
+      units.push({ otherId, childrenIds: fam.childIds, marriage: null });
+    }
+
+    const single = units.length === 1;
+    const spouseColumns: { spouseId: string; spouseX: number; childrenIds: string[]; marriage: (typeof marriages)[number] | null }[] = [];
     let colCursor = cursor + (single ? 1 : 0);
     let firstColWidth = 1;
 
-    for (let i = 0; i < marriages.length; i++) {
-      const m = marriages[i];
-      const spouseId = m.spouse1Id === memberId ? m.spouse2Id : m.spouse1Id;
-      const pairChildren = sortFor(spouseId, familyChildren([memberId, spouseId]));
+    for (let i = 0; i < units.length; i++) {
+      const u = units[i];
+      const spouseId = u.otherId;
+      const pairChildren = sortFor(spouseId, u.childrenIds);
       if (i === 1 && !single) colCursor += 1; // reserve the anchor's own slot
 
       let childCursor = colCursor;
@@ -156,7 +185,7 @@ export function layoutTree(
       const childrenWidth = Math.max(childCursor - colCursor, 0);
 
       // Spouse's OTHER marriages get extra columns on the spouse's side
-      const otherMarriages = (graph.marriagesOf.get(spouseId) ?? []).filter((x) => x.id !== m.id);
+      const otherMarriages = (graph.marriagesOf.get(spouseId) ?? []).filter((x) => !u.marriage || x.id !== u.marriage.id);
       let extraWidth = 0;
       for (const om of otherMarriages) {
         const otherSpouseId = om.spouse1Id === spouseId ? om.spouse2Id : om.spouse1Id;
@@ -226,7 +255,7 @@ export function layoutTree(
         }
       }
 
-      spouseColumns.push({ spouseId, spouseX, childrenIds: pairChildren, marriageIdx: i });
+      spouseColumns.push({ spouseId, spouseX, childrenIds: pairChildren, marriage: u.marriage });
       if (i === 0) firstColWidth = Math.max(colCursor - cursor, 1);
       const family = graph.familyByKey.get(familyKey([memberId, spouseId]));
       if (family && pairChildren.length > 0) {
@@ -240,29 +269,45 @@ export function layoutTree(
 
     placed.set(memberId, { x: anchorX, y: depth, depth });
 
-    // Marriage lines (with vertical offsets to avoid overlaps)
+    // Marriage / family join lines (with vertical offsets to avoid overlaps).
+    // Marriage-less couples get a synthetic join line so the family is still
+    // visually connected (GenoPro always joins co-parents).
     spouseColumns.forEach((col, idx) => {
-      const m = marriages[col.marriageIdx];
       const offset = (idx - (spouseColumns.length - 1) / 2) * 16;
-      marriageLines.push({
-        id: m.id,
-        s1: memberId,
-        s2: col.spouseId,
-        status: m.status,
-        type: m.type,
-        offset,
-      });
+      if (col.marriage) {
+        marriageLines.push({
+          id: col.marriage.id,
+          s1: memberId,
+          s2: col.spouseId,
+          status: col.marriage.status,
+          type: col.marriage.type,
+          offset,
+        });
+      } else {
+        marriageLines.push({
+          id: `syn:${memberId}:${col.spouseId}`,
+          s1: memberId,
+          s2: col.spouseId,
+          status: "MARRIED",
+          type: "NIKKAH",
+          offset,
+        });
+      }
     });
 
     return { width: totalWidth, anchorX, anchorY: depth };
   }
 
-  // Lay out roots left to right (root member first if specified)
+  // Lay out roots left to right. A member who has parents must NEVER be
+  // forced as a layout root — the tree must start from the top ancestors,
+  // otherwise the member is drawn on the same row as their own parents and
+  // the family bus fractures. rootId only orders TRUE roots.
   let roots = [...graph.roots];
-  if (rootId && roots.includes(rootId)) {
-    roots = [rootId, ...roots.filter((r) => r !== rootId)];
-  } else if (rootId) {
-    roots = [rootId, ...roots];
+  if (rootId) {
+    const rootHasParents = (graph.parentIdsOf.get(rootId) ?? []).length > 0;
+    if (!rootHasParents) {
+      roots = [rootId, ...roots.filter((r) => r !== rootId)];
+    }
   }
   roots = roots.filter((r, i) => roots.indexOf(r) === i);
   if (roots.length === 0 && graph.members.length > 0) {
@@ -322,9 +367,13 @@ export function layoutTree(
     if (parents.length === 0 || children.length === 0) continue;
 
     const parentYs = parents.map((p) => p.y);
-    const startY = Math.max(...parentYs) * LEVEL + NODE_H / 2;
-    const childY = Math.min(...children.map((c) => c.y * LEVEL)) - NODE_H / 2;
-    const coupleRowY = Math.max(...parentYs) * LEVEL;
+    const parentBottomY = Math.max(...parentYs) * LEVEL + NODE_H / 2; // parents' bottom edge
+    const childTopY = Math.min(...children.map((c) => c.y * LEVEL)) - NODE_H / 2; // children's top edge
+    const coupleRowY = Math.max(...parentYs) * LEVEL; // marriage row = parents' vertical center
+    const isCouple = family.parentIds.length > 1;
+    // single parent: drop starts at the parent's BOTTOM edge (never over the card)
+    // couple: drop starts at the marriage line (between the two spouse cards)
+    const startTop = isCouple ? coupleRowY : parentBottomY;
     const startX =
       family.parentIds.length === 1
         ? parents[0].x * SLOT
@@ -332,20 +381,23 @@ export function layoutTree(
 
     const minChildX = Math.min(...children.map((c) => c.x * SLOT));
     const maxChildX = Math.max(...children.map((c) => c.x * SLOT));
-    const midY = (startY + childY) / 2;
+    const midY = (parentBottomY + childTopY) / 2;
     const minX = Math.min(startX, minChildX);
     const maxX = Math.max(startX, maxChildX);
 
+    // Clean polyline: vertical drop → horizontal sibling run → per-child drops.
+    // Each child drop RETRACES back up to midY so the path never draws diagonals.
     const points = [
-      { x: startX, y: coupleRowY },
-      { x: startX, y: startY },
+      { x: startX, y: startTop },
       { x: startX, y: midY },
       { x: minX, y: midY },
       { x: maxX, y: midY },
     ];
-    for (const c of children) {
+    const sortedChildren = [...children].sort((a, b) => a.x * SLOT - b.x * SLOT);
+    for (const c of sortedChildren) {
       points.push({ x: c.x * SLOT, y: midY });
-      points.push({ x: c.x * SLOT, y: childY });
+      points.push({ x: c.x * SLOT, y: childTopY });
+      points.push({ x: c.x * SLOT, y: midY });
     }
     tbBuses.push({
       familyKey: family.key,

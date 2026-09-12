@@ -60,6 +60,7 @@ function TreeNodeInner({
 
   return (
     <g
+      data-member-id={member.id}
       transform={`translate(${cx} ${cy}) scale(${scale}) translate(${-cx} ${-cy})`}
       className="cursor-pointer"
       opacity={dimmed ? 0.35 : 1}

@@ -320,10 +320,10 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
         <g ref={gRef}>
           {/* marriage links under buses */}
           {layout.marriages.map((m) => (
-            <TreeMarriageLink key={m.id} line={m} />
+            <TreeMarriageLink key={m.id} line={m} dark={dark} />
           ))}
           {layout.buses.map((b) => (
-            <TreeLink key={b.familyKey + b.points.length} bus={b} />
+            <TreeLink key={b.familyKey + b.points.length} bus={b} dark={dark} />
           ))}
           {Array.from(layout.nodes.values()).map((n) => {
             const member = graph.memberById.get(n.id);

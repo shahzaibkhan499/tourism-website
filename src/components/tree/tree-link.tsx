@@ -9,31 +9,33 @@ import type { PlacedBus } from "@/lib/tree-layout";
 // Biological: solid green #16a34a; adopted: dashed blue;
 // step: dotted orange; guardian/foster: their own dashes.
 // Includes the sibling connector (horizontal run above the
-// children row).
+// children row) and the per-child drops.
 // ============================================================
 
 interface TreeLinkProps {
   bus: PlacedBus;
+  dark?: boolean;
 }
 
-function TreeLinkInner({ bus }: TreeLinkProps) {
+function TreeLinkInner({ bus, dark = false }: TreeLinkProps) {
   const meta = REL_TYPE_META[bus.type] ?? REL_TYPE_META.BIOLOGICAL;
   const d =
     bus.points
       .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
       .join(" ") || "";
   if (!d) return null;
+  const casing = dark ? "#030712" : "#ffffff";
   return (
     <g>
-      {/* thin light casing so lines stay legible over the dot grid */}
+      {/* casing so lines stay legible over the dot grid */}
       <path
         d={d}
         fill="none"
-        stroke="#ffffff"
+        stroke={casing}
         strokeWidth={4}
         strokeLinejoin="round"
         strokeLinecap="round"
-        opacity={0.85}
+        opacity={0.9}
       />
       <path
         d={d}

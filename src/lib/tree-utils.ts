@@ -26,7 +26,7 @@ export const GENDER_COLORS: Record<string, string> = {
 };
 export const DECEASED_COLOR = "#9ca3af";
 export const SELECTED_COLOR = "#16a34a";
-export const MARRIAGE_COLOR = "#f472b6";
+export const MARRIAGE_COLOR = "#ec4899";
 export const DOT_GRID_COLOR = "#e5e7eb";
 
 export const REL_TYPE_META: Record<
