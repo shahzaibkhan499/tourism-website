@@ -40,17 +40,17 @@ const CSV_FIELDS: { key: CsvMemberField; label: string }[] = [
   { key: "lastName", label: "خاندانی نام" },
   { key: "nickName", label: "عرفیت" },
   { key: "gender", label: "جنس (M/F)" },
-  { key: "dateOfBirth", label: "تاریخ پیدائش" },
-  { key: "dateOfDeath", label: "تاریخ وفات" },
+  { key: "dateOfBirth", label: "Date of Birth — تاریخ پیدائش" },
+  { key: "dateOfDeath", label: "Date of Death — تاریخ وفات" },
   { key: "isAlive", label: "زندہ؟" },
   { key: "birthPlace", label: "جائے پیدائش" },
   { key: "deathPlace", label: "جائے وفات" },
   { key: "currentCity", label: "شہر" },
   { key: "occupation", label: "پیشہ" },
   { key: "education", label: "تعلیم" },
-  { key: "bio", label: "تعارف" },
+  { key: "bio", label: "Bio — تعارف" },
   { key: "phone", label: "فون" },
-  { key: "email", label: "ای میل" },
+  { key: "email", label: "Email — ای میل" },
   { key: "fatherName", label: "والد کا نام" },
   { key: "motherName", label: "والدہ کا نام" },
   { key: "spouseName", label: "شریک حیات کا نام" },
@@ -114,7 +114,7 @@ export function ImportModal({ open, onOpenChange, treeId, onImported }: ImportMo
       fd.append("file", file);
       const res = await fetch("/api/tree/import", { method: "POST", body: fd });
       const j = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(j?.error || "امپورٹ نہیں ہوا");
+      if (!res.ok) throw new Error(j?.error || "Import failed — امپورٹ نہیں ہوا");
       setResult({
         created: j.created ?? 0,
         skipped: j.skipped ?? 0,
@@ -122,7 +122,7 @@ export function ImportModal({ open, onOpenChange, treeId, onImported }: ImportMo
         marriages: j.marriages ?? 0,
         warnings: j.warnings ?? [],
       });
-      toast.success(j?.message || "امپورٹ مکمل ہو گیا");
+      toast.success(j?.message || "Import complete — امپورٹ مکمل ہو گیا");
       onImported();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "کچھ غلط ہو گیا");
@@ -236,7 +236,7 @@ export function ImportModal({ open, onOpenChange, treeId, onImported }: ImportMo
               </Button>
               <Button className="bg-emerald-600 hover:bg-emerald-700" disabled={uploading || !file} onClick={submit}>
                 {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-                {uploading ? "امپورٹ ہو رہا ہے..." : "امپورٹ کریں"}
+                {uploading ? "Importing… — امپورٹ ہو رہا ہے…" : "Import — امپورٹ کریں"}
               </Button>
             </DialogFooter>
           </div>

@@ -9,6 +9,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2, Upload, X, Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
+import { T } from "@/lib/i18n";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -91,28 +92,28 @@ export default function CreateBusinessPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <PageHeader title="Register Business"
-        titleUrdu="بزنس رجسٹر کریں" description="اپنا بزنس ڈائریکٹری میں شامل کریں" />
+        titleUrdu="بزنس رجسٹر کریں" description="Add your business to the directory — اپنا بزنس ڈائریکٹری میں شامل کریں" />
 
       <Card>
         <CardContent className="p-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-1.5">
-              <Label htmlFor="name">Business Name *</Label>
-              <Input id="name" placeholder="e.g. Khan Textiles" {...register("name")} />
+              <Label htmlFor="name">{T.business.businessName}</Label>
+              <Input id="name" placeholder={T.business.businessNamePlaceholder} {...register("name")} />
               {errors.name && <p className="text-xs text-red-600">{errors.name.message}</p>}
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" rows={4} placeholder="بزنس کے بارے میں لکھیں..." {...register("description")} />
+              <Label htmlFor="description">{T.business.description}</Label>
+              <Textarea id="description" rows={4} placeholder={T.business.descriptionPlaceholder} {...register("description")} />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label>Industry</Label>
+                <Label>{T.business.industry}</Label>
                 <Select onValueChange={(v) => setValue("industry", v)} value={watch("industry") || undefined}>
                   <SelectTrigger>
-                    <SelectValue placeholder="منتخب کریں" />
+                    <SelectValue placeholder={T.common.selectOption} />
                   </SelectTrigger>
                   <SelectContent>
                     {INDUSTRIES.map((i) => (
@@ -124,27 +125,27 @@ export default function CreateBusinessPage() {
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="category">Category</Label>
-                <Input id="category" placeholder="e.g. Clothing & Fabric" {...register("category")} />
+                <Label htmlFor="category">{T.business.category}</Label>
+                <Input id="category" placeholder="e.g. Clothing & Fabric — مثال: کپڑے اور فیبرک" {...register("category")} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" placeholder="03001234567" {...register("phone")} />
+                <Label htmlFor="phone">{T.business.phone}</Label>
+                <Input id="phone" placeholder={T.business.phonePlaceholder} {...register("phone")} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="info@business.pk" {...register("email")} />
+                <Label htmlFor="email">{T.business.email}</Label>
+                <Input id="email" type="email" placeholder={T.business.emailPlaceholder} {...register("email")} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="website">Website</Label>
+                <Label htmlFor="website">{T.business.website}</Label>
                 <Input id="website" placeholder="www.business.pk" {...register("website")} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="address">Address</Label>
-                <Input id="address" placeholder="Shop #, Market, Area" {...register("address")} />
+                <Label htmlFor="address">{T.business.address}</Label>
+                <Input id="address" placeholder="Shop #, Market, Area — مثال: دکان نمبر، مارکیٹ، علاقہ" {...register("address")} />
               </div>
               <div className="space-y-1.5">
-                <Label>City</Label>
+                <Label>{T.business.city}</Label>
                 <Select onValueChange={(v) => setValue("city", v)} value={watch("city") || undefined}>
                   <SelectTrigger>
                     <SelectValue placeholder="منتخب کریں" />
@@ -159,7 +160,7 @@ export default function CreateBusinessPage() {
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label>Province</Label>
+                <Label>{T.profile.province}</Label>
                 <Select onValueChange={(v) => setValue("province", v)} value={watch("province") || undefined}>
                   <SelectTrigger>
                     <SelectValue placeholder="منتخب کریں" />
@@ -178,7 +179,7 @@ export default function CreateBusinessPage() {
             {/* Images */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label>Logo</Label>
+                <Label>Logo — لوگو</Label>
                 <label className="flex h-24 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-200 transition-colors hover:border-emerald-300">
                   {logo ? (
                     <div className="relative">
@@ -207,7 +208,7 @@ export default function CreateBusinessPage() {
                 </label>
               </div>
               <div className="space-y-1.5">
-                <Label>Cover Image</Label>
+                <Label>Cover Image — کور تصویر</Label>
                 <label className="flex h-24 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-200 transition-colors hover:border-emerald-300">
                   {coverImage ? (
                     <div className="relative">

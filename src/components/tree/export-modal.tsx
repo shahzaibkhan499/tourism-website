@@ -24,10 +24,10 @@ interface ExportModalProps {
 type ExportFormat = "gedcom" | "json" | "pdf" | "png";
 
 const FORMATS: { id: ExportFormat; label: string; desc: string; icon: typeof FileText }[] = [
-  { id: "gedcom", label: "GEDCOM 5.5.1", desc: "دوسرے جینالوجی سافٹ ویئر کے لیے (.ged)", icon: FileText },
-  { id: "json", label: "JSON", desc: "مکمل ڈیٹا بیک اپ (.json)", icon: FileJson },
-  { id: "pdf", label: "PDF", desc: "پرنٹ کے لیے درخت کا خاکہ (.pdf)", icon: FileText },
-  { id: "png", label: "PNG", desc: "تصویری خاکہ شیئر کرنے کے لیے (.png)", icon: FileImage },
+  { id: "gedcom", label: "GEDCOM 5.5.1", desc: "For other genealogy software (.ged) — دوسرے جینالوجی سافٹ ویئر کے لیے", icon: FileText },
+  { id: "json", label: "JSON", desc: "Full data backup (.json) — مکمل ڈیٹا بیک اپ", icon: FileJson },
+  { id: "pdf", label: "PDF", desc: "Tree diagram for print (.pdf) — پرنٹ کے لیے درخت کا خاکہ", icon: FileText },
+  { id: "png", label: "PNG", desc: "Diagram image for sharing (.png) — تصویری خاکہ شیئر کرنے کے لیے", icon: FileImage },
 ];
 
 export function ExportModal({ open, onOpenChange, treeId }: ExportModalProps) {
@@ -39,7 +39,7 @@ export function ExportModal({ open, onOpenChange, treeId }: ExportModalProps) {
       const res = await fetch(`/api/tree/export/${treeId}?format=${format}`);
       if (!res.ok) {
         const j = await res.json().catch(() => null);
-        throw new Error(j?.error || "ڈاؤن لوڈ نہیں ہوا");
+        throw new Error(j?.error || "Download failed — ڈاؤن لوڈ نہیں ہوا");
       }
       const blob = await res.blob();
       const disposition = res.headers.get("Content-Disposition") ?? "";
@@ -53,9 +53,9 @@ export function ExportModal({ open, onOpenChange, treeId }: ExportModalProps) {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      toast.success("فائل ڈاؤن لوڈ ہو گئی");
+      toast.success("File downloaded — فائل ڈاؤن لوڈ ہو گئی");
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "کچھ غلط ہو گیا");
+      toast.error(e instanceof Error ? e.message : "Something went wrong — کچھ غلط ہو گیا");
     } finally {
       setBusy(null);
     }

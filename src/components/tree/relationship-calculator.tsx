@@ -54,11 +54,11 @@ export function RelationshipCalculator({ open, onOpenChange, treeId, graph }: Re
 
   const calculate = async () => {
     if (!memberAId || !memberBId) {
-      toast.error("دونوں ممبرز منتخب کریں");
+      toast.error("Select both members — دونوں ممبرز منتخب کریں");
       return;
     }
     if (memberAId === memberBId) {
-      toast.error("ایک ہی ممبر دو بار منتخب نہ کریں");
+      toast.error("Do not select the same member twice — ایک ہی ممبر دو بار منتخب نہ کریں");
       return;
     }
     setLoading(true);
@@ -100,14 +100,14 @@ export function RelationshipCalculator({ open, onOpenChange, treeId, graph }: Re
             <SelectContent>
               {sorted.map((m) => (
                 <SelectItem key={m.id} value={m.id}>
-                  {fullName(m)} — {m.gender === "MALE" ? "مرد" : "خاتون"}
+                  {fullName(m)} — {m.gender === "MALE" ? "مرد" : "Female — خاتون"}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           <Select value={memberBId} onValueChange={(v) => { setMemberBId(v); setResult(null); }}>
             <SelectTrigger>
-              <SelectValue placeholder="دوسرا ممبر" />
+              <SelectValue placeholder="Second member — دوسرا ممبر" />
             </SelectTrigger>
             <SelectContent>
               {sorted.map((m) => (
@@ -150,7 +150,7 @@ export function RelationshipCalculator({ open, onOpenChange, treeId, graph }: Re
                   </div>
                 )}
                 <p className="mt-2 text-xs text-gray-400">
-                  قربت: {result.score}%{result.sameBloodline ? " · ایک خون" : ""}
+                  قربت: {result.score}%{result.sameBloodline ? " · same bloodline — ایک خون" : ""}
                 </p>
               </>
             ) : (
@@ -165,7 +165,7 @@ export function RelationshipCalculator({ open, onOpenChange, treeId, graph }: Re
           </Button>
           <Button className="bg-emerald-600 hover:bg-emerald-700" disabled={loading} onClick={calculate}>
             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Users2 className="mr-2 h-4 w-4" />}
-            {loading ? "نکالا جا رہا ہے..." : "رشتہ نکالیں"}
+            {loading ? "نکالا جا رہا ہے..." : "Calculate — رشتہ نکالیں"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -39,10 +39,10 @@ export function MemberComments({ treeId, memberId }: MemberCommentsProps) {
     try {
       const res = await fetch(`/api/tree/${treeId}/comments/${memberId}`);
       const j = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(j?.error || "کمنٹس لوڈ نہیں ہوئے");
+      if (!res.ok) throw new Error(j?.error || "Could not load comments — کمنٹس لوڈ نہیں ہوئے");
       setComments(j.items ?? []);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "کچھ غلط ہو گیا");
+      setError(e instanceof Error ? e.message : "Something went wrong — کچھ غلط ہو گیا");
     } finally {
       setLoading(false);
     }
@@ -62,8 +62,8 @@ export function MemberComments({ treeId, memberId }: MemberCommentsProps) {
         body: JSON.stringify({ content, parentId }),
       });
       const j = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(j?.error || "کمنٹ نہیں جا سکا");
-      toast.success(j?.message || "کمنٹ شامل ہو گیا");
+      if (!res.ok) throw new Error(j?.error || "Could not post comment — کمنٹ نہیں جا سکا");
+      toast.success(j?.message || "Comment added — کمنٹ شامل ہو گیا");
       if (parentId) {
         setReplyTo(null);
         setReplyText("");
@@ -88,7 +88,7 @@ export function MemberComments({ treeId, memberId }: MemberCommentsProps) {
       });
       if (!res.ok) {
         const j = await res.json().catch(() => null);
-        throw new Error(j?.error || "ری ایکشن نہیں ہوا");
+        throw new Error(j?.error || "Reaction failed — ری ایکشن نہیں ہوا");
       }
       load();
     } catch (e) {
@@ -108,8 +108,8 @@ export function MemberComments({ treeId, memberId }: MemberCommentsProps) {
         body: JSON.stringify({ commentId, content: editText }),
       });
       const j = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(j?.error || "ایڈٹ نہیں ہو سکا");
-      toast.success("کمنٹ اپ ڈیٹ ہو گیا");
+      if (!res.ok) throw new Error(j?.error || "Could not edit — ایڈٹ نہیں ہو سکا");
+      toast.success("Comment updated — کمنٹ اپ ڈیٹ ہو گیا");
       setEditingId(null);
       load();
     } catch (e) {
@@ -127,8 +127,8 @@ export function MemberComments({ treeId, memberId }: MemberCommentsProps) {
         body: JSON.stringify({ commentId }),
       });
       const j = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(j?.error || "ڈیلیٹ نہیں ہوا");
-      toast.success("کمنٹ ڈیلیٹ ہو گیا");
+      if (!res.ok) throw new Error(j?.error || "Could not delete — ڈیلیٹ نہیں ہوا");
+      toast.success("Comment deleted — کمنٹ ڈیلیٹ ہو گیا");
       load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "کچھ غلط ہو گیا");
@@ -173,10 +173,10 @@ export function MemberComments({ treeId, memberId }: MemberCommentsProps) {
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
                 {c.isPinned && <Pin className="h-3.5 w-3.5 text-amber-500" />}
-                <span className="text-sm font-semibold text-gray-800">{c.user?.name ?? "ممبر"}</span>
+                <span className="text-sm font-semibold text-gray-800">{c.user?.name ?? "Member — ممبر"}</span>
                 <span className="text-xs text-gray-400">
                   {new Date(c.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
-                  {c.isEdited && " · ترمیم شدہ"}
+                  {c.isEdited && " · edited — ترمیم شدہ"}
                 </span>
               </div>
               <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => remove(c.id)} aria-label="Delete comment">
@@ -187,7 +187,7 @@ export function MemberComments({ treeId, memberId }: MemberCommentsProps) {
               <div className="mt-2 flex gap-1">
                 <Input value={editText} onChange={(e) => setEditText(e.target.value)} className="h-8 text-sm" />
                 <Button size="sm" className="h-8 bg-emerald-600" disabled={savingEdit} onClick={() => saveEdit(c.id)}>
-                  {savingEdit ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "محفوظ"}
+                  {savingEdit ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Save — محفوظ"}
                 </Button>
               </div>
             ) : (
@@ -240,7 +240,7 @@ export function MemberComments({ treeId, memberId }: MemberCommentsProps) {
                 <Input
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
-                  placeholder="جواب لکھیں..."
+                  placeholder="Write a reply… — جواب لکھیں…"
                   className="h-8 text-sm"
                 />
                 <Button size="sm" className="h-8 bg-emerald-600" disabled={sending} onClick={() => send(replyText, c.id)}>
@@ -255,7 +255,7 @@ export function MemberComments({ treeId, memberId }: MemberCommentsProps) {
         <Input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="کمنٹ لکھیں..."
+          placeholder="Write a comment… — کمنٹ لکھیں…"
           className="h-9 text-sm"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {

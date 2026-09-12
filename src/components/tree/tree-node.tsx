@@ -56,7 +56,7 @@ function TreeNodeInner({
     showDates && (member.dateOfBirth || member.dateOfDeath)
       ? `${member.dateOfBirth ? "b." + formatDate(member.dateOfBirth) : ""}${member.dateOfDeath ? " – d." + formatDate(member.dateOfDeath) : ""}`
       : "";
-  const name = showNames ? fullName(member) : member.gender === "MALE" ? "مرد" : "خاتون";
+  const name = showNames ? fullName(member) : member.gender === "MALE" ? "Male — مرد" : "Female — خاتون";
 
   return (
     <g
@@ -109,9 +109,10 @@ function TreeNodeInner({
       )}
       {deceased && (
         <>
-          <line x1={x + 4} y1={y + NODE_H - 6} x2={x + 62} y2={y + NODE_H - 6} stroke="#cbd5e1" strokeWidth={3} />
-          <line x1={x + 2} y1={y + 10} x2={x + 88} y2={y + 30} stroke="#e5e7eb" strokeWidth={8} opacity={0.6} />
-          <text x={x + NODE_W - 16} y={y + NODE_H - 10} fontSize={13} textAnchor="middle">
+          {/* subtle gray tint over the whole card (no diagonal stripe) */}
+          <rect x={x} y={y} width={NODE_W} height={NODE_H} rx={12} ry={12} fill="rgba(107,114,128,0.05)" />
+          {/* candle emoji in the top-right corner, next to the generation badge */}
+          <text x={x + NODE_W - 32} y={y + 19} fontSize={12} textAnchor="middle">
             🕯️
           </text>
         </>
@@ -157,7 +158,7 @@ function TreeNodeInner({
         y={y + 30}
         fontSize={14}
         fontWeight={700}
-        fill="#111827"
+        fill={theme.nameFill}
         style={{ fontFamily: "inherit" }}
       >
         {name.length > 16 ? name.slice(0, 15) + "…" : name}
@@ -167,6 +168,11 @@ function TreeNodeInner({
       {dates && (
         <text x={x + 58} y={y + 48} fontSize={12} fill={theme.dateFill}>
           {dates.length > 30 ? dates.slice(0, 29) + "…" : dates}
+        </text>
+      )}
+      {deceased && member.dateOfDeath && (
+        <text x={x + 58} y={y + 62} fontSize={11} fill="#9ca3af" fontStyle="italic">
+          {"d. " + member.dateOfDeath.slice(0, 4)}
         </text>
       )}
       {!dates && member.birthPlace && (

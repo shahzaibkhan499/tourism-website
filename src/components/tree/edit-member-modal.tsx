@@ -32,7 +32,7 @@ import type { TreeMemberDto } from "@/types/tree";
 // ============================================================
 
 const formSchema = z.object({
-  firstName: z.string().trim().min(1, "نام لکھنا ضروری ہے").max(100),
+  firstName: z.string().trim().min(1, "Name is required — نام لکھنا ضروری ہے").max(100),
   lastName: z.string().trim().max(100),
   nickName: z.string().trim().max(100),
   gender: z.enum(["MALE", "FEMALE"]),
@@ -46,7 +46,7 @@ const formSchema = z.object({
   education: z.string().trim().max(200),
   bio: z.string().trim().max(2000),
   phone: z.string().trim().max(50),
-  email: z.union([z.string().trim().email("درست ای میل لکھیں").max(200), z.literal("")]),
+  email: z.union([z.string().trim().email("Enter a valid email — درست ای میل لکھیں").max(200), z.literal("")]),
   photo: z.string().trim().max(500),
   isPrivate: z.boolean(),
 });
@@ -157,15 +157,15 @@ export function EditMemberModal({ open, onOpenChange, treeId, member, onSaved }:
       if (!res.ok) {
         if (j?.details && typeof j.details === "object") {
           const first = Object.values(j.details).flat()[0];
-          throw new Error(typeof first === "string" ? first : j.error || "غلط درخواست");
+          throw new Error(typeof first === "string" ? first : j.error || "Invalid request — غلط درخواست");
         }
-        throw new Error(j?.error || "اپ ڈیٹ نہیں ہو سکا");
+        throw new Error(j?.error || "Update failed — اپ ڈیٹ نہیں ہو سکا");
       }
-      toast.success(j?.message || "ممبر اپ ڈیٹ ہو گیا");
+      toast.success(j?.message || "Member updated — ممبر اپ ڈیٹ ہو گیا");
       onOpenChange(false);
       onSaved();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "کچھ غلط ہو گیا");
+      toast.error(e instanceof Error ? e.message : "Something went wrong — کچھ غلط ہو گیا");
     } finally {
       setSaving(false);
     }
@@ -279,7 +279,7 @@ export function EditMemberModal({ open, onOpenChange, treeId, member, onSaved }:
             </Button>
             <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700" disabled={saving}>
               {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-              {saving ? "محفوظ ہو رہا ہے..." : "محفوظ کریں"}
+              {saving ? "Saving… — محفوظ ہو رہا ہے…" : "Save — محفوظ کریں"}
             </Button>
           </DialogFooter>
         </form>

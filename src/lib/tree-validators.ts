@@ -104,6 +104,7 @@ export const treeCreateSchema = z.object({
   description: optionalLongText.optional(),
   visibility: treeVisibilitySchema.optional(),
   isPublic: z.boolean().optional(),
+  autoAddSelfAsRoot: z.boolean().optional(),
   rootMember: memberBaseSchema.pick({
     firstName: true,
     lastName: true,

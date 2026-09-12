@@ -14,6 +14,8 @@ import { MemberTimeline } from "@/components/tree/member-timeline";
 import { MemberStories } from "@/components/tree/member-stories";
 import { VerifySection } from "@/components/tree/verify-section";
 import { SiblingReorderDialog } from "@/components/tree/sibling-reorder-dialog";
+import { QuickAddSection } from "@/components/tree/quick-add-section";
+import { T } from "@/lib/i18n";
 
 // ============================================================
 // TREE SIDEBAR — right details panel: member info (parents,
@@ -63,9 +65,9 @@ export function TreeSidebar({ treeId, graph, canEdit, onDataChanged }: TreeSideb
   const deceased = isDeceased(member);
 
   return (
-    <aside className="flex h-full w-full flex-col overflow-hidden rounded-xl border bg-white shadow-sm lg:w-[340px]">
+    <aside className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:w-[340px]">
       <div className="flex items-center justify-between border-b px-4 py-3">
-        <span className="text-sm font-semibold text-gray-800">ممبر کی تفصیلات</span>
+        <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">{T.tree.memberDetails}</span>
         <Button
           variant="ghost"
           size="icon"
@@ -81,7 +83,7 @@ export function TreeSidebar({ treeId, graph, canEdit, onDataChanged }: TreeSideb
       </div>
 
       {/* header */}
-      <div className="border-b px-4 py-3">
+      <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-800">
         <div className="flex items-center gap-3">
           {member.photo ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -103,27 +105,27 @@ export function TreeSidebar({ treeId, graph, canEdit, onDataChanged }: TreeSideb
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h3 className="truncate text-base font-bold text-gray-900">{fullName(member)}</h3>
-              {deceased && <span title="فوت شدہ">🕯️</span>}
+              {deceased && <span title={T.tree.deceased}>🕯️</span>}
             </div>
             <p className="text-xs text-gray-500">
-              {member.dateOfBirth && `b. ${formatDate(member.dateOfBirth)}`}
-              {member.dateOfDeath && ` · d. ${formatDate(member.dateOfDeath)}`}
+              {member.dateOfBirth && `${T.tree.born} ${formatDate(member.dateOfBirth)}`}
+              {member.dateOfDeath && ` · ${T.tree.died} ${formatDate(member.dateOfDeath)}`}
               {age !== null && ` · ${age} سال`}
             </p>
-            <p className="mt-0.5 text-xs text-gray-400">
-              جنریشن {member.generation}
+            <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">
+              {T.tree.generation} {member.generation}
               {member.currentCity ? ` · ${member.currentCity}` : ""}
             </p>
           </div>
         </div>
         {member.occupation && (
           <p className="mt-2 text-sm text-gray-700">
-            <span className="font-medium">پیشہ:</span> {member.occupation}
+            <span className="font-medium">{T.profile.occupation}:</span> {member.occupation}
           </p>
         )}
         {member.education && (
           <p className="mt-0.5 text-sm text-gray-700">
-            <span className="font-medium">تعلیم:</span> {member.education}
+            <span className="font-medium">{T.profile.education}:</span> {member.education}
           </p>
         )}
         {member.bio && <p className="mt-1.5 whitespace-pre-wrap text-sm text-gray-600">{member.bio}</p>}
@@ -132,13 +134,16 @@ export function TreeSidebar({ treeId, graph, canEdit, onDataChanged }: TreeSideb
         </div>
       </div>
 
+      {/* quick add relatives (GenoPro style) */}
+      <QuickAddSection treeId={treeId} graph={graph} memberId={member.id} canEdit={canEdit} onAdded={onDataChanged ?? (() => {})} />
+
       {/* tabs */}
-      <div className="flex border-b">
+      <div className="flex border-b border-gray-200 dark:border-gray-800">
         {[
-          { id: "info" as const, label: "معلومات", icon: Info },
-          { id: "comments" as const, label: "کمنٹس", icon: MessageCircle },
-          { id: "timeline" as const, label: "ٹائم لائن", icon: CalendarClock },
-          { id: "stories" as const, label: "کہانیاں", icon: BookOpen },
+          { id: "info" as const, label: T.tree.info, icon: Info },
+          { id: "comments" as const, label: T.tree.comments, icon: MessageCircle },
+          { id: "timeline" as const, label: T.tree.timeline, icon: CalendarClock },
+          { id: "stories" as const, label: T.tree.stories, icon: BookOpen },
         ].map((t) => (
           <button
             key={t.id}
@@ -146,8 +151,8 @@ export function TreeSidebar({ treeId, graph, canEdit, onDataChanged }: TreeSideb
             onClick={() => setTab(t.id)}
             className={`flex flex-1 items-center justify-center gap-1 border-b-2 px-2 py-2 text-xs font-medium transition-colors ${
               tab === t.id
-                ? "border-emerald-600 text-emerald-700"
-                : "border-transparent text-gray-500 hover:text-gray-700"
+                ? "border-emerald-600 text-emerald-700 dark:text-emerald-400"
+                : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             }`}
           >
             <t.icon className="h-3.5 w-3.5" />
@@ -159,23 +164,23 @@ export function TreeSidebar({ treeId, graph, canEdit, onDataChanged }: TreeSideb
       <div className="flex-1 overflow-y-auto">
         {tab === "info" && (
           <div className="space-y-4 p-4">
-            <RelativeSection title="والدین — Parents" items={relatives.parents} empty="والدین درج نہیں" />
-            <RelativeSection title="شریک حیات — Spouses" items={relatives.spouses} empty="شادی درج نہیں" />
-            <RelativeSection title="بچے — Children" items={relatives.children} empty="بچے درج نہیں" />
+            <RelativeSection title={T.tree.parents} items={relatives.parents} empty={T.tree.noParents} />
+            <RelativeSection title={T.tree.spouses} items={relatives.spouses} empty={T.tree.noSpouses} />
+            <RelativeSection title={T.tree.children} items={relatives.children} empty={T.tree.noChildren} />
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400">بہن بھائی — Siblings</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">{T.tree.siblings}</h4>
                 {canEdit && relatives.siblings.length > 0 && (
                   <button
                     type="button"
-                    className="rounded border px-1.5 py-0.5 text-[10px] text-gray-500 hover:border-emerald-300 hover:text-emerald-600"
+                    className="rounded border px-1.5 py-0.5 text-[10px] text-gray-500 hover:border-emerald-300 hover:text-emerald-600 dark:text-gray-400"
                     onClick={() => setReorderOpen(true)}
                   >
-                    ترتیب بدلیں
+                    {T.tree.reorderSiblings}
                   </button>
                 )}
               </div>
-              <RelativeSection title="" items={relatives.siblings} empty="بہن بھائی درج نہیں" />
+              <RelativeSection title="" items={relatives.siblings} empty={T.tree.noSiblings} />
             </div>
           </div>
         )}
@@ -222,7 +227,7 @@ function RelativeSection({
               key={m.id}
               type="button"
               onClick={() => setSelected(m.id)}
-              className="rounded-full border bg-gray-50 px-2.5 py-1 text-xs text-gray-700 transition-colors hover:border-emerald-300 hover:bg-emerald-50"
+              className="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-gray-700 transition-colors hover:border-emerald-300 hover:bg-emerald-50 dark:border-gray-800 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               {fullName(m)}
               <HeartHandshake className="ml-1 inline h-3 w-3 text-pink-400" />

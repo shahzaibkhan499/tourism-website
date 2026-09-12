@@ -32,7 +32,7 @@ import {
 
 const formSchema = z.object({
   type: z.enum(["VIEW", "COLLABORATE", "MERGE", "CLAIM_PROFILE"]),
-  inviteeEmail: z.string().trim().email("درست ای میل لکھنا ضروری ہے"),
+  inviteeEmail: z.string().trim().email("A valid email is required — درست ای میل لکھنا ضروری ہے"),
   inviteeName: z.string().trim().max(200),
   message: z.string().trim().max(1000),
 });
@@ -98,7 +98,7 @@ export function InviteModal({ open, onOpenChange, treeId }: InviteModalProps) {
         }
         throw new Error(j?.error || "دعوت نہیں بھیجی جا سکی");
       }
-      toast.success(j?.message || "دعوت بھیج دی گئی");
+      toast.success(j?.message || "Invite sent — دعوت بھیج دی گئی");
       setInviteUrl(j?.invite?.inviteUrl ?? null);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "کچھ غلط ہو گیا");
@@ -166,7 +166,7 @@ export function InviteModal({ open, onOpenChange, treeId }: InviteModalProps) {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="inv-msg">پیغام (اختیاری)</Label>
-              <Textarea id="inv-msg" rows={3} placeholder="آپ کو خاندانی شجرے میں شامل ہونے کی دعوت ہے..." {...register("message")} />
+              <Textarea id="inv-msg" rows={3} placeholder="You are invited to join this family tree… — آپ کو خاندانی شجرے میں شامل ہونے کی دعوت ہے…" {...register("message")} />
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
@@ -174,7 +174,7 @@ export function InviteModal({ open, onOpenChange, treeId }: InviteModalProps) {
               </Button>
               <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700" disabled={saving}>
                 {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
-                {saving ? "بھیجی جا رہی ہے..." : "دعوت بھیجیں"}
+                {saving ? "Sending… — بھیجی جا رہی ہے…" : "دعوت بھیجیں"}
               </Button>
             </DialogFooter>
           </form>

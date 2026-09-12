@@ -300,7 +300,7 @@ export const TreeViewer = forwardRef<TreeViewerApi, TreeViewerProps>(function Tr
   const capReached = graph.members.length > 200;
 
   return (
-    <div ref={wrapRef} className="relative h-[72vh] w-full overflow-hidden rounded-xl border bg-[#fafafa] dark:border-gray-700 dark:bg-[#0b1220]">
+    <div ref={wrapRef} className="relative h-[72vh] w-full overflow-hidden rounded-xl border border-gray-200 bg-[#fafafa] dark:border-gray-800 dark:bg-[#030712]">
       <svg
         ref={svgRef}
         className="h-full w-full touch-none select-none"

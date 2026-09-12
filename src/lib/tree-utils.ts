@@ -33,9 +33,9 @@ export const REL_TYPE_META: Record<
   RelationshipType,
   { label: string; urdu: string; stroke: string; dash: string }
 > = {
-  BIOLOGICAL: { label: "Biological", urdu: "حقیقی", stroke: "#86efac", dash: "" },
-  ADOPTED: { label: "Adopted", urdu: "لے پالک", stroke: "#93c5fd", dash: "6,4" },
-  STEP: { label: "Step", urdu: "سوتیلا", stroke: "#fbbf24", dash: "2,4" },
+  BIOLOGICAL: { label: "Biological", urdu: "حقیقی", stroke: "#16a34a", dash: "" },
+  ADOPTED: { label: "Adopted", urdu: "لے پالک", stroke: "#3b82f6", dash: "6,4" },
+  STEP: { label: "Step", urdu: "سوتیلا", stroke: "#f97316", dash: "2,4" },
   GUARDIAN: { label: "Guardian", urdu: "سرپرست", stroke: "#a78bfa", dash: "8,4,2,4" },
   FOSTER: { label: "Foster", urdu: "رضاعی", stroke: "#5eead4", dash: "1,5" },
 };

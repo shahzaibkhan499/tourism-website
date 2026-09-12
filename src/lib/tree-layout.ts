@@ -298,11 +298,13 @@ export function layoutTree(
     const p2 = placed.get(ml.s2);
     if (!p1 || !p2) continue;
     const y = p1.y * LEVEL + ml.offset;
+    const xA = p1.x * SLOT;
+    const xB = p2.x * SLOT;
     tbMarriages.push({
       id: ml.id,
-      x1: p1.x * SLOT,
+      x1: Math.min(xA, xB) + NODE_W / 2,
       y1: y,
-      x2: p2.x * SLOT,
+      x2: Math.max(xA, xB) - NODE_W / 2,
       y2: y,
       status: ml.status,
       type: ml.type,
@@ -320,8 +322,9 @@ export function layoutTree(
     if (parents.length === 0 || children.length === 0) continue;
 
     const parentYs = parents.map((p) => p.y);
-    const startY = Math.max(...parentYs) * LEVEL + NODE_H / 2 + 14;
-    const childY = Math.min(...children.map((c) => c.y * LEVEL)) - NODE_H / 2 - 14;
+    const startY = Math.max(...parentYs) * LEVEL + NODE_H / 2;
+    const childY = Math.min(...children.map((c) => c.y * LEVEL)) - NODE_H / 2;
+    const coupleRowY = Math.max(...parentYs) * LEVEL;
     const startX =
       family.parentIds.length === 1
         ? parents[0].x * SLOT
@@ -334,6 +337,7 @@ export function layoutTree(
     const maxX = Math.max(startX, maxChildX);
 
     const points = [
+      { x: startX, y: coupleRowY },
       { x: startX, y: startY },
       { x: startX, y: midY },
       { x: minX, y: midY },

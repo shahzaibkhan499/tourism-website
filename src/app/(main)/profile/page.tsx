@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { formatDate, initials } from "@/lib/utils";
 import { PAKISTANI_CITIES, PAKISTANI_PROVINCES, BLOOD_GROUPS, EDUCATION_LEVELS } from "@/lib/constants";
+import { T } from "@/lib/i18n";
 import type { UserBasic } from "@/types";
 import { JobProfileSection } from "@/components/profile/job-profile-section";
 import { BusinessProfileSection } from "@/components/profile/business-profile-section";
@@ -354,29 +355,29 @@ export default function ProfilePage() {
         {/* Details */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base">Details</CardTitle>
+            <CardTitle className="text-base">{T.profile.details}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Bio</div>
-              <p className="mt-1 text-sm text-gray-700">{profile.bio || "کوئی تعارف نہیں ہے"}</p>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.bio}</div>
+              <p className="mt-1 text-sm text-gray-700">{profile.bio || T.profile.noBio}</p>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Date of Birth</div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.dateOfBirth}</div>
               <p className="mt-1 text-sm text-gray-700">{profile.dateOfBirth ? formatDate(profile.dateOfBirth) : "—"}</p>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">City</div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.city}</div>
               <p className="mt-1 flex items-center gap-1 text-sm text-gray-700">
                 <MapPin className="h-3.5 w-3.5 text-emerald-600" /> {profile.city || "—"}, {profile.province || "—"}
               </p>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Blood Group</div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.bloodGroup}</div>
               <p className="mt-1 text-sm text-gray-700">{profile.bloodGroup || "—"}</p>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Clan</div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.clan}</div>
               <p className="mt-1 text-sm text-gray-700">
                 {profile.clan ? (
                   <>
@@ -389,7 +390,7 @@ export default function ProfilePage() {
               </p>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Member Since</div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.memberSince}</div>
               <p className="mt-1 text-sm text-gray-700">{formatDate(profile.createdAt)}</p>
             </div>
           </CardContent>
@@ -402,19 +403,19 @@ export default function ProfilePage() {
               <div>
                 <div className="flex items-center gap-2 font-semibold">
                   <Heart className="h-4 w-4 text-pink-600" />
-                  رشتہ پروفائل
+                  Rishta Profile — رشتہ پروفائل
                 </div>
                 <p className="mt-0.5 text-xs text-gray-500">
                   {profile.rishtaProfile
                     ? profile.rishtaProfile.isActive
-                      ? "فعال ہے ✓"
-                      : "غیر فعال ہے"
-                    : "ابھی نہیں بنایا"}
+                      ? "Active ✓ — فعال ہے ✓"
+                      : "Inactive — غیر فعال ہے"
+                    : "Not created yet — ابھی نہیں بنایا"}
                 </p>
               </div>
               <Button size="sm" variant="outline" asChild>
                 <a href={profile.rishtaProfile ? `/rishta/${profile.rishtaProfile.id}` : "/rishta/create"}>
-                  {profile.rishtaProfile ? "دیکھیں" : "بنائیں"}
+                  {profile.rishtaProfile ? "View — دیکھیں" : "Create — بنائیں"}
                 </a>
               </Button>
             </CardContent>
@@ -426,8 +427,8 @@ export default function ProfilePage() {
       <BusinessProfileSection />
 
       <div className="mt-8">
-        <h2 className="mb-1 text-lg font-semibold">Profile Sections</h2>
-        <p dir="rtl" className="mb-4 font-urdu text-sm text-emerald-700">پروفائل سیکشنز — جس پر کلک کریں، اس کا فارم کھل جائے گا</p>
+        <h2 className="mb-1 text-lg font-semibold">Profile Sections — پروفائل سیکشنز</h2>
+        <p dir="rtl" className="mb-4 font-urdu text-sm text-emerald-700">Click a section to open its form — جس پر کلک کریں، اس کا فارم کھل جائے گا</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <GeneralSection profile={profile} onSaved={loadProfile} />
           <BirthSection profile={profile} onSaved={loadProfile} />

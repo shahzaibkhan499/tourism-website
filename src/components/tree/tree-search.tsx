@@ -73,7 +73,7 @@ export function TreeSearch({ graph, open, onClose, viewerApi }: TreeSearchProps)
           ref={inputRef}
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="ممبر تلاش کریں... (Ctrl+F)"
+          placeholder="Search members… (Ctrl+F) — ممبر تلاش کریں…"
           className="h-8 border-0 px-1 shadow-none focus-visible:ring-0"
           onKeyDown={(e) => {
             if (e.key === "Escape") onClose();

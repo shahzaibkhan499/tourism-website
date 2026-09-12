@@ -16,7 +16,6 @@ import {
   Send,
   Settings,
   Upload,
-  UserPlus,
   Users,
 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
@@ -36,10 +35,7 @@ import { TreeMinimap } from "@/components/tree/tree-minimap";
 import { TreeSidebar } from "@/components/tree/tree-sidebar";
 import { TreeStats } from "@/components/tree/tree-stats";
 import { TreeContextMenu } from "@/components/tree/context-menu";
-import { AddMemberModal } from "@/components/tree/add-member-modal";
 import { EditMemberModal } from "@/components/tree/edit-member-modal";
-import { AddMarriageModal } from "@/components/tree/add-marriage-modal";
-import { AddRelationshipModal } from "@/components/tree/add-relationship-modal";
 import { DeleteMemberDialog } from "@/components/tree/delete-member-dialog";
 import { RelationshipCalculator } from "@/components/tree/relationship-calculator";
 import { MemberComparison } from "@/components/tree/member-comparison";
@@ -53,6 +49,8 @@ import { CanvasTreeViewer } from "@/components/tree/canvas-tree-viewer";
 import type { CanvasViewerApi } from "@/components/tree/canvas-tree-viewer";
 import { MarriageManager } from "@/components/tree/marriage-manager";
 import { RelationshipManager } from "@/components/tree/relationship-manager";
+import { T } from "@/lib/i18n";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 // ============================================================
 // TREE PAGE CLIENT — loads graph, wires viewer + sidebar +
@@ -71,17 +69,11 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
   const viewerRef = useRef<TreeViewerApi | null>(null);
 
   const setTreeId = useTreeStore((s) => s.setTreeId);
-  const setAddMemberOpen = useTreeStore((s) => s.setAddMemberOpen);
   const setEditMemberOpen = useTreeStore((s) => s.setEditMemberOpen);
-  const setAddMarriageOpen = useTreeStore((s) => s.setAddMarriageOpen);
-  const setAddRelationshipOpen = useTreeStore((s) => s.setAddRelationshipOpen);
   const setDeletingMember = useTreeStore((s) => s.setDeletingMember);
   const setSearchOpen = useTreeStore((s) => s.setSearchOpen);
   const searchOpen = useTreeStore((s) => s.searchOpen);
-  const addMemberOpen = useTreeStore((s) => s.addMemberOpen);
   const editMemberOpen = useTreeStore((s) => s.editMemberOpen);
-  const addMarriageOpen = useTreeStore((s) => s.addMarriageOpen);
-  const addRelationshipOpen = useTreeStore((s) => s.addRelationshipOpen);
   const deletingMemberId = useTreeStore((s) => s.deletingMemberId);
   const selectedMemberId = useTreeStore((s) => s.selectedMemberId);
 
@@ -111,8 +103,6 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
   const [relationshipsOpen, setRelationshipsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const [addMemberPresets, setAddMemberPresets] = useState<{ parentIds?: string[]; spouseId?: string; gender?: "MALE" | "FEMALE" }>({});
-  const [relationshipPreset, setRelationshipPreset] = useState<string | undefined>(undefined);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -120,11 +110,11 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
     try {
       const res = await fetch(`/api/tree/${treeId}`);
       const j = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(j?.error || "شجرہ لوڈ نہیں ہو سکا");
+      if (!res.ok) throw new Error(j?.error || T.error.loadFailed);
       setData(j);
       setTreeId(treeId);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "کچھ غلط ہو گیا");
+      setError(e instanceof Error ? e.message : T.common.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -153,9 +143,9 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
           const res = await fetch(`/api/tree/${data.tree.id}/undo`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
           const j = await res.json().catch(() => null);
           if (!res.ok) {
-            toast.error(j?.error ?? "واپسی ممکن نہیں");
+            toast.error(j?.error ?? T.error.saveFailed);
           } else {
-            toast.success(j?.message ?? "تبدیلی واپس کر دی گئی");
+            toast.success(j?.message ?? T.error.saved);
             await load();
           }
         } finally {
@@ -170,9 +160,9 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
           const res = await fetch(`/api/tree/${data.tree.id}/redo`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
           const j = await res.json().catch(() => null);
           if (!res.ok) {
-            toast.error(j?.error ?? "دوبارہ لاگو ممکن نہیں");
+            toast.error(j?.error ?? T.error.saveFailed);
           } else {
-            toast.success(j?.message ?? "تبدیلی دوبارہ لاگو ہو گئی");
+            toast.success(j?.message ?? T.error.saved);
             await load();
           }
         } finally {
@@ -251,12 +241,12 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
   if (error || !data || !fullGraph || !graph || !layout) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-10 text-center">
-        <p className="text-base font-medium text-red-700">{error || "شجرہ لوڈ نہیں ہو سکا"}</p>
+        <p className="text-base font-medium text-red-700">{error || T.error.loadFailed}</p>
         <Button variant="outline" className="mt-3" onClick={load}>
-          دوبارہ کوشش کریں
+          Try Again — دوبارہ کوشش کریں
         </Button>
         <Button variant="ghost" className="mt-3 ml-2" asChild>
-          <Link href="/tree">واپس — تمام شجرے</Link>
+          <Link href="/tree">{T.tree.backToTrees}</Link>
         </Button>
       </div>
     );
@@ -266,103 +256,93 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
   const canEdit = data.canEdit;
   const selectedMember = selectedMemberId ? graph.memberById.get(selectedMemberId) : undefined;
 
-  const openAddMember = (presets: { parentIds?: string[]; spouseId?: string; gender?: "MALE" | "FEMALE" }) => {
-    setAddMemberPresets(presets);
-    setAddMemberOpen(true);
-  };
-
   const toolbarBtn = "h-8 text-xs";
 
   return (
     <div>
+      <nav aria-label="breadcrumb" className="mb-2 flex flex-wrap items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+        <Link href="/dashboard" className="hover:text-emerald-600 hover:underline">Dashboard — ڈیش بورڈ</Link>
+        <span aria-hidden>›</span>
+        <Link href="/tree" className="hover:text-emerald-600 hover:underline">Family Tree — شجرہ نسب</Link>
+        <span aria-hidden>›</span>
+        <span className="max-w-[40ch] truncate font-medium text-gray-700 dark:text-gray-200">{tree.name}</span>
+      </nav>
       <PageHeader
-        title={tree.name}
+        title="Family Tree"
         titleUrdu="شجرہ نسب"
-        description={tree.description ?? undefined}
+        description={tree.name}
         actions={
-          <div className="flex flex-wrap items-center gap-1.5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:pb-1">
+          <div className="flex overflow-x-auto gap-2 pb-2 -mx-4 px-4 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:items-center">
             {canEdit && (
               <>
-                <Button size="sm" className={toolbarBtn + " bg-emerald-600 hover:bg-emerald-700"} onClick={() => openAddMember({})}>
-                  <UserPlus className="mr-1 h-3.5 w-3.5" />
-                  ممبر شامل کریں
-                </Button>
-                <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setAddMarriageOpen(true)}>
+                <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} onClick={() => setMarriagesOpen(true)}>
                   <HeartHandshake className="mr-1 h-3.5 w-3.5" />
-                  شادی
+                  {T.tree.marriagesList}
                 </Button>
-                <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setAddRelationshipOpen(true)}>
-                  <GitMerge className="mr-1 h-3.5 w-3.5" />
-                  رشتہ
-                </Button>
-                <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setMarriagesOpen(true)}>
-                  <HeartHandshake className="mr-1 h-3.5 w-3.5" />
-                  شادیاں
-                </Button>
-                <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setRelationshipsOpen(true)}>
+                <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} onClick={() => setRelationshipsOpen(true)}>
                   <Link2 className="mr-1 h-3.5 w-3.5" />
-                  رشتے
+                  {T.tree.relationshipsList}
                 </Button>
               </>
             )}
-            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setCalculatorOpen(true)}>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} onClick={() => setCalculatorOpen(true)}>
               <Calculator className="mr-1 h-3.5 w-3.5" />
-              رشتہ نکالیں
+              {T.tree.calculateRelation}
             </Button>
-            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setCompareOpen(true)}>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} onClick={() => setCompareOpen(true)}>
               <Copy className="mr-1 h-3.5 w-3.5" />
-              موازنہ
+              {T.tree.compare}
             </Button>
-            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setDuplicatesOpen(true)}>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} onClick={() => setDuplicatesOpen(true)}>
               <Copy className="mr-1 h-3.5 w-3.5" />
-              ڈپلیکیٹس
+              {T.tree.duplicates}
             </Button>
-            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setMergeOpen(true)}>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} onClick={() => setMergeOpen(true)}>
               <GitMerge className="mr-1 h-3.5 w-3.5" />
-              انضمام
+              {T.tree.merge}
             </Button>
-            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setInviteOpen(true)}>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} onClick={() => setInviteOpen(true)}>
               <Send className="mr-1 h-3.5 w-3.5" />
-              دعوت
+              {T.tree.invite}
             </Button>
-            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setImportOpen(true)}>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} onClick={() => setImportOpen(true)}>
               <Upload className="mr-1 h-3.5 w-3.5" />
-              امپورٹ
+              {T.tree.import}
             </Button>
-            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setExportOpen(true)}>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} onClick={() => setExportOpen(true)}>
               <Download className="mr-1 h-3.5 w-3.5" />
-              ایکسپورٹ
+              {T.tree.export}
             </Button>
-            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setStatsOpen(true)}>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} onClick={() => setStatsOpen(true)}>
               <BarChart3 className="mr-1 h-3.5 w-3.5" />
-              اعداد و شمار
+              {T.tree.stats}
             </Button>
-            <Button size="sm" variant="outline" className={toolbarBtn} onClick={() => setSearchOpen(true)}>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} onClick={() => setSearchOpen(true)}>
               <Search className="mr-1 h-3.5 w-3.5" />
-              تلاش
+              {T.tree.searchTree}
             </Button>
-            <Button size="sm" variant="outline" className={toolbarBtn} asChild>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} asChild>
               <Link href={`/tree/${tree.id}/settings`}>
                 <Settings className="mr-1 h-3.5 w-3.5" />
-                ترتیبات
+                {T.tree.treeSettings}
               </Link>
             </Button>
-            <Button size="sm" variant="outline" className={toolbarBtn} asChild>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} asChild>
               <Link href={`/tree/${tree.id}/collaborate`}>
                 <Users className="mr-1 h-3.5 w-3.5" />
-                ساتھی
+                {T.tree.collaborators}
               </Link>
             </Button>
-            <Button size="sm" variant="outline" className={toolbarBtn} asChild>
+            <Button size="sm" variant="outline" className={toolbarBtn + " shrink-0"} asChild>
               <Link href={`/tree/${tree.id}/history`}>
                 <History className="mr-1 h-3.5 w-3.5" />
-                تاریخچہ
+                {T.tree.history}
               </Link>
             </Button>
-            <Button size="sm" variant="ghost" className={toolbarBtn} asChild>
+            <Button size="sm" variant="ghost" className={toolbarBtn + " shrink-0"} asChild>
               <Link href="/tree">
                 <ArrowLeft className="mr-1 h-3.5 w-3.5" />
-                واپس
+                {T.tree.backToTrees}
               </Link>
             </Button>
           </div>
@@ -410,19 +390,23 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
                 className="h-8 bg-emerald-600 shadow-lg hover:bg-emerald-700"
                 onClick={() => setFilters({ maxGeneration: null })}
               >
-                {hiddenGenerationCount} مزید ممبرز دکھائیں (نسلیں: {activeDepth})
+                {T.tree.showMoreMembers.replace("{n}", String(hiddenGenerationCount)).replace("{g}", String(activeDepth))}
               </Button>
             </div>
           )}
         </div>
         {isMobile ? (
-          detailPanelOpen && (
-            <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setDetailPanel(false)}>
-              <div className="absolute inset-x-0 bottom-0 max-h-[75vh]" onClick={(e) => e.stopPropagation()}>
+          <Sheet open={detailPanelOpen} onOpenChange={(v) => setDetailPanel(v)}>
+            <SheetContent side="bottom" hideClose className="max-h-[85vh] overflow-y-auto rounded-t-2xl p-0 pb-0">
+              {/* drag handle — bottom drawer */}
+              <div className="flex justify-center pt-2 pb-0">
+                <div className="h-1.5 w-12 rounded-full bg-gray-300 dark:bg-gray-700" aria-hidden />
+              </div>
+              <div className="max-h-[80vh] overflow-y-auto">
                 <TreeSidebar treeId={tree.id} graph={graph} canEdit={canEdit} onDataChanged={load} />
               </div>
-            </div>
-          )
+            </SheetContent>
+          </Sheet>
         ) : (
           <TreeSidebar treeId={tree.id} graph={graph} canEdit={canEdit} onDataChanged={load} />
         )}
@@ -434,27 +418,19 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
           useTreeStore.getState().setSelectedMember(id);
           setEditMemberOpen(true);
         }}
-        onAddChild={(id) => openAddMember({ parentIds: [id] })}
+        onAddChild={(id) => {
+          useTreeStore.getState().setSelectedMember(id);
+          setDetailPanel(true);
+        }}
         onAddSpouse={(id) => {
-          const m = graph.memberById.get(id);
-          openAddMember({ spouseId: id, gender: m?.gender === "MALE" ? "FEMALE" : "MALE" });
+          useTreeStore.getState().setSelectedMember(id);
+          setDetailPanel(true);
         }}
         onAddParent={(id) => {
-          setRelationshipPreset(id);
-          setAddRelationshipOpen(true);
+          useTreeStore.getState().setSelectedMember(id);
+          setDetailPanel(true);
         }}
         onDelete={(id) => setDeletingMember(id)}
-      />
-
-      <AddMemberModal
-        open={addMemberOpen}
-        onOpenChange={setAddMemberOpen}
-        treeId={tree.id}
-        graph={graph}
-        presetParentIds={addMemberPresets.parentIds}
-        presetSpouseId={addMemberPresets.spouseId}
-        presetGender={addMemberPresets.gender}
-        onAdded={load}
       />
 
       <EditMemberModal
@@ -462,23 +438,6 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
         onOpenChange={setEditMemberOpen}
         treeId={tree.id}
         member={selectedMember ?? null}
-        onSaved={load}
-      />
-
-      <AddMarriageModal
-        open={addMarriageOpen}
-        onOpenChange={setAddMarriageOpen}
-        treeId={tree.id}
-        graph={graph}
-        onSaved={load}
-      />
-
-      <AddRelationshipModal
-        open={addRelationshipOpen}
-        onOpenChange={setAddRelationshipOpen}
-        treeId={tree.id}
-        graph={graph}
-        presetChildId={relationshipPreset}
         onSaved={load}
       />
 

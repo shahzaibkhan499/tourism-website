@@ -42,11 +42,11 @@ export function TreeContextMenu({ canEdit, onEdit, onAddChild, onAddSpouse, onAd
   if (!contextMenu.memberId || !canEdit) return null;
 
   const items = [
-    { icon: Pencil, label: "ترمیم کریں", onClick: () => onEdit(contextMenu.memberId!) },
-    { icon: UserPlus, label: "والدین شامل کریں", onClick: () => onAddParent(contextMenu.memberId!) },
-    { icon: HeartHandshake, label: "شریک حیات شامل کریں", onClick: () => onAddSpouse(contextMenu.memberId!) },
-    { icon: Baby, label: "بچہ شامل کریں", onClick: () => onAddChild(contextMenu.memberId!) },
-    { icon: Trash2, label: "ڈیلیٹ کریں", danger: true, onClick: () => onDelete(contextMenu.memberId!) },
+    { icon: Pencil, label: "Edit — ترمیم کریں", onClick: () => onEdit(contextMenu.memberId!) },
+    { icon: UserPlus, label: "Add Parent — والدین شامل کریں", onClick: () => onAddParent(contextMenu.memberId!) },
+    { icon: HeartHandshake, label: "Add Spouse — شریک حیات شامل کریں", onClick: () => onAddSpouse(contextMenu.memberId!) },
+    { icon: Baby, label: "Add Child — بچہ شامل کریں", onClick: () => onAddChild(contextMenu.memberId!) },
+    { icon: Trash2, label: "Delete — ڈیلیٹ کریں", danger: true, onClick: () => onDelete(contextMenu.memberId!) },
   ];
 
   const style: React.CSSProperties = {

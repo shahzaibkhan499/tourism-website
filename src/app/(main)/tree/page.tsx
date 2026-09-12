@@ -19,6 +19,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { TreeCard } from "@/components/tree/tree-card";
+import { T } from "@/lib/i18n";
 import type { TreeDto } from "@/types/tree";
 
 interface TreeListItem extends TreeDto {
@@ -78,12 +79,12 @@ export default function TreeListPage() {
       <PageHeader
         title="Family Tree"
         titleUrdu="شجرہ نسب"
-        description="اپنے خاندان کا شجرہ بنائیں، ممبرز جوڑیں اور رشتے دیکھیں"
+        description="Build your family tree, add members and explore relationships — اپنے خاندان کا شجرہ بنائیں، ممبرز جوڑیں اور رشتے دیکھیں"
         actions={
           <Button className="bg-emerald-600 hover:bg-emerald-700" asChild>
             <Link href="/tree/create">
               <Plus className="mr-1 h-4 w-4" />
-              نیا شجرہ
+              {T.tree.newTree}
             </Link>
           </Button>
         }
@@ -94,7 +95,7 @@ export default function TreeListPage() {
         <Input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="شجرہ تلاش کریں..."
+          placeholder={T.tree.searchMembers}
           className="pl-9"
         />
       </div>
@@ -109,20 +110,20 @@ export default function TreeListPage() {
         <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center">
           <p className="text-sm text-red-700">{error}</p>
           <Button variant="outline" className="mt-3" onClick={load}>
-            دوبارہ کوشش کریں
+            Try Again — دوبارہ کوشش کریں
           </Button>
         </div>
       ) : trees.length === 0 ? (
         <div className="rounded-xl border border-dashed p-10 text-center">
           <Network className="mx-auto mb-3 h-12 w-12 text-gray-300" />
-          <p className="text-base font-medium text-gray-700">Koi data nahi mila</p>
-          <p className="mt-1 text-sm text-gray-500">
-            {q ? "اس نام سے کوئی شجرہ نہیں ملا" : "آپ نے ابھی کوئی شجرہ نہیں بنایا"}
+          <p className="text-base font-medium text-gray-700 dark:text-gray-200">{T.common.noData}</p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            {q ? "No tree matches this search — اس نام سے کوئی شجرہ نہیں ملا" : "You haven't created any tree yet — آپ نے ابھی کوئی شجرہ نہیں بنایا"}
           </p>
           <Button className="mt-4 bg-emerald-600 hover:bg-emerald-700" asChild>
             <Link href="/tree/create">
               <Plus className="mr-1 h-4 w-4" />
-              پہلا شجرہ بنائیں
+              {T.tree.createFirstTree}
             </Link>
           </Button>
         </div>

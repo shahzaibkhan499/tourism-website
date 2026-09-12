@@ -35,7 +35,7 @@ export const TREE_THEME = {
     deceasedCircle: "#f3f4f6",
   },
   dark: {
-    canvasBg: "#0b1220",
+    canvasBg: "#030712",
     dot: "#1e293b",
     nodeFill: "#111827",
     nameFill: "#e5e7eb",

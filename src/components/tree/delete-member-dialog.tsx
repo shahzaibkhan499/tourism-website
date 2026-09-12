@@ -87,15 +87,15 @@ export function DeleteMemberDialog({ open, onOpenChange, treeId, memberId, graph
       const j = await res.json().catch(() => null);
       if (res.status === 409) {
         setBlocked(true);
-        toast.error(j?.details?.message || j?.error || "بچے موجود ہیں");
+        toast.error(j?.details?.message || j?.error || "Children exist — بچے موجود ہیں");
         return;
       }
-      if (!res.ok) throw new Error(j?.error || "ڈیلیٹ نہیں ہو سکا");
-      toast.success(j?.message || "ممبر ڈیلیٹ ہو گیا");
+      if (!res.ok) throw new Error(j?.error || "Could not delete — ڈیلیٹ نہیں ہو سکا");
+      toast.success(j?.message || "Member deleted — ممبر ڈیلیٹ ہو گیا");
       onOpenChange(false);
       onDeleted();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "کچھ غلط ہو گیا");
+      toast.error(e instanceof Error ? e.message : "Something went wrong — کچھ غلط ہو گیا");
     } finally {
       setDeleting(false);
     }
@@ -110,10 +110,10 @@ export function DeleteMemberDialog({ open, onOpenChange, treeId, memberId, graph
             {member ? (
               <>
                 «{fullName(member)}» کو شجرے سے ہٹایا جائے گا۔
-                {hasChildren && " اس کے بچے موجود ہیں — پہلے فیصلہ کریں کہ بچوں کا کیا کرنا ہے۔"}
+                {hasChildren && "This member has children — decide what to do with them first. اس کے بچے موجود ہیں — پہلے فیصلہ کریں کہ بچوں کا کیا کرنا ہے۔"}
               </>
             ) : (
-              "کیا آپ واقعی یہ ممبر ڈیلیٹ کرنا چاہتے ہیں؟"
+              "Are you sure you want to delete this member? — کیا آپ واقعی یہ ممبر ڈیلیٹ کرنا چاہتے ہیں؟"
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -147,7 +147,7 @@ export function DeleteMemberDialog({ open, onOpenChange, treeId, memberId, graph
                 <Label>نئے والدین منتخب کریں</Label>
                 <Select value={reassignToId} onValueChange={setReassignToId}>
                   <SelectTrigger className="bg-white">
-                    <SelectValue placeholder="ممبر منتخب کریں" />
+                    <SelectValue placeholder="Select a member — ممبر منتخب کریں" />
                   </SelectTrigger>
                   <SelectContent>
                     {candidates.map((m) => (

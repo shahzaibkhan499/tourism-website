@@ -118,16 +118,16 @@ export function TreeStatsPanel({ open, onOpenChange, treeId }: TreeStatsPanelPro
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               <StatBox label="کل ممبرز" value={stats.totals.members} />
               <StatBox label="مرد" value={stats.totals.males} />
-              <StatBox label="خواتین" value={stats.totals.females} />
+              <StatBox label="Females — خواتین" value={stats.totals.females} />
               <StatBox label="نسلیں" value={stats.totals.generations} />
               <StatBox label="زندہ" value={stats.totals.living} />
               <StatBox label="فوت شدہ" value={stats.totals.deceased} />
-              <StatBox label="رشتے" value={stats.totals.relationships} />
+              <StatBox label="Relationships — رشتے" value={stats.totals.relationships} />
               <StatBox label="شادیاں" value={stats.totals.marriages} />
               <StatBox label="کمنٹس" value={stats.totals.comments} />
               <StatBox label="واقعات" value={stats.totals.lifeEvents} />
               <StatBox label="کہانیاں" value={stats.totals.stories} />
-              <StatBox label="تصاویر" value={stats.totals.photos} />
+              <StatBox label="Photos — تصاویر" value={stats.totals.photos} />
             </div>
 
             {stats.averageLifespan !== null && (
@@ -150,7 +150,7 @@ export function TreeStatsPanel({ open, onOpenChange, treeId }: TreeStatsPanelPro
             </ChartCard>
 
             {/* gender by generation */}
-            <ChartCard title="جنس بلحاظ نسل — Gender by Generation">
+            <ChartCard title="Gender by Generation — جنس بلحاظ نسل">
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={stats.genderByGeneration}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -165,7 +165,7 @@ export function TreeStatsPanel({ open, onOpenChange, treeId }: TreeStatsPanelPro
             </ChartCard>
 
             {/* gender pie */}
-            <ChartCard title="جنس کا تناسب — Gender Ratio">
+            <ChartCard title="Gender Ratio — جنس کا تناسب">
               <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
                   <Pie
@@ -232,7 +232,7 @@ export function TreeStatsPanel({ open, onOpenChange, treeId }: TreeStatsPanelPro
 
             {/* top cities + occupations */}
             <div className="grid gap-4 sm:grid-cols-2">
-              <ChartCard title="بڑے شہر — Top Cities">
+              <ChartCard title="Top Cities — بڑے شہر">
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={stats.topCities} layout="vertical" margin={{ left: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -243,7 +243,7 @@ export function TreeStatsPanel({ open, onOpenChange, treeId }: TreeStatsPanelPro
                   </BarChart>
                 </ResponsiveContainer>
               </ChartCard>
-              <ChartCard title="اہم پیشے — Top Occupations">
+              <ChartCard title="Top Occupations — اہم پیشے">
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={stats.topOccupations} layout="vertical" margin={{ left: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" />

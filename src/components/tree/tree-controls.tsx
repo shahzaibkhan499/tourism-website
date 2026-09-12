@@ -13,6 +13,7 @@ import { useTreeStore } from "@/stores/tree-store";
 import type { LayoutDirection } from "@/types/tree";
 import type { TreeViewerApi } from "@/components/tree/tree-viewer";
 import { cn } from "@/lib/utils";
+import { T } from "@/lib/i18n";
 
 // ============================================================
 // TREE CONTROLS — zoom, fit, layout direction switch, display
@@ -20,10 +21,10 @@ import { cn } from "@/lib/utils";
 // ============================================================
 
 const DIRECTIONS: { value: LayoutDirection; label: string }[] = [
-  { value: "TB", label: "Top → Bottom · اوپر سے نیچے" },
-  { value: "BT", label: "Bottom → Top · نیچے سے اوپر" },
-  { value: "LR", label: "Left → Right · بائیں سے دائیں" },
-  { value: "RL", label: "Right → Left · دائیں سے بائیں" },
+  { value: "TB", label: T.common.topToBottom },
+  { value: "BT", label: T.common.bottomToTop },
+  { value: "LR", label: T.common.leftToRight },
+  { value: "RL", label: T.common.rightToLeft },
 ];
 
 interface TreeControlsProps {
@@ -75,10 +76,10 @@ export function TreeControls({ viewerApi, maxGen = null }: TreeControlsProps) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">تمام نسلیں</SelectItem>
+            <SelectItem value="all">{T.common.allGenerations}</SelectItem>
             {Array.from({ length: maxGen }, (_, i) => i + 1).map((g) => (
               <SelectItem key={g} value={String(g)}>
-                نسل {g} تک
+                {T.tree.untilGeneration.replace("{g}", String(g))}
               </SelectItem>
             ))}
           </SelectContent>
@@ -98,10 +99,10 @@ export function TreeControls({ viewerApi, maxGen = null }: TreeControlsProps) {
       </Select>
 
       <div className="flex flex-wrap items-center gap-1.5">
-        <TogglePill label="نام" active={showNames} onClick={toggleNames} />
-        <TogglePill label="تصاویر" active={showPhotos} onClick={togglePhotos} />
-        <TogglePill label="تاریخیں" active={showDates} onClick={toggleDates} />
-        <TogglePill label="پہلے مرد" active={malesFirst} onClick={toggleMalesFirst} />
+        <TogglePill label={T.tree.names} active={showNames} onClick={toggleNames} />
+        <TogglePill label={T.tree.photos} active={showPhotos} onClick={togglePhotos} />
+        <TogglePill label={T.tree.dates} active={showDates} onClick={toggleDates} />
+        <TogglePill label={T.tree.malesFirst} active={malesFirst} onClick={toggleMalesFirst} />
         <Button
           variant={showMinimap ? "secondary" : "outline"}
           size="sm"
@@ -110,7 +111,7 @@ export function TreeControls({ viewerApi, maxGen = null }: TreeControlsProps) {
           aria-label="Toggle minimap"
         >
           <MapIcon className="mr-1 h-3.5 w-3.5" />
-          نقشہ
+          {T.tree.minimap}
         </Button>
         <Button
           variant={showLegend ? "secondary" : "outline"}
@@ -120,7 +121,7 @@ export function TreeControls({ viewerApi, maxGen = null }: TreeControlsProps) {
           aria-label="Toggle legend"
         >
           <BookOpen className="mr-1 h-3.5 w-3.5" />
-          رہنما
+          {T.tree.legend}
         </Button>
       </div>
     </div>
@@ -135,8 +136,8 @@ function TogglePill({ label, active, onClick }: { label: string; active: boolean
       className={cn(
         "h-8 rounded-lg border px-3 text-xs font-medium transition-colors",
         active
-          ? "border-emerald-300 bg-emerald-50 text-emerald-700"
-          : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+          ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+          : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
       )}
     >
       {label}

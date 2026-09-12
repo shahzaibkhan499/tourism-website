@@ -15,9 +15,9 @@ export function TreeLegend() {
   if (!showLegend) return null;
 
   return (
-    <div className="absolute bottom-3 left-3 z-20 w-56 rounded-xl border bg-white p-3 shadow-lg">
+    <div className="absolute bottom-3 left-3 z-20 w-56 rounded-xl border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200">
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm font-semibold">رہنما — Legend</span>
+        <span className="text-sm font-semibold">Legend — رہنما</span>
         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={toggleLegend} aria-label="Close legend">
           <X className="h-3.5 w-3.5" />
         </Button>
@@ -33,7 +33,7 @@ export function TreeLegend() {
         </li>
         <li className="flex items-center gap-2">
           <span className="h-3 w-3 rounded-sm border-2" style={{ borderColor: DECEASED_COLOR }} />
-          فوت شدہ 🕯️
+          Deceased — فوت شدہ 🕯️
         </li>
         <li className="flex items-center gap-2">
           <span className="h-3 w-3 rounded-sm border-2 border-green-600" />

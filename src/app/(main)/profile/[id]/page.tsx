@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { personLd, SITE_URL } from "@/lib/seo";
+import { T } from "@/lib/i18n";
 import { useInjectJsonLd } from "@/lib/seo-client";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -200,39 +201,39 @@ export default function PublicProfilePage() {
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">تعارف</CardTitle>
+            <CardTitle className="text-base">About — تعارف</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600">{profile.bio || "کوئی تعارف نہیں ہے"}</p>
+            <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600">{profile.bio || T.profile.noBio}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Details</CardTitle>
+            <CardTitle className="text-base">{T.profile.details}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Occupation</div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.occupation}</div>
               <p className="text-sm text-gray-700">{profile.occupation || "—"}</p>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Education</div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.education}</div>
               <p className="text-sm text-gray-700">{profile.education || "—"}</p>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Clan</div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.clan}</div>
               <p className="text-sm text-gray-700">{profile.clan ? profile.clan.name : "—"}</p>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Sub-Clan</div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">Sub-Clan — ذیلی کلان</div>
               <p className="text-sm text-gray-700">{profile.subClan ? profile.subClan.name : "—"}</p>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Province</div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.province}</div>
               <p className="text-sm text-gray-700">{profile.province || "—"}</p>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-gray-400">Blood Group</div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.bloodGroup}</div>
               <p className="text-sm text-gray-700">{profile.bloodGroup || "—"}</p>
             </div>
           </CardContent>

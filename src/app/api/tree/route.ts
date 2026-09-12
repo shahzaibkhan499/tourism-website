@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
     if (!parsed.success) {
       return apiError(400, "ValidationError", parsed.error.flatten().fieldErrors);
     }
-    const { name, description, visibility, isPublic, rootMember } = parsed.data;
+    const { name, description, visibility, isPublic, rootMember, autoAddSelfAsRoot } = parsed.data;
 
     const existing = await prisma.familyTree.findFirst({
       where: { creatorId: user.id, name: { equals: name, mode: "insensitive" } },
@@ -106,7 +106,26 @@ export async function POST(req: NextRequest) {
       });
 
       let rootMemberId: string | null = null;
-      if (rootMember) {
+      if (autoAddSelfAsRoot) {
+        // FIX 5 — auto-create the root FamilyMember from the session user's data
+        const parts = (user.name ?? user.email ?? "").trim().split(/\s+/);
+        const root = await tx.familyMember.create({
+          data: {
+            treeId: t.id,
+            userId: user.id,
+            firstName: sanitizeInput(parts[0] ?? user.email ?? ""),
+            lastName: parts.slice(1).join(" ") ? sanitizeInput(parts.slice(1).join(" ")) : "",
+            gender: user.gender ?? "MALE",
+            dateOfBirth: user.dateOfBirth ?? null,
+            photo: user.image ?? null,
+            currentCity: user.city ?? null,
+            bio: user.bio ?? null,
+            generation: 1,
+            sortOrder: 0,
+          },
+        });
+        rootMemberId = root.id;
+      } else if (rootMember) {
         const root = await tx.familyMember.create({
           data: {
             treeId: t.id,

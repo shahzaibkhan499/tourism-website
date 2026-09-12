@@ -761,6 +761,7 @@ model FamilyMember {
   photoTags        GroupPhotoTag[]
   verifications    RelationshipVerification[]
 
+  @@unique([treeId, userId], name: "one_user_per_tree")
   @@index([treeId])
   @@index([treeId, generation])
   @@index([userId])

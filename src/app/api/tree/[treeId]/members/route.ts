@@ -151,6 +151,52 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
       ? (await prisma.familyMember.aggregate({ where: { id: { in: siblingIds } }, _max: { sortOrder: true } }))._max.sortOrder ?? 0
       : 0;
 
+    // FIX 6 — one User = one Member per tree.
+    // If the payload's email/phone matches an existing User:
+    //  - already linked in this tree  -> 400
+    //  - not linked                    -> create WITHOUT userId + CLAIM_PROFILE invite
+    const contact = (d.email && d.email.trim()) || (d.phone && d.phone.trim()) || null;
+    let matchingUser: { id: string; email: string | null; phone: string | null } | null = null;
+    if (contact) {
+      matchingUser = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { email: d.email ? d.email.trim().toLowerCase() : undefined },
+            { phone: d.phone ? d.phone.trim() : undefined },
+          ],
+        },
+        select: { id: true, email: true, phone: true },
+      });
+    }
+    if (matchingUser) {
+      // already linked via userId?
+      const linkedMember = await prisma.familyMember.findFirst({
+        where: { treeId, userId: matchingUser.id },
+        select: { id: true },
+      });
+      if (linkedMember) {
+        return apiError(400, "This person is already in this tree — یہ شخص پہلے سے اس شجرے میں ہے");
+      }
+      // already present as an unlinked member (email match) or pending CLAIM_PROFILE invite?
+      const [sameEmailMember, pendingClaim] = await Promise.all([
+        matchingUser.email
+          ? prisma.familyMember.findFirst({
+              where: { treeId, email: { equals: matchingUser.email, mode: "insensitive" } },
+              select: { id: true },
+            })
+          : null,
+        matchingUser.email
+          ? prisma.treeInvite.findFirst({
+              where: { treeId, inviteeEmail: { equals: matchingUser.email, mode: "insensitive" }, type: "CLAIM_PROFILE", memberId: { not: null }, status: "PENDING" },
+              select: { id: true },
+            })
+          : null,
+      ]);
+      if (sameEmailMember || pendingClaim) {
+        return apiError(400, "This person is already in this tree — یہ شخص پہلے سے اس شجرے میں ہے");
+      }
+    }
+
     const snapshot = await snapshotTree(treeId);
 
     const member = await prisma.$transaction(async (tx) => {
@@ -179,7 +225,7 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
           showInPublic: d.showInPublic ?? true,
           positionX: d.positionX ?? null,
           positionY: d.positionY ?? null,
-          userId: d.userId,
+          userId: matchingUser ? null : d.userId,
         },
       });
 
@@ -204,6 +250,22 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
       }
       return m;
     });
+
+    // FIX 6 — create a CLAIM_PROFILE invite for the matched (unlinked) user
+    if (matchingUser) {
+      await prisma.treeInvite.create({
+        data: {
+          treeId,
+          inviterId: user.id,
+          inviteeEmail: matchingUser.email,
+          inviteePhone: matchingUser.phone,
+          type: "CLAIM_PROFILE",
+          status: "PENDING",
+          memberId: member.id,
+          expiresAt: new Date(Date.now() + 7 * 24 * 3600 * 1000),
+        },
+      });
+    }
 
     // Duplicate detection
     const rels = await prisma.relationship.findMany({ where: { treeId } });

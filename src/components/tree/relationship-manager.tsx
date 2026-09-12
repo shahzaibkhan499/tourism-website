@@ -62,11 +62,11 @@ export function RelationshipManager({ open, onOpenChange, treeId, graph, relatio
         body: JSON.stringify({ type }),
       });
       const j = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(j?.error || "قسم نہیں بدلی");
-      toast.success(j?.message || "رشتے کی قسم بدل گئی");
+      if (!res.ok) throw new Error(j?.error || "Type not changed — قسم نہیں بدلی");
+      toast.success(j?.message || "Relationship type changed — رشتے کی قسم بدل گئی");
       onSaved();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "کچھ غلط ہو گیا");
+      toast.error(e instanceof Error ? e.message : "Something went wrong — کچھ غلط ہو گیا");
     } finally {
       setBusyId(null);
     }
@@ -79,8 +79,8 @@ export function RelationshipManager({ open, onOpenChange, treeId, graph, relatio
         method: "DELETE",
       });
       const j = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(j?.error || "رشتہ نہیں ہٹا");
-      toast.success(j?.message || "رشتہ ہٹا دیا گیا");
+      if (!res.ok) throw new Error(j?.error || "Could not remove relationship — رشتہ نہیں ہٹا");
+      toast.success(j?.message || "Relationship removed — رشتہ ہٹا دیا گیا");
       setRemoving(null);
       onSaved();
     } catch (e) {
