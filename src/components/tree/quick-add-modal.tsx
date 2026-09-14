@@ -78,12 +78,22 @@ export function QuickAddModal({ open, onOpenChange, treeId, graph, memberId, rel
     register,
     handleSubmit,
     setValue,
+    watch,
     reset,
     formState: { errors },
   } = useForm<QuickAddForm>({
-    resolver: zodResolver(quickAddSchema),
+    resolver: zodResolver(
+      // STRICT — multi-spouse member + SON/DAUGHTER: motherId is required so
+      // the child lands in the correct family unit (matches the API rule).
+      quickAddSchema.refine(
+        (v) => !(needsMother && spouses.length > 1) || Boolean(v.motherId && v.motherId.trim()),
+        { message: "Mother selection is required — والدہ کا انتخاب ضروری ہے", path: ["motherId"] }
+      )
+    ),
     defaultValues: { firstName: "", lastName: "", dateOfBirth: "", motherId: "", fatherName: "" },
   });
+  const motherIdValue = watch("motherId");
+  const submitDisabled = submitting || (needsMother && spouses.length > 1 && !(motherIdValue && motherIdValue.trim()));
 
   const onSubmit = async (values: QuickAddForm) => {
     if (needsFather && !(values.fatherName ?? "").trim()) {
@@ -157,8 +167,11 @@ export function QuickAddModal({ open, onOpenChange, treeId, graph, memberId, rel
 
           {showMotherSelect && (
             <div className="space-y-1.5">
-              <Label>{T.tree.motherLabel}</Label>
-              <Select onValueChange={(v) => setValue("motherId", v)}>
+              <Label>
+                {T.tree.motherLabel}
+                {spouses.length > 1 && <span className="text-red-500"> *</span>}
+              </Label>
+              <Select value={motherIdValue || undefined} onValueChange={(v) => setValue("motherId", v)}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder={T.tree.selectMother} />
                 </SelectTrigger>
@@ -170,6 +183,14 @@ export function QuickAddModal({ open, onOpenChange, treeId, graph, memberId, rel
                   ))}
                 </SelectContent>
               </Select>
+              {errors.motherId && (
+                <p className="text-xs text-red-500">{errors.motherId.message}</p>
+              )}
+              {spouses.length > 1 && (
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {T.tree.motherRequiredNote}
+                </p>
+              )}
             </div>
           )}
 
@@ -191,7 +212,7 @@ export function QuickAddModal({ open, onOpenChange, treeId, graph, memberId, rel
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {T.common.cancel}
             </Button>
-            <Button type="submit" disabled={submitting} className="bg-emerald-600 hover:bg-emerald-700">
+            <Button type="submit" disabled={submitDisabled} className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60">
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Add {rel.en} — {rel.ur} شامل کریں
             </Button>

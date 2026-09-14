@@ -95,8 +95,10 @@ export function DashboardContent({ user, stats, upcomingEvents, activities }: Da
               <AvatarFallback className="bg-white/20 text-white">{initials(user.name)}</AvatarFallback>
             </Avatar>
             <div>
-              <h2 className="text-xl font-bold">
-                Assalam-o-Alaikum, <span className="font-urdu">{user.name.split(" ")[0]}</span>!
+              <h2 className="flex flex-wrap items-center gap-x-2 text-xl font-bold" dir="ltr">
+                <span>Assalam-o-Alaikum, {user.name.split(" ")[0]}!</span>
+                <span className="text-emerald-100" aria-hidden>—</span>
+                <span className="font-urdu" dir="rtl">السلام علیکم، {user.name.split(" ")[0]}</span>
               </h2>
               <p className="mt-0.5 text-sm text-emerald-100">
                 {formatDate(new Date())} ·{" "}

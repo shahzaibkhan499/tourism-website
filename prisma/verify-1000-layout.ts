@@ -231,6 +231,51 @@ async function main() {
   }
   check("children strictly below parents (>= NODE_H gap)", above === 0, above === 0 ? `${rels.length} links` : `${above} violating`);
 
+  // No two nodes may share the exact same X AND Y coordinate (prompt assertion)
+  const posKey = new Set<string>();
+  let dupPos = 0;
+  for (const n of nodes) {
+    const key = `${Math.round(n.cx * 10)}:${Math.round(n.cy * 10)}`;
+    if (posKey.has(key)) dupPos += 1;
+    posKey.add(key);
+  }
+  check("no nodes share the same X and Y coordinate", dupPos === 0, dupPos === 0 ? `${nodes.length} unique positions` : `${dupPos} duplicates`);
+
+  // Wives share the SAME Y as their husbands (spouses sit on one row)
+  let spousesOffRow = 0;
+  for (const m of marrs) {
+    const a = placed.get(m.spouse1Id);
+    const b = placed.get(m.spouse2Id);
+    if (!a || !b) continue;
+    if (Math.abs(a.cy - b.cy) > EPS) spousesOffRow += 1;
+  }
+  check("wives share the same Y as husbands", spousesOffRow === 0,
+    spousesOffRow === 0 ? `${marrs.length} marriages on shared rows` : `${spousesOffRow} off-row`);
+
+  // Vertical hierarchy (exact): every parent-child link must move EXACTLY
+  // one row down (child.depth === parent.depth + 1), and every married
+  // couple must sit on the SAME row. Together these prove the Y-axis is
+  // strict generation math (root 0, each generation +1 row, spouses same Y).
+  let depthLinkViolations = 0;
+  for (const r of rels) {
+    const p = placed.get(r.parentId);
+    const c = placed.get(r.childId);
+    if (!p || !c) continue;
+    if (c.depth !== p.depth + 1) depthLinkViolations += 1;
+  }
+  check("every parent-child link moves exactly one row down", depthLinkViolations === 0,
+    depthLinkViolations === 0 ? `${rels.length} links` : `${depthLinkViolations} violating`);
+
+  let coupleDepthViolations = 0;
+  for (const m of marrs) {
+    const a = placed.get(m.spouse1Id);
+    const b = placed.get(m.spouse2Id);
+    if (!a || !b) continue;
+    if (a.depth !== b.depth) coupleDepthViolations += 1;
+  }
+  check("every married couple shares the same layout row", coupleDepthViolations === 0,
+    coupleDepthViolations === 0 ? `${marrs.length} couples` : `${coupleDepthViolations} violating`);
+
   // connectivity BFS from roots
   const seen = new Set<string>();
   const q = [...layout.rootIds];

@@ -90,6 +90,22 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
       motherId = d.motherId;
     }
 
+    // STRICT — SON/DAUGHTER on a member with more than one spouse: the other
+    // parent MUST be selected so the child lands in the correct family unit.
+    // Without it the child would link to only one parent and the layout could
+    // not show which marriage the child belongs to.
+    if (d.relationshipType === "SON" || d.relationshipType === "DAUGHTER") {
+      const spouseCount = await prisma.marriage.count({
+        where: {
+          treeId,
+          OR: [{ spouse1Id: selected.id }, { spouse2Id: selected.id }],
+        },
+      });
+      if (spouseCount > 1 && !motherId) {
+        return apiError(400, "Mother selection is required for multiple marriages — متعدد شادیوں کے لیے والدہ کا انتخاب ضروری ہے");
+      }
+    }
+
     // FIX — BROTHER/SISTER of a member with NO parents: without a shared
     // parent the new sibling would be created with zero relationships and
     // stay alone in the tree. Require the father's name (GenoPro-style)

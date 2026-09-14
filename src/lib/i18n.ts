@@ -272,6 +272,7 @@ export const T = {
     daughter: "Daughter — بیٹی",
     motherLabel: "Mother — والدہ",
     selectMother: "Select Mother — والدہ منتخب کریں",
+    motherRequiredNote: "Required: multiple marriages — child links to the selected mother — لازمی: متعدد شادیاں — بچہ منتخب والدہ سے منسلک ہوتا ہے",
     fatherNameLabel: "Father's Name — والد کا نام",
     fatherNamePlaceholder: "e.g. Khan Baba — مثال: خان بابا",
     siblingNeedsFather: "This member has no parents yet — adding the father connects the new {relation} to the tree — اس ممبر کے والدین شجرے میں شامل نہیں — والد کا نام لکھنے سے نیا {relation} شجرے سے جڑ جائے گا",

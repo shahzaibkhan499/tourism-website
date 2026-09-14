@@ -72,10 +72,10 @@ export function TreeControls({ viewerApi, maxGen = null }: TreeControlsProps) {
           value={maxGeneration === null ? "all" : String(maxGeneration)}
           onValueChange={(v) => setFilters({ maxGeneration: v === "all" ? null : Number(v) })}
         >
-          <SelectTrigger className="h-9 w-40 bg-white dark:border-gray-700 dark:bg-gray-900" aria-label="Generation depth">
+          <SelectTrigger className="h-9 w-auto min-w-[200px] whitespace-nowrap overflow-visible bg-white dark:border-gray-700 dark:bg-gray-900" aria-label="Generation depth">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="w-auto min-w-[200px] whitespace-nowrap overflow-visible">
             <SelectItem value="all">{T.common.allGenerations}</SelectItem>
             {Array.from({ length: maxGen }, (_, i) => i + 1).map((g) => (
               <SelectItem key={g} value={String(g)}>
@@ -86,7 +86,7 @@ export function TreeControls({ viewerApi, maxGen = null }: TreeControlsProps) {
         </Select>
       )}
       <Select value={direction} onValueChange={(v) => setDirection(v as LayoutDirection)}>
-        <SelectTrigger className="h-9 w-44 bg-white" aria-label="Layout direction">
+        <SelectTrigger className="h-9 w-auto min-w-[180px] whitespace-nowrap overflow-visible bg-white" aria-label="Layout direction">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

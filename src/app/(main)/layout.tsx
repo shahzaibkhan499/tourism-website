@@ -30,9 +30,15 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         <header className="flex h-16 shrink-0 items-center justify-between border-b bg-white px-4 lg:px-6">
           <div className="flex items-center gap-3">
             <MobileNav isAdmin={isAdmin} />
-            <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Assalam-o-Alaikum, {session.user.name?.split(" ")[0]} —{" "}
-              <span className="font-urdu">السلام علیکم، {session.user.name?.split(" ")[0]}</span>
+            {/* isolated LTR + RTL spans so the greeting never bidi-jumbles */}
+            <div className="flex flex-wrap items-center gap-x-2 text-sm font-medium text-gray-500 dark:text-gray-400" dir="ltr">
+              <span className="text-gray-800 dark:text-gray-200">
+                Assalam-o-Alaikum, {session.user.name?.split(" ")[0]}
+              </span>
+              <span className="text-gray-400" aria-hidden>—</span>
+              <span className="font-urdu" dir="rtl">
+                السلام علیکم، {session.user.name?.split(" ")[0]}
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-1.5">
