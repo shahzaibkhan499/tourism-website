@@ -130,7 +130,7 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
     } finally {
       setLoading(false);
     }
-  }, [treeId, setTreeId]);
+  }, [treeId, setTreeId, setFilters]);
 
   useEffect(() => {
     load();

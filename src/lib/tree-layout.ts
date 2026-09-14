@@ -328,6 +328,34 @@ export function layoutTree(
       if (i === 0) firstColWidth = Math.max(colCursor - cursor, 1);
     }
 
+    // FIX — anchor's OWN single-parent children (e.g. a child quick-added to
+    // a married father before the spouse auto-link existed): without this
+    // they were never placed by the couple branch and fell into the
+    // unvisited-members fallback as a DISCONNECTED cluster at the top row.
+    // Place them in a dedicated column after the spouse columns and route a
+    // single-parent bus from the anchor's bottom edge down to them.
+    const anchorDirectChildren = sortFor(memberId, childrenOf(memberId)).filter(
+      (c) => (graph.parentIdsOf.get(c) ?? []).length === 1
+    );
+    if (anchorDirectChildren.length > 0) {
+      let acCursor = colCursor;
+      for (const c of anchorDirectChildren) {
+        if (visited.has(c)) continue;
+        const cu = placeUnit(c, depth + 1, acCursor);
+        acCursor += Math.max(cu.width, 1);
+      }
+      colCursor = Math.max(colCursor, acCursor);
+      buses.push({
+        family: graph.familyByKey.get(familyKey([memberId])) ?? {
+          key: familyKey([memberId]),
+          parentIds: [memberId],
+          childIds: anchorDirectChildren,
+          marriage: null,
+        },
+        type: "BIOLOGICAL",
+      });
+    }
+
     const totalWidth = Math.max(colCursor - cursor, 1);
     const anchorX = single ? cursor + 0.5 : cursor + firstColWidth + 0.5;
 

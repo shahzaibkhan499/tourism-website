@@ -47,7 +47,7 @@ export function UserMenu() {
           <DropdownMenuItem asChild>
             <Link href="/admin">
               <Shield className="mr-2 h-4 w-4" />
-              Admin Panel
+              Switch to Admin — ایڈمن پر جائیں
             </Link>
           </DropdownMenuItem>
         )}

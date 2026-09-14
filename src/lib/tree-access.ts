@@ -276,13 +276,21 @@ export async function recordVersion(
 export async function refreshTreeStats(treeId: string) {
   const [members, generations] = await Promise.all([
     prisma.familyMember.findMany({ where: { treeId }, select: { generation: true } }),
-    prisma.familyMember.aggregate({ where: { treeId }, _max: { generation: true } }),
+    prisma.familyMember.aggregate({
+      where: { treeId },
+      _max: { generation: true },
+      _min: { generation: true },
+    }),
   ]);
+  // Generation span: ancestors may carry negative generations (GenoPro-style),
+  // so the count is (max - min + 1), e.g. gen -49 .. 2 = 52 generations.
+  const minG = generations._min.generation ?? 1;
+  const maxG = generations._max.generation ?? 1;
   await prisma.familyTree.update({
     where: { id: treeId },
     data: {
       memberCount: members.length,
-      generationCount: generations._max.generation ?? 1,
+      generationCount: Math.max(1, maxG - minG + 1),
       lastModified: new Date(),
     },
   });

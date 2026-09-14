@@ -68,7 +68,11 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
 
     let generation = selected.generation;
     if (d.relationshipType === "FATHER" || d.relationshipType === "MOTHER") {
-      generation = Math.max(0, selected.generation - 1);
+      // NO clamp: ancestor chains go negative (GenoPro-style) so a father of
+      // a gen-0 ancestor is gen -1 — the chain keeps its vertical order and
+      // stats can count the true generation span. (The old Math.max(0, ...)
+      // collapsed every ancestor above the root into generation 0.)
+      generation = selected.generation - 1;
     }
     if (d.relationshipType === "SON" || d.relationshipType === "DAUGHTER") {
       generation = selected.generation + 1;
@@ -95,14 +99,22 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
     // Without it the child would link to only one parent and the layout could
     // not show which marriage the child belongs to.
     if (d.relationshipType === "SON" || d.relationshipType === "DAUGHTER") {
-      const spouseCount = await prisma.marriage.count({
+      const spouseMarriages = await prisma.marriage.findMany({
         where: {
           treeId,
           OR: [{ spouse1Id: selected.id }, { spouse2Id: selected.id }],
         },
       });
-      if (spouseCount > 1 && !motherId) {
+      if (spouseMarriages.length > 1 && !motherId) {
         return apiError(400, "Mother selection is required for multiple marriages — متعدد شادیوں کے لیے والدہ کا انتخاب ضروری ہے");
+      }
+      // AUTO-LINK the single spouse: a child of a married parent must always
+      // carry BOTH parent links, otherwise the layout places it outside the
+      // couple's family unit (disconnected cluster). With exactly one spouse
+      // there is no ambiguity, so link them automatically.
+      if (spouseMarriages.length === 1 && !motherId) {
+        const m = spouseMarriages[0];
+        motherId = m.spouse1Id === selected.id ? m.spouse2Id : m.spouse1Id;
       }
     }
 
@@ -175,7 +187,7 @@ export async function POST(req: NextRequest, { params }: RouteCtx) {
               firstName: sanitizeInput((d.fatherName as string).trim()),
               lastName: d.lastName ? sanitizeInput(d.lastName) : "",
               gender: "MALE",
-              generation: Math.max(0, selected.generation - 1),
+              generation: selected.generation - 1,
               sortOrder: 0,
               showInPublic: true,
             },

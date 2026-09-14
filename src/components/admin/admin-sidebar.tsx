@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Users,
   Network,
+  TreePine,
   CalendarDays,
   Flag,
   Building2,
@@ -25,6 +26,7 @@ import { cn } from "@/lib/utils";
 const items = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/trees", label: "Family Trees", icon: TreePine },
   { href: "/admin/clans", label: "Clans", icon: Network },
   { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/reports", label: "Reports", icon: Flag },
@@ -47,7 +49,7 @@ export function AdminSidebar() {
           <Shield className="h-4 w-4" />
         </div>
         <div>
-          <div className="text-sm font-bold text-white">Admin Panel</div>
+          <div className="text-sm font-bold text-white">Admin Panel — ایڈمن پینل</div>
           <div className="text-[10px] text-gray-500">{APP_NAME}</div>
         </div>
       </div>

@@ -119,7 +119,9 @@ export function Sidebar({ isAdmin, mobile, onClose }: SidebarProps) {
               )}
             >
               <Shield className={cn("h-[18px] w-[18px]", pathname.startsWith("/admin") ? "text-emerald-400" : "text-gray-400")} />
-              Admin Panel
+              <span dir="ltr">Switch to Admin</span>
+              <span className="text-xs text-gray-500">—</span>
+              <span dir="rtl">ایڈمن پر جائیں</span>
             </Link>
           )}
         </div>
