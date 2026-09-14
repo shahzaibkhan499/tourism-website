@@ -313,12 +313,19 @@ export function layoutTree(
       }
 
       spouseColumns.push({ spouseId, spouseX, childrenIds: pairChildren, marriage: u.marriage });
-      if (i === 0) firstColWidth = Math.max(colCursor - cursor, 1);
       const family = graph.familyByKey.get(familyKey([memberId, spouseId]));
       if (family && pairChildren.length > 0) {
         buses.push({ family, type: "BIOLOGICAL" });
       }
       colCursor = Math.max(colCursor + colWidth, childCursor);
+      // IMPORTANT: capture the first spouse column's FULL width AFTER the
+      // colCursor advance. Capturing before it (the old order) always yielded
+      // 1, so the anchor column landed at cursor+1.5 — only 0.5 slot (120px)
+      // from the first wife's card and inside her children's span. With 2+
+      // kids under the first wife, husband and first wife cards overlapped
+      // (180px-wide cards, 120px apart). Now the anchor gets the whole first
+      // column width, keeping every spouse ≥1.5 slots from the anchor.
+      if (i === 0) firstColWidth = Math.max(colCursor - cursor, 1);
     }
 
     const totalWidth = Math.max(colCursor - cursor, 1);

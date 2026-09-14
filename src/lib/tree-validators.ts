@@ -105,6 +105,9 @@ export const treeCreateSchema = z.object({
   visibility: treeVisibilitySchema.optional(),
   isPublic: z.boolean().optional(),
   autoAddSelfAsRoot: z.boolean().optional(),
+  // .nullable() is required: the create-tree form sends `rootMember: null`
+  // when auto-adding the session user as the first member (first tree flow).
+  // Without it, Zod rejects null with "Expected object, received null".
   rootMember: memberBaseSchema.pick({
     firstName: true,
     lastName: true,
@@ -116,7 +119,7 @@ export const treeCreateSchema = z.object({
     currentCity: true,
     occupation: true,
     bio: true,
-  }).optional(),
+  }).optional().nullable(),
 });
 
 export const treeUpdateSchema = z.object({

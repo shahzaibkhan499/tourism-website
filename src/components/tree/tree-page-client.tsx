@@ -104,6 +104,12 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
   const [isMobile, setIsMobile] = useState(false);
 
 
+  // One-time perf guard for big trees: set an EXPLICIT store filter of 4
+  // generations on the first load. The store value must actually change
+  // (null -> 4) so the "Show more members" button can later set it back to
+  // null and trigger a re-render — a hidden fallback (maxGeneration ?? 4)
+  // kept the store at null forever, so the show-all click was a no-op.
+  const initialFilterApplied = useRef(false);
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -113,6 +119,12 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
       if (!res.ok) throw new Error(j?.error || T.error.loadFailed);
       setData(j);
       setTreeId(treeId);
+      if (!initialFilterApplied.current) {
+        initialFilterApplied.current = true;
+        if ((j?.members?.length ?? 0) > 200 && useTreeStore.getState().filters.maxGeneration === null) {
+          setFilters({ maxGeneration: 4 });
+        }
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : T.common.somethingWentWrong);
     } finally {
@@ -197,8 +209,9 @@ export function TreePageClient({ treeId }: TreePageClientProps) {
     return Math.max(...data.members.map((m) => m.generation), 1);
   }, [data]);
 
-  const defaultDepth = data && data.members.length > 200 ? 4 : null;
-  const activeDepth = maxGeneration ?? defaultDepth;
+  // Store is the single source of truth: null = all generations shown.
+  // Big trees start at 4 via the one-time filter in load() above.
+  const activeDepth = maxGeneration;
 
   const graph = useMemo(() => {
     if (!fullGraph) return null;

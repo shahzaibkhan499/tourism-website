@@ -123,7 +123,7 @@ export function QuickAddModal({ open, onOpenChange, treeId, graph, memberId, rel
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[95vh] overflow-y-auto sm:max-w-md">
+      <DialogContent className="h-[100dvh] max-h-[100dvh] w-full overflow-y-auto rounded-none sm:h-auto sm:max-h-[95vh] sm:max-w-md sm:rounded-lg">
         <DialogHeader>
           <DialogTitle>
             Add {rel.en} — {rel.ur} شامل کریں
