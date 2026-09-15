@@ -79,7 +79,7 @@ export function TreeControls({ viewerApi, maxGen = null }: TreeControlsProps) {
             <SelectItem value="all">{T.common.allGenerations}</SelectItem>
             {Array.from({ length: maxGen }, (_, i) => i + 1).map((g) => (
               <SelectItem key={g} value={String(g)}>
-                {T.tree.untilGeneration.replace("{g}", String(g))}
+                {T.tree.untilGeneration.replace(/{g}/g, String(g))}
               </SelectItem>
             ))}
           </SelectContent>
