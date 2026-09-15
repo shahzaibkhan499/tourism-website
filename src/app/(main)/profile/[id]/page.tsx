@@ -39,6 +39,7 @@ interface PublicProfile {
   bloodGroup: string | null;
   occupation: string | null;
   education: string | null;
+  educations: { degree: string; institute: string; year: string }[] | null;
   isVerified: boolean;
   createdAt: string;
   isOwn: boolean;
@@ -218,7 +219,14 @@ export default function PublicProfilePage() {
             </div>
             <div>
               <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.education}</div>
-              <p className="text-sm text-gray-700">{profile.education || "—"}</p>
+              <p className="text-sm text-gray-700">
+                {profile.educations && profile.educations.length > 0
+                  ? profile.educations
+                      .filter((e) => e.degree || e.institute)
+                      .map((e) => `${e.degree || e.institute}${e.year ? ` (${e.year})` : ""}`)
+                      .join(", ")
+                  : profile.education || "—"}
+              </p>
             </div>
             <div>
               <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.clan}</div>

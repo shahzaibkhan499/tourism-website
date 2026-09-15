@@ -35,6 +35,7 @@ export async function GET() {
         cnic: true,
         birthPlace: true,
         extendedProfile: true,
+        educations: true,
         privacy: true,
         isVerified: true,
         role: true,
@@ -99,6 +100,7 @@ export async function PATCH(req: NextRequest) {
     if (d.bloodGroup !== undefined) data.bloodGroup = d.bloodGroup;
     if (d.occupation !== undefined) data.occupation = d.occupation;
     if (d.education !== undefined) data.education = d.education;
+    if (d.educations !== undefined) data.educations = d.educations;
     if (d.clanId !== undefined) data.clanId = d.clanId;
     if (d.subClanId !== undefined) data.subClanId = d.subClanId;
     if (d.nameTitle !== undefined) data.nameTitle = d.nameTitle;
@@ -161,6 +163,7 @@ export async function PATCH(req: NextRequest) {
         cnic: true,
         birthPlace: true,
         extendedProfile: true,
+        educations: true,
         privacy: true,
       },
     });

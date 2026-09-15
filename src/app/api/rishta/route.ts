@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
-import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { rishtaProfileSchema, rishtaQuerySchema } from "@/lib/validators";
 import { apiError, apiSuccess, handleApiError, requireUser } from "@/lib/api";
+import { mapRishtaInput } from "@/lib/rishta-mapping";
 
 export async function GET(req: NextRequest) {
   try {
@@ -71,62 +71,12 @@ export async function POST(req: NextRequest) {
     }
 
     const d = parsed.data;
+    const data = mapRishtaInput(d) as Record<string, unknown>;
 
     const profile = await prisma.rishtaProfile.upsert({
       where: { userId: user.id },
-      update: {
-        age: d.age,
-        height: d.height,
-        weight: d.weight,
-        complexion: d.complexion,
-        education: d.education,
-        educationDetail: d.educationDetail,
-        profession: d.profession,
-        income: d.income,
-        sect: d.sect,
-        maslak: d.maslak,
-        castePreference: d.castePreference,
-        cityPreference: d.cityPreference,
-        countryPreference: d.countryPreference,
-        maritalStatus: d.maritalStatus,
-        children: d.children,
-        about: d.about,
-        familyBackground: d.familyBackground,
-        expectations: d.expectations,
-        photos: d.photos,
-        isGuardianMode: d.isGuardianMode,
-        guardianName: d.guardianName,
-        guardianRelation: d.guardianRelation,
-        guardianPhone: d.guardianPhone,
-        marriageForm: (d.marriageForm ?? undefined) as Prisma.InputJsonValue | undefined,
-      },
-      create: {
-        userId: user.id,
-        age: d.age,
-        height: d.height,
-        weight: d.weight,
-        complexion: d.complexion,
-        education: d.education,
-        educationDetail: d.educationDetail,
-        profession: d.profession,
-        income: d.income,
-        sect: d.sect,
-        maslak: d.maslak,
-        castePreference: d.castePreference,
-        cityPreference: d.cityPreference,
-        countryPreference: d.countryPreference,
-        maritalStatus: d.maritalStatus,
-        children: d.children,
-        about: d.about,
-        familyBackground: d.familyBackground,
-        expectations: d.expectations,
-        photos: d.photos,
-        isGuardianMode: d.isGuardianMode,
-        guardianName: d.guardianName,
-        guardianRelation: d.guardianRelation,
-        guardianPhone: d.guardianPhone,
-        marriageForm: (d.marriageForm ?? undefined) as Prisma.InputJsonValue | undefined,
-      },
+      update: data,
+      create: { userId: user.id, ...data },
     });
 
     return apiSuccess(profile, 201);

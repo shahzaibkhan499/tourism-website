@@ -34,6 +34,7 @@ model User {
   cnic             String?
   birthPlace       String?
   extendedProfile  Json?
+  educations       Json?
   privacy          Json?
   isVerified       Boolean   @default(false)
   role             Role      @default(USER)
@@ -492,7 +493,7 @@ model RishtaProfile {
   guardianPhone     String?
   isVerified        Boolean  @default(false)
   isPremium         Boolean  @default(false)
-  marriageForm      Json?
+  formDetails       Json?
   viewsCount        Int      @default(0)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt

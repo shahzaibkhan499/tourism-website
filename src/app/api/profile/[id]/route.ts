@@ -2,14 +2,13 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { apiSuccess, handleApiError, requireUser } from "@/lib/api";
 
+// NOTE: "family", "relations" and "death" sections were removed from the base
+// user profile — that data belongs exclusively in the Family Tree module.
+// "education" (old single-entry JSON section) was replaced by User.educations.
 const SECTION_KEYS = [
   "birth",
-  "family",
-  "relations",
-  "death",
   "occupation",
   "contact",
-  "education",
   "experience",
   "favorites",
   "personal",
@@ -48,6 +47,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         cnic: true,
         birthPlace: true,
         extendedProfile: true,
+        educations: true,
         privacy: true,
         occupationProfile: true,
         clan: { select: { id: true, name: true, nameUrdu: true } },

@@ -1,11 +1,7 @@
 "use client";
 
 import {
-  Users,
-  HeartHandshake,
-  Flower2,
   Phone,
-  GraduationCap,
   Briefcase,
   Star,
   Sparkles,
@@ -52,7 +48,7 @@ function SectionBlock({
   titleUrdu,
   data,
 }: {
-  icon: typeof Users;
+  icon: typeof Phone;
   title: string;
   titleUrdu: string;
   data: SectionValue;
@@ -114,11 +110,7 @@ export function PublicSections({ sections, occupation, isOwn }: PublicSectionsPr
       )}
 
       <SectionBlock icon={Baby} title="Birth" titleUrdu="پیدائش" data={sections.birth ?? null} />
-      <SectionBlock icon={Users} title="Family Member" titleUrdu="خاندانی ممبر" data={sections.family ?? null} />
-      <SectionBlock icon={HeartHandshake} title="Family Relation" titleUrdu="خاندانی رشتے" data={sections.relations ?? null} />
-      <SectionBlock icon={Flower2} title="Death" titleUrdu="وفات" data={sections.death ?? null} />
       <SectionBlock icon={Phone} title="Contact" titleUrdu="رابطہ" data={sections.contact ?? null} />
-      <SectionBlock icon={GraduationCap} title="Education Detail" titleUrdu="تفصیل تعلیم" data={sections.education ?? null} />
       <SectionBlock icon={Briefcase} title="Experience" titleUrdu="تجربہ" data={sections.experience ?? null} />
       <SectionBlock icon={Star} title="Favorites" titleUrdu="پسندیدہ" data={sections.favorites ?? null} />
       <SectionBlock icon={Sparkles} title="Personal Info" titleUrdu="ذاتی معلومات" data={sections.personal ?? null} />

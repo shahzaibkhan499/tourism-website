@@ -48,14 +48,14 @@ export function BusinessProfileSection() {
         <div>
           <CardTitle className="flex items-center gap-2 text-base">
             <Building2 className="h-4 w-4 text-blue-600" />
-            Business Profile
+            My Businesses — میرے بزنس
           </CardTitle>
-          <CardDescription>آپ کے کاروبار — جاب پوسٹ کرنے کے لیے ضروری</CardDescription>
+          <CardDescription>آپ کی پورٹ فولیو — ایک سے زیادہ بزنس شامل ہو سکتے ہیں</CardDescription>
         </div>
         <Button size="sm" variant="outline" asChild>
           <Link href="/business/create">
             <Plus className="mr-1 h-3.5 w-3.5" />
-            بنائیں
+            بزنس شامل کریں
           </Link>
         </Button>
       </CardHeader>

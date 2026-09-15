@@ -75,18 +75,169 @@ export const SECTS = [
 ] as const;
 
 export const MARITAL_STATUSES = [
-  { value: "NEVER_MARRIED", label: "Never Married", labelUrdu: "غیر شادی شدہ" },
+  { value: "SINGLE", label: "Single", labelUrdu: "سنگل" },
+  { value: "MARRIED", label: "Married", labelUrdu: "شادی شدہ" },
   { value: "DIVORCED", label: "Divorced", labelUrdu: "طلاق یافتہ" },
-  { value: "WIDOWED", label: "Widowed", labelUrdu: "بیوہ / بیوے" },
+  { value: "KHULLA", label: "Khulla", labelUrdu: "خُلّہ" },
+  { value: "WIDOWED", label: "Widow", labelUrdu: "بیوہ / بیوے" },
 ] as const;
 
-export const COMPLEXIONS = [
-  "Fair",
-  "Wheatish",
-  "Medium",
-  "Brown",
-  "Dark",
+/* ---------- Rishta form option lists (click-friendly) ---------- */
+
+export const RISHTA_HEIGHTS = [
+  "4'10\"",
+  "4'11\"",
+  "5'0\"",
+  "5'1\"",
+  "5'2\"",
+  "5'3\"",
+  "5'4\"",
+  "5'5\"",
+  "5'6\"",
+  "5'7\"",
+  "5'8\"",
+  "5'9\"",
+  "5'10\"",
+  "5'11\"",
+  "6'0\"",
+  "6'1\"",
+  "6'2\"",
+  "6'3\"",
+  "6'4\"",
+  "6'5\"",
+  "6'6\"",
 ] as const;
+
+export const BUILDS = ["Slim", "Medium", "Healthy"] as const;
+
+export const INCOME_RANGES = [
+  "Under 50k",
+  "50k-100k",
+  "100k-200k",
+  "200k-300k",
+  "300k-500k",
+  "500k-1M",
+  "1M+",
+] as const;
+
+export const MOTHER_TONGUES = [
+  "Urdu",
+  "Punjabi",
+  "Sindhi",
+  "Pashto",
+  "Balochi",
+  "Seraiki",
+  "Hindko",
+  "Other",
+] as const;
+
+export const RISHTA_QUALIFICATIONS = [
+  "Matric",
+  "Inter",
+  "Bachelors",
+  "Masters",
+  "PhD",
+  "Islamic",
+] as const;
+
+export const RISHTA_LANGUAGES = [
+  "Urdu",
+  "English",
+  "Punjabi",
+  "Sindhi",
+  "Pashto",
+  "Balochi",
+  "Seraiki",
+  "Arabic",
+  "Hindi",
+] as const;
+
+export const CASTES = [
+  "Khawaja",
+  "Shaikh",
+  "Bhatti",
+  "Memon",
+  "Lashari",
+  "Jatoi",
+  "Arain",
+  "Gujjar",
+  "Rajput",
+  "Chaudhry",
+  "Qureshi",
+  "Pathan",
+  "Baloch",
+  "Domki",
+  "Mughal",
+  "Larkana",
+  "Other",
+] as const;
+
+export const SUB_CASTES = [
+  "Vohra",
+  "Sehgal",
+  "Mehta",
+  "Roar",
+  "Khosa",
+  "Ghangro",
+  "Jaffri",
+  "Shah",
+  "Sana",
+  "Naqvi",
+  "Qureshi",
+  "Siddiqui",
+  "Other",
+] as const;
+
+export const HOME_SIZES = [
+  "5 Marla",
+  "7 Marla",
+  "10 Marla",
+  "1 Kanal",
+  "2 Kanal",
+  "5 Kanal",
+  "100 Sq. Yards",
+  "150 Sq. Yards",
+  "200 Sq. Yards",
+  "Bungalow",
+  "Other",
+] as const;
+
+export const CONTACT_RELATIONS = [
+  { value: "SELF", label: "Self", labelUrdu: "خود" },
+  { value: "FATHER", label: "Father", labelUrdu: "والد" },
+  { value: "MOTHER", label: "Mother", labelUrdu: "والدہ" },
+  { value: "BROTHER", label: "Brother", labelUrdu: "بھائی" },
+  { value: "SISTER", label: "Sister", labelUrdu: "بہن" },
+  { value: "UNCLE", label: "Uncle", labelUrdu: "ممہ / چچا" },
+  { value: "AUNT", label: "Aunt", labelUrdu: "مامی / چچی" },
+  { value: "COUSIN", label: "Cousin", labelUrdu: "بھانجہ / پوتی" },
+  { value: "GUARDIAN", label: "Guardian", labelUrdu: "سرپرست" },
+  { value: "OTHER", label: "Other", labelUrdu: "دیگر" },
+] as const;
+
+export const PARTNER_STATUSES = [
+  { value: "SINGLE", label: "Single", labelUrdu: "سنگل" },
+  { value: "DIVORCED", label: "Divorced", labelUrdu: "طلاق یافتہ" },
+  { value: "KHULLA", label: "Khulla", labelUrdu: "خُلّہ" },
+  { value: "WIDOWED", label: "Widow", labelUrdu: "بیوہ / بیوے" },
+] as const;
+
+export const SHARIA_PERDA_OPTIONS = [
+  { value: "YES", label: "Yes", labelUrdu: "جی ہاں" },
+  { value: "NO", label: "No", labelUrdu: "نہیں" },
+  { value: "ANY", label: "Doesn't Matter", labelUrdu: "فروق نہیں پڑتا" },
+] as const;
+
+export const PARTNER_SECT_OPTIONS = [
+  { value: "SUNNI", label: "Sunni", labelUrdu: "سنی" },
+  { value: "SHIA", label: "Shia", labelUrdu: "شیعہ" },
+  { value: "ANY", label: "Any", labelUrdu: "کوئی بھی" },
+] as const;
+
+/** The exact Halaf Nama (oath) text — must be shown verbatim with a required checkbox. */
+export const HALAF_NAMA_TEXT = `I HOLD WITNESS TO ALMIGHTY ALLAH THAT ABOVE INFORMATION IS CORRECT TO THE BEST OF MY KNOWLEDGE.....
+حلف نامہ۔
+میں اللّہ تعالیٰﷻ کو گواہ بنا کر اس بات کا اقرار کرتا/کرتی ہوں ہمارے پیارے نبی حضرت محمد صلی اللّہ علیہ وسلم اللّہ پاک کے آخری نبیﷺ ہیں اور ان کے بعد نبوت کاسلسلہ ہمیشہ کے لیے ختم ہو چکا ہے وہ خاتم النبیینﷺ ہیں اور میں حلف دیتا/دیتی ہوں میں فراڈ نہیں ہوں اور پوری ایمانداری سے یہ فارم فل کر کے آپ کو بھیجا ہے. ان شاءاللہ تعالیٰ`;
 
 export const INDUSTRIES = [
   "Technology",

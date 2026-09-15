@@ -1,52 +1,48 @@
 "use client";
 
 import { GraduationCap } from "lucide-react";
-import { JsonFormSection } from "./json-form-section";
-import type { JsonField } from "./json-form-section";
+import { SectionCard } from "./section-card";
 
-const LEVELS = [
-  "Illiterate", "Primary / Elementary", "Secondary / Junior", "High School",
-  "Professional / Technical", "College", "Undergraduate / Bachelors", "MBA",
-  "Masters", "Doctorate", "Ph.D.", "Post Doctorate",
-];
-const STUDY_TYPES = ["Full Time", "Part Time", "Night Time", "Distance Education", "Others"];
-const TERMINATIONS = [
-  "Still Attending", "Completed The Course / Program", "Graduated (Passed Required Examinations)",
-  "Drop Out (Abandoned School / Institution)", "Expulsion From School / Institution",
-  "Transfer to another School / Institution", "Other", "Unknown / Don't Know",
-];
+interface EduEntry {
+  degree: string;
+  institute: string;
+  year: string;
+}
 
-const FIELDS: JsonField[] = [
-  { name: "program", label: "Program / Discipline", urdu: "پروگرام / مضمون" },
-  { name: "institution", label: "Institution Name (School/College/University)", urdu: "ادارے کا نام" },
-  { name: "level", label: "Education Level", urdu: "تعلیمی سطح", options: LEVELS },
-  { name: "year", label: "Year", urdu: "سال" },
-  { name: "studyPlace", label: "Study Place", urdu: "مقام تعلیم" },
-  { name: "studyType", label: "Study Type", urdu: "طریقہ تعلیم", options: STUDY_TYPES },
-  { name: "achievement", label: "Achievement", urdu: "نتیجہ", options: ["Failed", "Passed"] },
-  { name: "startDate", label: "Start Date", urdu: "آغاز کی تاریخ", type: "date" },
-  { name: "endDate", label: "End Date", urdu: "اختتام کی تاریخ", type: "date" },
-  { name: "duration", label: "Duration", urdu: "مدت" },
-  { name: "grade", label: "Grade", urdu: "گریڈ" },
-  { name: "activities", label: "Activities and societies", urdu: "سرگرمیاں اور سوسائٹیز", type: "textarea" },
-  { name: "termination", label: "Termination", urdu: "اختتامی حیثیت", options: TERMINATIONS },
-  { name: "description", label: "Description", urdu: "تفصیل", type: "textarea" },
-  { name: "comments", label: "Comments", urdu: "تبصرے", type: "textarea" },
-  { name: "skills", label: "Skills (top 5)", urdu: "مہارتیں (اہم 5)", type: "textarea" },
-];
+/**
+ * Multi-entry education list (User.educations JSON array).
+ * Editing happens in the main "پروفائل میں ترمیم" dialog (useFieldArray),
+ * which is opened via the onEdit prop.
+ */
+export function EducationSection({ profile, onEdit }: { profile: any; onEdit: () => void }) {
+  const educations: EduEntry[] = Array.isArray(profile?.educations) ? profile.educations : [];
+  const summary = educations
+    .filter((e) => e.degree || e.institute)
+    .map((e) => [e.degree, e.year].filter(Boolean).join(" · "))
+    .join("   |   ");
 
-export function EducationSection({ profile, onSaved }: { profile: any; onSaved: () => void }) {
   return (
-    <JsonFormSection
+    <SectionCard
       icon={GraduationCap}
-      title="Education Detail"
-      titleUrdu="تفصیل تعلیم"
-      description="تعلیمی ادارے، سطح اور کامیابیاں"
-      sectionKey="education"
-      fields={FIELDS}
-      summaryKeys={["program", "institution", "level"]}
-      profile={profile}
-      onSaved={onSaved}
-    />
+      title="Education"
+      titleUrdu="تعلیم"
+      description="تعلیمی درجہ، ادارے کا نام، سال"
+      summary={summary || undefined}
+      onEdit={onEdit}
+    >
+      {educations.length > 1 && (
+        <div className="mt-3 space-y-1.5">
+          {educations.map((e, i) => (
+            <div key={i} className="flex items-baseline justify-between gap-3 rounded-lg bg-gray-50 px-3 py-1.5 text-sm">
+              <span className="truncate text-gray-700">
+                {e.degree || "—"}
+                {e.institute ? <span className="text-gray-500"> — {e.institute}</span> : null}
+              </span>
+              {e.year && <span className="shrink-0 text-xs text-gray-400">{e.year}</span>}
+            </div>
+          ))}
+        </div>
+      )}
+    </SectionCard>
   );
 }

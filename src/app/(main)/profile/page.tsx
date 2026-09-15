@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
-import { Pencil, ShieldCheck, MapPin, Phone, Mail, Camera, Loader2, Heart, Save } from "lucide-react";
+import { Pencil, ShieldCheck, MapPin, Phone, Mail, Camera, Loader2, Heart, Save, Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,16 +29,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatDate, initials } from "@/lib/utils";
-import { PAKISTANI_CITIES, PAKISTANI_PROVINCES, BLOOD_GROUPS, EDUCATION_LEVELS } from "@/lib/constants";
+import { PAKISTANI_CITIES, PAKISTANI_PROVINCES, BLOOD_GROUPS } from "@/lib/constants";
 import { T } from "@/lib/i18n";
 import type { UserBasic } from "@/types";
 import { JobProfileSection } from "@/components/profile/job-profile-section";
 import { BusinessProfileSection } from "@/components/profile/business-profile-section";
 import { GeneralSection } from "@/components/profile/sections/general-section";
 import { BirthSection } from "@/components/profile/sections/birth-section";
-import { FamilySection } from "@/components/profile/sections/family-section";
-import { RelationSection } from "@/components/profile/sections/relation-section";
-import { DeathSection } from "@/components/profile/sections/death-section";
 import { ContactSection } from "@/components/profile/sections/contact-section";
 import { EducationSection } from "@/components/profile/sections/education-section";
 import { ExperienceSection } from "@/components/profile/sections/experience-section";
@@ -46,12 +44,32 @@ import { PersonalSection } from "@/components/profile/sections/personal-section"
 import { AlertsSection } from "@/components/profile/sections/alerts-section";
 import { OccupationCard } from "@/components/profile/sections/occupation-card";
 
+interface EduEntry {
+  degree: string;
+  institute: string;
+  year: string;
+}
+
+interface ProfileForm {
+  name: string;
+  phone: string;
+  gender: string;
+  dateOfBirth: string;
+  city: string;
+  province: string;
+  bio: string;
+  bloodGroup: string;
+  occupation: string;
+  educations: EduEntry[];
+}
+
 interface ProfileData extends UserBasic {
   _count: { events: number; memories: number; media: number; businesses: number };
   clan: { id: string; name: string; nameUrdu: string | null } | null;
   subClan: { id: string; name: string; nameUrdu: string | null } | null;
   rishtaProfile: { id: string; isActive: boolean; isVerified: boolean } | null;
   jobProfile: { id: string } | null;
+  educations: EduEntry[] | null;
   lastLoginAt: string | null;
 }
 
@@ -61,18 +79,31 @@ export default function ProfilePage() {
   const [editOpen, setEditOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    gender: "",
-    dateOfBirth: "",
-    city: "",
-    province: "",
-    bio: "",
-    bloodGroup: "",
-    occupation: "",
-    education: "",
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    control,
+    formState: { errors },
+  } = useForm<ProfileForm>({
+    defaultValues: {
+      name: "",
+      phone: "",
+      gender: "",
+      dateOfBirth: "",
+      city: "",
+      province: "",
+      bio: "",
+      bloodGroup: "",
+      occupation: "",
+      educations: [],
+    },
   });
+  const { fields, append, remove } = useFieldArray({ control, name: "educations" });
+  const bioValue = watch("bio");
 
   const loadProfile = () => {
     fetch("/api/profile")
@@ -83,7 +114,8 @@ export default function ProfilePage() {
           return;
         }
         setProfile(json);
-        setForm({
+        const existing: EduEntry[] = Array.isArray(json.educations) ? json.educations : [];
+        reset({
           name: json.name || "",
           phone: json.phone || "",
           gender: json.gender || "",
@@ -93,7 +125,12 @@ export default function ProfilePage() {
           bio: json.bio || "",
           bloodGroup: json.bloodGroup || "",
           occupation: json.occupation || "",
-          education: json.education || "",
+          educations:
+            existing.length > 0
+              ? existing
+              : json.education
+                ? [{ degree: json.education, institute: "", year: "" }]
+                : [],
         });
       })
       .catch(() => toast.error("پروفائل لوڈ نہیں ہو سکی"))
@@ -102,19 +139,39 @@ export default function ProfilePage() {
 
   useEffect(() => {
     loadProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSave = async () => {
+  const onSave = async (data: ProfileForm) => {
     setSaving(true);
     try {
+      const educations: EduEntry[] = data.educations
+        .filter((e) => e.degree || e.institute || e.year)
+        .map((e) => ({
+          degree: e.degree ?? "",
+          institute: e.institute ?? "",
+          year: e.year ?? "",
+        }));
       const res = await fetch("/api/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          name: data.name,
+          phone: data.phone || null,
+          gender: data.gender || null,
+          dateOfBirth: data.dateOfBirth || null,
+          city: data.city || null,
+          province: data.province || null,
+          bio: data.bio || null,
+          bloodGroup: data.bloodGroup || null,
+          occupation: data.occupation || null,
+          educations,
+          education: educations[0]?.degree || null,
+        }),
       });
-      const data = await res.json();
+      const d = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "پروفائل محفوظ نہیں ہو سکی");
+        toast.error(d.error || "پروفائل محفوظ نہیں ہو سکی");
         return;
       }
       toast.success("پروفائل اپ ڈیٹ ہو گئی!");
@@ -187,111 +244,139 @@ export default function ProfilePage() {
                 <DialogTitle>پروفائل میں ترمیم کریں</DialogTitle>
                 <DialogDescription>اپنی معلومات اپ ڈیٹ کریں</DialogDescription>
               </DialogHeader>
-              <div className="grid max-h-[60vh] gap-4 overflow-y-auto p-1 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label>نام</Label>
-                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              <form onSubmit={handleSubmit(onSave)}>
+                <div className="max-h-[60vh] grid gap-4 overflow-y-auto p-1 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label>نام</Label>
+                    <Input {...register("name")} />
+                    {errors.name && <p className="text-xs text-red-600">{errors.name.message}</p>}
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Phone</Label>
+                    <Input placeholder="03001234567" {...register("phone")} />
+                    {errors.phone && <p className="text-xs text-red-600">{errors.phone.message}</p>}
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Gender</Label>
+                    <Select value={watch("gender") || undefined} onValueChange={(v) => setValue("gender", v)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="منتخب کریں" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="MALE">Male</SelectItem>
+                        <SelectItem value="FEMALE">Female</SelectItem>
+                        <SelectItem value="OTHER">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Date of Birth</Label>
+                    <Input type="date" {...register("dateOfBirth")} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>City</Label>
+                    <Select value={watch("city") || undefined} onValueChange={(v) => setValue("city", v)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="منتخب کریں" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-64">
+                        {PAKISTANI_CITIES.map((c) => (
+                          <SelectItem key={c} value={c}>
+                            {c}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Province</Label>
+                    <Select value={watch("province") || undefined} onValueChange={(v) => setValue("province", v)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="منتخب کریں" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PAKISTANI_PROVINCES.map((p) => (
+                          <SelectItem key={p} value={p}>
+                            {p}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Blood Group</Label>
+                    <Select value={watch("bloodGroup") || undefined} onValueChange={(v) => setValue("bloodGroup", v)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="منتخب کریں" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BLOOD_GROUPS.map((b) => (
+                          <SelectItem key={b} value={b}>
+                            {b}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Occupation</Label>
+                    <Input {...register("occupation")} />
+                  </div>
+
+                  {/* Education — multi-entry (useFieldArray) */}
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label>Education — تعلیم (کئی درجے شامل ہو سکتے ہیں)</Label>
+                    {fields.length === 0 && (
+                      <p className="rounded-lg border border-dashed border-gray-300 p-2.5 text-center text-xs text-gray-500">
+                        ابھی کوئی تعلیمی درجہ شامل نہیں — نیچے سے شامل کریں
+                      </p>
+                    )}
+                    {fields.map((f, i) => (
+                      <div key={f.id} className="grid gap-2 rounded-lg border border-gray-200 bg-gray-50/50 p-2.5 sm:grid-cols-[1fr_1fr_110px_auto]">
+                        <Input
+                          placeholder="Degree / Course — e.g. Bachelors"
+                          {...register(`educations.${i}.degree`)}
+                        />
+                        <Input
+                          placeholder="Institute — e.g. NUST"
+                          {...register(`educations.${i}.institute`)}
+                        />
+                        <Input
+                          placeholder="Year — e.g. 2020"
+                          {...register(`educations.${i}.year`)}
+                        />
+                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(i)} className="shrink-0 text-red-600">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => append({ degree: "", institute: "", year: "" })}
+                      className="border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                    >
+                      <Plus className="mr-1 h-3.5 w-3.5" />
+                      Add More Education — مزید تعلیم شامل کریں
+                    </Button>
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label>Bio (max 500 chars)</Label>
+                    <Textarea
+                      rows={3}
+                      maxLength={500}
+                      {...register("bio")}
+                    />
+                    <p className="text-right text-xs text-gray-400">{(bioValue ?? "").length}/500</p>
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label>Phone</Label>
-                  <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="03001234567" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Gender</Label>
-                  <Select value={form.gender || undefined} onValueChange={(v) => setForm({ ...form, gender: v })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="منتخب کریں" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="MALE">Male</SelectItem>
-                      <SelectItem value="FEMALE">Female</SelectItem>
-                      <SelectItem value="OTHER">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Date of Birth</Label>
-                  <Input type="date" value={form.dateOfBirth} onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })} />
-                </div>
-                <div className="space-y-1.5">
-                  <Label>City</Label>
-                  <Select value={form.city || undefined} onValueChange={(v) => setForm({ ...form, city: v })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="منتخب کریں" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-64">
-                      {PAKISTANI_CITIES.map((c) => (
-                        <SelectItem key={c} value={c}>
-                          {c}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Province</Label>
-                  <Select value={form.province || undefined} onValueChange={(v) => setForm({ ...form, province: v })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="منتخب کریں" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PAKISTANI_PROVINCES.map((p) => (
-                        <SelectItem key={p} value={p}>
-                          {p}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Blood Group</Label>
-                  <Select value={form.bloodGroup || undefined} onValueChange={(v) => setForm({ ...form, bloodGroup: v })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="منتخب کریں" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {BLOOD_GROUPS.map((b) => (
-                        <SelectItem key={b} value={b}>
-                          {b}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Education</Label>
-                  <Select value={form.education || undefined} onValueChange={(v) => setForm({ ...form, education: v })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="منتخب کریں" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {EDUCATION_LEVELS.map((e) => (
-                        <SelectItem key={e} value={e}>
-                          {e}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Occupation</Label>
-                  <Input value={form.occupation} onChange={(e) => setForm({ ...form, occupation: e.target.value })} />
-                </div>
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label>Bio (max 500 chars)</Label>
-                  <Textarea
-                    rows={3}
-                    maxLength={500}
-                    value={form.bio}
-                    onChange={(e) => setForm({ ...form, bio: e.target.value })}
-                  />
-                  <p className="text-right text-xs text-gray-400">{form.bio.length}/500</p>
-                </div>
-              </div>
-              <Button onClick={handleSave} disabled={saving} className="bg-emerald-600 hover:bg-emerald-700">
-                {saving ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Save className="mr-1 h-4 w-4" />}
-                محفوظ کریں
-              </Button>
+                <Button type="submit" disabled={saving} className="mt-4 bg-emerald-600 hover:bg-emerald-700">
+                  {saving ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Save className="mr-1 h-4 w-4" />}
+                  محفوظ کریں
+                </Button>
+              </form>
             </DialogContent>
           </Dialog>
         }
@@ -377,6 +462,17 @@ export default function ProfilePage() {
               <p className="mt-1 text-sm text-gray-700">{profile.bloodGroup || "—"}</p>
             </div>
             <div>
+              <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.education}</div>
+              <p className="mt-1 text-sm text-gray-700">
+                {profile.educations && profile.educations.length > 0
+                  ? profile.educations
+                      .filter((e) => e.degree)
+                      .map((e) => `${e.degree}${e.year ? ` (${e.year})` : ""}`)
+                      .join(", ")
+                  : profile.education || "—"}
+              </p>
+            </div>
+            <div>
               <div className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500">{T.profile.clan}</div>
               <p className="mt-1 text-sm text-gray-700">
                 {profile.clan ? (
@@ -432,12 +528,9 @@ export default function ProfilePage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <GeneralSection profile={profile} onSaved={loadProfile} />
           <BirthSection profile={profile} onSaved={loadProfile} />
-          <FamilySection profile={profile} onSaved={loadProfile} />
-          <RelationSection profile={profile} onSaved={loadProfile} />
-          <DeathSection profile={profile} onSaved={loadProfile} />
           <OccupationCard profile={profile} />
           <ContactSection profile={profile} onSaved={loadProfile} />
-          <EducationSection profile={profile} onSaved={loadProfile} />
+          <EducationSection profile={profile} onEdit={() => setEditOpen(true)} />
           <ExperienceSection profile={profile} onSaved={loadProfile} />
           <FavoritesSection profile={profile} onSaved={loadProfile} />
           <PersonalSection profile={profile} onSaved={loadProfile} />

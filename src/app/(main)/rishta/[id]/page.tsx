@@ -13,9 +13,6 @@ import {
   Loader2,
   Lock,
   MapPin,
-  GraduationCap,
-  Briefcase,
-  HeartHandshake,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +39,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { MARITAL_STATUSES } from "@/lib/constants";
+import { MARITAL_STATUSES, CONTACT_RELATIONS } from "@/lib/constants";
+import type { RishtaFormDetails } from "@/lib/validators";
 
 interface RishtaDetail {
   id: string;
@@ -55,22 +53,19 @@ interface RishtaDetail {
   profession: string | null;
   income: string | null;
   sect: string | null;
-  maslak: string | null;
   castePreference: string | null;
   cityPreference: string | null;
   countryPreference: string | null;
   maritalStatus: string;
   children: number;
-  about: string | null;
-  familyBackground: string | null;
   expectations: string | null;
   photos: string[];
+  formDetails: RishtaFormDetails | null;
   isGuardianMode: boolean;
   guardianName: string | null;
   guardianRelation: string | null;
   guardianPhone: string | null;
   isVerified: boolean;
-  isPremium: boolean;
   viewsCount: number;
   isOwner: boolean;
   isApproved: boolean;
@@ -83,6 +78,45 @@ interface RishtaDetail {
     isVerified: boolean;
     clan: { name: string } | null;
   } | null;
+}
+
+const SECT_LABEL: Record<string, string> = { SUNNI: "Sunni", SHIA: "Shia", ANY: "Any — کوئی بھی" };
+const BUILD_LABEL: Record<string, string> = { SLIM: "Slim", MEDIUM: "Medium", HEALTHY: "Healthy" };
+const HOME_LABEL: Record<string, string> = { OWN: "Own — اپنا", RENT: "Rent — کرایہ" };
+const PERDA_LABEL: Record<string, string> = { YES: "Yes", NO: "No", ANY: "Doesn't Matter" };
+
+function labelFor(list: readonly { value: string; label: string; labelUrdu: string }[], v: string | null | undefined) {
+  const m = list.find((x) => x.value === v);
+  return m ? `${m.label} — ${m.labelUrdu}` : v ?? "—";
+}
+
+function Row({ label, urdu, value }: { label: string; urdu: string; value?: React.ReactNode }) {
+  const empty = value == null || value === "" || value === "—";
+  return (
+    <div>
+      <div className="flex flex-wrap items-baseline gap-x-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
+        <span>{label}</span>
+        <span dir="rtl" className="font-urdu normal-case text-gray-400">{urdu}</span>
+      </div>
+      <div className="mt-0.5 break-words text-sm text-gray-700">
+        {empty ? <span className="text-gray-300">—</span> : value}
+      </div>
+    </div>
+  );
+}
+
+function SectionCard({ title, urdu, children }: { title: string; urdu: string; children: React.ReactNode }) {
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="flex flex-wrap items-baseline gap-x-2.5 text-base">
+          <span>{title}</span>
+          <span dir="rtl" className="font-urdu text-sm text-pink-700">{urdu}</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="grid gap-x-6 gap-y-3 sm:grid-cols-2">{children}</CardContent>
+    </Card>
+  );
 }
 
 export default function RishtaDetailPage() {
@@ -131,15 +165,16 @@ export default function RishtaDetailPage() {
     }
   };
 
-  const handleReport = async (reason: string) => {
+  const handleReport = async () => {
+    if (!profile) return;
     try {
       const res = await fetch("/api/reports", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          reportedId: profile?.user?.id,
+          reportedId: profile.user?.id,
           type: "Fake Profile",
-          reason,
+          reason: "یہ پروفائل جعلی یا نامناسب لگتی ہے",
         }),
       });
       const data = await res.json();
@@ -180,7 +215,9 @@ export default function RishtaDetailPage() {
     );
   }
 
-  const maritalLabel = MARITAL_STATUSES.find((m) => m.value === profile.maritalStatus)?.label || "Never Married";
+  const fd = profile.formDetails ?? null;
+  const maritalLabel = MARITAL_STATUSES.find((m) => m.value === profile.maritalStatus)?.label || profile.maritalStatus;
+  const contactLabel = labelFor(CONTACT_RELATIONS, fd?.contact?.relation);
 
   return (
     <div>
@@ -199,14 +236,18 @@ export default function RishtaDetailPage() {
               {profile.user?.gender === "FEMALE" ? "🧕" : "👤"}
             </div>
             <div>
-              <h1 className="text-xl font-bold">{profile.user?.name}</h1>
+              <h1 className="text-xl font-bold">{fd?.personal?.name || profile.user?.name}</h1>
               <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-500">
                 {profile.age && <span>{profile.age} saal</span>}
-                {profile.user?.city && (
+                {fd?.house?.currentCity ? (
+                  <span className="flex items-center gap-1">
+                    <MapPin className="h-3.5 w-3.5" /> {fd.house.currentCity}
+                  </span>
+                ) : profile.user?.city ? (
                   <span className="flex items-center gap-1">
                     <MapPin className="h-3.5 w-3.5" /> {profile.user.city}
                   </span>
-                )}
+                ) : null}
                 {profile.isVerified && (
                   <Badge variant="success">
                     <ShieldCheck className="mr-1 h-3 w-3" /> Verified
@@ -232,7 +273,7 @@ export default function RishtaDetailPage() {
                     <DialogTitle>Interest Bhejein</DialogTitle>
                     <DialogDescription>
                       {profile.isGuardianMode
-                        ? "یہ پروفائل گارڈین موڈ میں ہے۔ آپ کا پیغام گارڈین تک جائے گا۔"
+                        ? "یہ پروفائل سرپرست موڈ میں ہے۔ آپ کا پیغام سرپرست تک جائے گا۔"
                         : "آپ کا پیغام سیدھا پروفائل والے تک جائے گا۔"}
                     </DialogDescription>
                   </DialogHeader>
@@ -269,10 +310,7 @@ export default function RishtaDetailPage() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      className="bg-red-600 hover:bg-red-700"
-                      onClick={() => handleReport("یہ پروفائل جعلی یا نامناسب لگتی ہے")}
-                    >
+                    <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={handleReport}>
                       رپورٹ کریں
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -287,13 +325,13 @@ export default function RishtaDetailPage() {
       {profile.photos.length > 0 && (
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle className="text-base">Photos</CardTitle>
+            <CardTitle className="text-base">Photos — تصاویر</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {profile.photos.map((photo, i) => (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={i} src={photo} alt={`Photo ${i + 1}`} className="h-32 w-full rounded-lg object-cover" />
+                <img key={i} src={photo} alt={`Photo ${i + 1}`} className="h-40 w-full rounded-lg object-cover" />
               ))}
             </div>
           </CardContent>
@@ -308,121 +346,160 @@ export default function RishtaDetailPage() {
       )}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        {/* Personal details */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Personal Details</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
-            <DetailRow label="Umar" value={profile.age ? `${profile.age} saal` : "—"} />
-            <DetailRow label="Height" value={profile.height || "—"} />
-            <DetailRow label="Weight" value={profile.weight || "—"} />
-            <DetailRow label="Complexion" value={profile.complexion || "—"} />
-            <DetailRow label="Marital Status" value={maritalLabel} />
-            <DetailRow label="Children" value={profile.children > 0 ? String(profile.children) : "کوئی نہیں"} />
-            <DetailRow label="City Preference" value={profile.cityPreference || "—"} />
-            <DetailRow label="Country Preference" value={profile.countryPreference || "—"} />
-            <DetailRow label="Caste/Clan Preference" value={profile.castePreference || "—"} />
-          </CardContent>
-        </Card>
+        {fd ? (
+          <>
+            <SectionCard title="Personal Information" urdu="ذاتی معلومات">
+              <Row label="Gender" urdu="جنس" value={fd.personal?.gender === "FEMALE" ? "Female — لڑکی" : "Male — لڑکا"} />
+              <Row label="Name" urdu="نام" value={fd.personal?.name} />
+              <Row label="Date of Birth" urdu="تاریخ پیدائش" value={fd.personal?.dateOfBirth} />
+              <Row label="Marital Status" urdu="تأثیری حیثیت" value={maritalLabel} />
+              <Row label="Mother Tongue" urdu="مادری زبان" value={fd.personal?.motherTongue} />
+              <Row label="Children" urdu="بچے" value={profile.children > 0 ? String(profile.children) : "کوئی نہیں"} />
+            </SectionCard>
 
-        {/* Professional & religious */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Taleem, Profession & Mazhab</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
-            <DetailRow
-              label="Education"
-              value={
-                profile.education ? (
-                  <span className="flex items-center gap-1">
-                    <GraduationCap className="h-3.5 w-3.5" /> {profile.education}
-                  </span>
-                ) : (
-                  "—"
-                )
-              }
-            />
-            <DetailRow label="Education Detail" value={profile.educationDetail || "—"} />
-            <DetailRow
-              label="Profession"
-              value={
-                profile.profession ? (
-                  <span className="flex items-center gap-1">
-                    <Briefcase className="h-3.5 w-3.5" /> {profile.profession}
-                  </span>
-                ) : (
-                  "—"
-                )
-              }
-            />
-            <DetailRow label="Income" value={profile.income || "—"} />
-            <DetailRow label="Sect" value={profile.sect || "—"} />
-            <DetailRow label="مسلک" value={profile.maslak || "—"} />
-          </CardContent>
-        </Card>
+            <SectionCard title="Physical Appearance" urdu="جسمانی ساخت">
+              <Row label="Height" urdu="قد" value={profile.height} />
+              <Row label="Weight" urdu="وزن" value={profile.weight ? `${profile.weight} kg` : undefined} />
+              <Row label="Complexion / Build" urdu="رنگت / ساخت" value={BUILD_LABEL[fd.physical?.build ?? ""] ?? fd.physical?.build} />
+              <Row
+                label="Disability"
+                urdu="معذوری"
+                value={fd.physical?.disability ? `جی ہاں — ${fd.physical?.disabilityDetails ?? ""}` : "نہیں"}
+              />
+            </SectionCard>
 
-        {/* About */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Taaruf</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h4 className="text-xs font-semibold uppercase text-gray-400">About</h4>
-              <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-gray-600">
-                {profile.about || "کوئی تعارف نہیں لکھا گیا"}
-              </p>
-            </div>
-            <div>
-              <h4 className="text-xs font-semibold uppercase text-gray-400">Family Background</h4>
-              <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-gray-600">
-                {profile.familyBackground || "نہیں بتایا گیا"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+            {fd.education && fd.education.length > 0 && (
+              <SectionCard title="Education Details" urdu="تعلیمی تفصیلات">
+                {fd.education.map((e, i) => (
+                  <div key={i} className="rounded-lg border border-gray-100 bg-gray-50/60 p-3 sm:col-span-2">
+                    <p className="text-sm font-semibold text-gray-800">{e.qualification || "—"} {e.course ? `· ${e.course}` : ""}</p>
+                    <div className="mt-1 grid gap-x-6 gap-y-2 sm:grid-cols-3">
+                      <Row label="School" urdu="اسکول" value={e.school} />
+                      <Row label="College" urdu="کالج" value={e.college} />
+                      <Row label="University" urdu="یونیورسٹی" value={e.university} />
+                    </div>
+                  </div>
+                ))}
+              </SectionCard>
+            )}
 
-        {/* Expectations & guardian */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Expectations</CardTitle>
+            <SectionCard title="Job / Business" urdu="نوکری / کاروبار">
+              <Row label="Company / Business" urdu="کمپنی / بزنس" value={fd.job?.company} />
+              <Row label="Nature" urdu="نوعیت" value={profile.profession ?? fd.job?.nature} />
+              <Row label="Place of Work" urdu="کام کی جگہ" value={fd.job?.place} />
+              <Row label="Rank / Position" urdu="عہدہ" value={fd.job?.rank} />
+              <Row label="Monthly Income" urdu="ماہانہ آمدنی" value={profile.income ? `PKR ${profile.income}` : undefined} />
+              <div className="sm:col-span-2">
+                <Row label="Future Plans" urdu="مستقبل کے منصوبے" value={fd.job?.futurePlans} />
+              </div>
+            </SectionCard>
+
+            <SectionCard title="Cultural & Ethical" urdu="ثقافتی و اخلاقی">
+              <Row label="Languages" urdu="زبانیں" value={fd.cultural?.languages?.length ? fd.cultural.languages.join(", ") : undefined} />
+              <Row label="Caste" urdu="ذات" value={fd.cultural?.caste} />
+              <Row label="Sub Cast / Ethnicity" urdu="ذیلی ذات" value={fd.cultural?.subCast} />
+              <div className="sm:col-span-2">
+                <Row label="Hobbies" urdu="مشاغل" value={fd.cultural?.hobbies} />
+              </div>
+            </SectionCard>
+
+            <SectionCard title="Religion" urdu="مذہب">
+              <Row label="Religion" urdu="مذہب" value="Islam" />
+              <Row label="Sect (Maslak)" urdu="مسلک" value={SECT_LABEL[fd.religion?.sect ?? ""] ?? fd.religion?.sect} />
+            </SectionCard>
+
+            <SectionCard title="House Details" urdu="گھر کی تفصیلات">
+              <Row label="Home" urdu="گھر" value={HOME_LABEL[fd.house?.home ?? ""] ?? undefined} />
+              <Row label="Size" urdu="سائز" value={fd.house?.size} />
+              <Row label="Location" urdu="مقام" value={fd.house?.location} />
+              <Row label="Land Owned" urdu="زمین" value={fd.house?.land ? "جی ہاں" : "نہیں"} />
+              <Row label="Vehicles" urdu="گاڑیاں" value={fd.house?.vehicles} />
+              <Row label="Address" urdu="پتہ" value={fd.house?.address} />
+              <Row label="Current City" urdu="موجودہ شہر" value={fd.house?.currentCity} />
+              <Row label="Nationality" urdu="قومیت" value={fd.house?.nationality} />
+              <div className="sm:col-span-2">
+                <Row label="Home Town" urdu="آبائی شہر" value={fd.house?.homeTown} />
+              </div>
+            </SectionCard>
+
+            <SectionCard title="Family Details" urdu="خاندان کی تفصیلات">
+              <Row label="Father Name" urdu="والد کا نام" value={fd.family?.fatherName} />
+              <Row label="Father's Occupation" urdu="والد کا پیشہ" value={fd.family?.fatherOccupation} />
+              <Row label="Father Mobile" urdu="والد کا موبائل" value={profile.isApproved || profile.isOwner ? fd.family?.fatherMobile : undefined} />
+              <Row label="Mother Name" urdu="والدہ کا نام" value={fd.family?.motherName} />
+              <Row label="Mother's Occupation" urdu="والدہ کا پیشہ" value={fd.family?.motherOccupation} />
+              <Row label="Mother Mobile" urdu="والدہ کا موبائل" value={profile.isApproved || profile.isOwner ? fd.family?.motherMobile : undefined} />
+              <Row label="Brothers" urdu="بھائی" value={fd.family?.brothers ? `${fd.family.brothers} (${fd.family.brothersMarried ?? 0} married)` : "0"} />
+              <Row label="Sisters" urdu="بہنیں" value={fd.family?.sisters ? `${fd.family.sisters} (${fd.family.sistersMarried ?? 0} married)` : "0"} />
+            </SectionCard>
+
+            <SectionCard title="Life Partner Requirements" urdu="زندگی کے ساتھی کی ضروریات">
+              <Row label="Status Required" urdu="حیثیت" value={fd.partner?.statuses?.length ? fd.partner.statuses.map((s) => labelFor(MARITAL_STATUSES, s)).join(", ") : "کوئی ترجیح نہیں"} />
+              <Row
+                label="Age Between"
+                urdu="عمر کے درمیان"
+                value={fd.partner?.minAge || fd.partner?.maxAge ? `${fd.partner?.minAge ?? "?"} – ${fd.partner?.maxAge ?? "?"}` : undefined}
+              />
+              <Row label="Height Required" urdu="قد" value={fd.partner?.minHeight ? `≥ ${fd.partner.minHeight}` : "کوئی شرط نہیں"} />
+              <Row label="City Required" urdu="شہر" value={fd.partner?.city || "کوئی شرط نہیں"} />
+              <Row label="Caste Required" urdu="ذات" value={fd.partner?.caste || "کوئی شرط نہیں"} />
+              <Row label="Sect Required" urdu="مسلک" value={SECT_LABEL[fd.partner?.sect ?? ""] ?? fd.partner?.sect} />
+              <Row label="Qualification Required" urdu="تعلیم" value={fd.partner?.qualification || "کوئی شرط نہیں"} />
+              <Row label="Sharia Perda" urdu="شریعتِ پردہ" value={PERDA_LABEL[fd.partner?.shariaPerda ?? ""] ?? fd.partner?.shariaPerda} />
+              <Row label="Divorced Acceptable?" urdu="طلاق یافتہ مناسب؟" value={fd.partner?.divorcedAcceptable ? "جی ہاں" : "نہیں"} />
+              <div className="sm:col-span-2">
+                <Row label="Any Other Requirements" urdu="دیگر ضروریات" value={profile.expectations ?? fd.partner?.otherRequirements} />
+              </div>
+            </SectionCard>
+
+            <SectionCard title="Contact Person" urdu="رابطہ شخص">
+              <Row label="Person Name" urdu="شخص کا نام" value={fd.contact?.personName} />
+              <Row label="Relation" urdu="رشتہ" value={contactLabel} />
+              <Row
+                label="Mobile No"
+                urdu="موبائل"
+                value={profile.isApproved || profile.isOwner ? fd.contact?.mobile : undefined}
+              />
+            </SectionCard>
+          </>
+        ) : (
+          <>
+            {/* Fallback for pre-overhaul profiles */}
+            <SectionCard title="Personal Details" urdu="ذاتی معلومات">
+              <Row label="Age" urdu="عمر" value={profile.age ? `${profile.age} saal` : undefined} />
+              <Row label="Height" urdu="قد" value={profile.height} />
+              <Row label="Weight" urdu="وزن" value={profile.weight} />
+              <Row label="Complexion" urdu="رنگت" value={profile.complexion} />
+              <Row label="Marital Status" urdu="حیثیت" value={maritalLabel} />
+              <Row label="Children" urdu="بچے" value={profile.children > 0 ? String(profile.children) : "کوئی نہیں"} />
+            </SectionCard>
+            <SectionCard title="Taleem, Profession & Mazhab" urdu="تعلیم، پیشہ اور مذہب">
+              <Row label="Education" urdu="تعلیم" value={profile.education} />
+              <Row label="Education Detail" urdu="تفصیل" value={profile.educationDetail} />
+              <Row label="Profession" urdu="پیشہ" value={profile.profession} />
+              <Row label="Income" urdu="آمدنی" value={profile.income} />
+              <Row label="Sect" urdu="مسلک" value={profile.sect} />
+            </SectionCard>
+          </>
+        )}
+
+        {(profile.isGuardianMode || (fd && fd.contact?.relation && fd.contact.relation !== "SELF")) && (
+          <Card className="border-blue-200 bg-blue-50/50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Guardian / Contact — سرپرست</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600">
-                {profile.expectations || "نہیں بتائی گئیں"}
-              </p>
+            <CardContent className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+              <Row label="Name" urdu="نام" value={profile.guardianName} />
+              <Row label="Relation" urdu="رشتہ" value={profile.guardianRelation} />
+              <Row
+                label="Phone"
+                urdu="فون"
+                value={profile.isApproved || profile.isOwner ? profile.guardianPhone : undefined}
+              />
             </CardContent>
           </Card>
-
-          {profile.isGuardianMode && (
-            <Card className="border-blue-200 bg-blue-50/50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <HeartHandshake className="h-4 w-4 text-blue-600" />
-                  Guardian Info (Guardian Mode ON)
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <DetailRow label="Guardian Name" value={profile.guardianName || "—"} />
-                <DetailRow label="رشتہ" value={profile.guardianRelation || "—"} />
-                {profile.isApproved && <DetailRow label="Phone" value={profile.guardianPhone || "—"} />}
-              </CardContent>
-            </Card>
-          )}
-        </div>
+        )}
       </div>
-    </div>
-  );
-}
-
-function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div>
-      <div className="text-xs font-semibold uppercase tracking-wide text-gray-400">{label}</div>
-      <div className="mt-0.5 text-sm text-gray-700">{value}</div>
     </div>
   );
 }

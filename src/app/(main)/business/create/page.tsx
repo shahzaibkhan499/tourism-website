@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Upload, X, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Loader2, Upload, X, Plus, Trash2, Building2 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { T } from "@/lib/i18n";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,7 +29,6 @@ const formSchema = businessSchema;
 type FormData = z.infer<typeof formSchema>;
 
 export default function CreateBusinessPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [socials, setSocials] = useState<Array<{ platform: string; url: string }>>([]);
 
@@ -39,6 +37,7 @@ export default function CreateBusinessPage() {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -67,6 +66,15 @@ export default function CreateBusinessPage() {
     }
   };
 
+  const [created, setCreated] = useState<{ id: string; name: string } | null>(null);
+
+  const resetForAnother = () => {
+    reset();
+    setSocials([]);
+    setCreated(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
@@ -80,8 +88,8 @@ export default function CreateBusinessPage() {
         toast.error(result.error || "بزنس رجسٹر نہیں ہو سکا");
         return;
       }
-      toast.success("بزنس رجسٹر ہو گیا! 🎉");
-      router.push(`/business/${result.id}`);
+      toast.success("بزنس آپ کی پورٹ فولیو میں شامل ہو گیا! 🎉");
+      setCreated({ id: result.id, name: data.name });
     } catch {
       toast.error("نیٹ ورک کی خرابی۔ دوبارہ کوشش کریں۔");
     } finally {
@@ -89,10 +97,48 @@ export default function CreateBusinessPage() {
     }
   };
 
+  if (created) {
+    return (
+      <div className="mx-auto max-w-2xl">
+        <PageHeader title="Add Business"
+          titleUrdu="بزنس شامل کریں" description="Add a business to your portfolio — اپنی پورٹ فولیو میں نیا بزنس شامل کریں" />
+        <Card>
+          <CardContent className="flex flex-col items-center gap-4 p-10 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-3xl">✅</div>
+            <div>
+              <h2 className="text-lg font-bold">{created.name} رجسٹر ہو گیا!</h2>
+              <p dir="rtl" className="mt-1 font-urdu text-sm text-gray-500">
+                یہ بزنس آپ کی پورٹ فولیو میں شامل ہو گیا۔ آپ چاہیں تو ابھی ایک اور بزنس شامل کر سکتے ہیں۔
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button variant="outline" asChild>
+                <Link href={`/business/${created.id}`}>
+                  <Building2 className="mr-1 h-4 w-4" />
+                  بزنس دیکھیں — View
+                </Link>
+              </Button>
+              <Button variant="outline" className="flex-1" asChild>
+                <Link href="/business">
+                  <ArrowLeft className="mr-1 h-4 w-4" />
+                  View Directory — ڈائریکٹری دیکھیں
+                </Link>
+              </Button>
+              <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700" onClick={resetForAnother}>
+                <Plus className="mr-1 h-4 w-4" />
+                Add Another Business — بزنس شامل کریں
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-2xl">
-      <PageHeader title="Register Business"
-        titleUrdu="بزنس رجسٹر کریں" description="Add your business to the directory — اپنا بزنس ڈائریکٹری میں شامل کریں" />
+      <PageHeader title="Add Business"
+        titleUrdu="بزنس شامل کریں" description="Add a business to your portfolio — ایک صارف کے پاس کئی بزنس ہو سکتے ہیں" />
 
       <Card>
         <CardContent className="p-6">
@@ -301,7 +347,7 @@ export default function CreateBusinessPage() {
               </Button>
               <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {loading ? "رجسٹر ہو رہا ہے..." : "بزنس رجسٹر کریں"}
+                {loading ? "شامل ہو رہا ہے..." : "بزنس شامل کریں — Add Business"}
               </Button>
             </div>
           </form>

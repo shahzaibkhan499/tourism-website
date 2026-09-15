@@ -78,6 +78,17 @@ export const profileSchema = z.object({
   birthPlace: z.string().optional().nullable(),
   extendedProfile: z.record(z.string(), z.any()).optional(),
   privacy: z.record(z.string(), z.any()).optional(),
+  educations: z
+    .array(
+      z.object({
+        degree: z.string().max(100),
+        institute: z.string().max(200),
+        year: z.string().max(20),
+      })
+    )
+    .max(20)
+    .optional()
+    .nullable(),
 });
 
 // ---------- Occupation ----------
@@ -172,32 +183,164 @@ export const communitySchema = z.object({
 
 // ---------- Rishta ----------
 
-export const rishtaProfileSchema = z.object({
-  age: z.coerce.number().int().min(18, "Umar kam az kam 18 ho").max(80, "عمر 80 سے زیادہ نہیں ہو سکتی"),
-  height: z.string().optional().nullable(),
-  weight: z.string().optional().nullable(),
-  complexion: z.string().optional().nullable(),
-  education: z.string().optional().nullable(),
-  educationDetail: z.string().optional().nullable(),
-  profession: z.string().optional().nullable(),
-  income: z.string().optional().nullable(),
-  sect: z.string().optional().nullable(),
-  maslak: z.string().optional().nullable(),
-  castePreference: z.string().optional().nullable(),
-  cityPreference: z.string().optional().nullable(),
-  countryPreference: z.string().optional().nullable(),
-  maritalStatus: z.string().default("NEVER_MARRIED"),
-  children: z.coerce.number().int().min(0).max(20).default(0),
+/* ---------- Rishta (overhauled 12-section form) ---------- */
+
+/** Optional int that treats "" as "not provided" (z.coerce would turn "" into 0). */
+const optInt = (min: number, max: number) =>
+  z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number().int().min(min).max(max).optional().nullable());
+
+
+export const rishtaEducationEntrySchema = z.object({
+  qualification: z.string().max(100).optional().nullable(),
+  school: z.string().max(200).optional().nullable(),
+  college: z.string().max(200).optional().nullable(),
+  university: z.string().max(200).optional().nullable(),
+  course: z.string().max(200).optional().nullable(),
+});
+
+export const rishtaFormDetailsSchema = z.object({
+  // 1. Personal information
+  personal: z
+    .object({
+      gender: z.enum(["MALE", "FEMALE"]).default("MALE"),
+      name: z.string().max(100).optional().nullable(),
+      dateOfBirth: z.string().optional().nullable(),
+      motherTongue: z.string().max(50).optional().nullable(),
+    })
+    .default({}),
+  // 2. Physical appearance
+  physical: z
+    .object({
+      build: z.enum(["SLIM", "MEDIUM", "HEALTHY"]).optional().nullable(),
+      disability: z.boolean().default(false),
+      disabilityDetails: z.string().max(500).optional().nullable(),
+    })
+    .default({}),
+  // 3. Education details (multi-entry)
+  education: z.array(rishtaEducationEntrySchema).max(10).default([]),
+  // 4. Job / Business
+  job: z
+    .object({
+      company: z.string().max(200).optional().nullable(),
+      nature: z.string().max(200).optional().nullable(),
+      place: z.string().max(200).optional().nullable(),
+      rank: z.string().max(200).optional().nullable(),
+      futurePlans: z.string().max(1000).optional().nullable(),
+    })
+    .default({}),
+  // 5. Cultural & ethical
+  cultural: z
+    .object({
+      languages: z.array(z.string()).max(9).default([]),
+      caste: z.string().max(100).optional().nullable(),
+      subCast: z.string().max(100).optional().nullable(),
+      hobbies: z.string().max(500).optional().nullable(),
+    })
+    .default({}),
+  // 6. Religion details
+  religion: z
+    .object({
+      sect: z.enum(["SUNNI", "SHIA"]).optional().nullable(),
+    })
+    .default({}),
+  // 7. House details
+  house: z
+    .object({
+      home: z.enum(["OWN", "RENT"]).optional().nullable(),
+      size: z.string().max(100).optional().nullable(),
+      location: z.string().max(200).optional().nullable(),
+      land: z.boolean().default(false),
+      vehicles: z.string().max(200).optional().nullable(),
+      address: z.string().max(300).optional().nullable(),
+      currentCity: z.string().max(100).optional().nullable(),
+      nationality: z.string().max(100).optional().nullable(),
+      homeTown: z.string().max(100).optional().nullable(),
+    })
+    .default({}),
+  // 8. Family details
+  family: z
+    .object({
+      fatherName: z.string().max(100).optional().nullable(),
+      fatherOccupation: z.string().max(100).optional().nullable(),
+      fatherMobile: z.string().max(30).optional().nullable(),
+      motherName: z.string().max(100).optional().nullable(),
+      motherOccupation: z.string().max(100).optional().nullable(),
+      motherMobile: z.string().max(30).optional().nullable(),
+      brothers: z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number().int().min(0).max(30).default(0)),
+      brothersMarried: z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number().int().min(0).max(30).default(0)),
+      sisters: z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number().int().min(0).max(30).default(0)),
+      sistersMarried: z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number().int().min(0).max(30).default(0)),
+    })
+    .default({}),
+  // 9. Life partner requirements
+  partner: z
+    .object({
+      statuses: z.array(z.enum(["SINGLE", "DIVORCED", "KHULLA", "WIDOWED"])).max(4).default([]),
+      minAge: optInt(10, 80),
+      maxAge: optInt(10, 80),
+      minHeight: z.string().max(20).optional().nullable(),
+      city: z.string().max(100).optional().nullable(),
+      caste: z.string().max(100).optional().nullable(),
+      sect: z.enum(["SUNNI", "SHIA", "ANY"]).default("ANY"),
+      qualification: z.string().max(100).optional().nullable(),
+      shariaPerda: z.enum(["YES", "NO", "ANY"]).default("ANY"),
+      otherRequirements: z.string().max(1000).optional().nullable(),
+      divorcedAcceptable: z.boolean().default(false),
+    })
+    .default({}),
+  // 10. Contact person
+  contact: z
+    .object({
+      personName: z.string().max(100).optional().nullable(),
+      relation: z
+        .enum(["SELF", "FATHER", "MOTHER", "BROTHER", "SISTER", "UNCLE", "AUNT", "COUSIN", "GUARDIAN", "OTHER"])
+        .default("SELF"),
+      mobile: z.string().max(30).optional().nullable(),
+    })
+    .default({}),
+  // 12. Mandatory Halaf Nama (oath)
+  halafNama: z.boolean().default(false),
+});
+
+export const rishtaProfileFields = z.object({
+  maritalStatus: z.enum(["SINGLE", "MARRIED", "DIVORCED", "KHULLA", "WIDOWED"]).default("SINGLE"),
+  children: z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number().int().min(0).max(20).default(0)),
+  height: z.string().max(20).optional().nullable(),
+  weight: optInt(20, 300),
+  complexion: z.string().max(50).optional().nullable(),
+  education: z.string().max(100).optional().nullable(),
+  educationDetail: z.string().max(300).optional().nullable(),
+  profession: z.string().max(200).optional().nullable(),
+  income: z.string().max(50).optional().nullable(),
+  sect: z.string().max(50).optional().nullable(),
+  maslak: z.string().max(50).optional().nullable(),
+  castePreference: z.string().max(100).optional().nullable(),
+  cityPreference: z.string().max(100).optional().nullable(),
+  countryPreference: z.string().max(100).optional().nullable(),
   about: z.string().max(2000).optional().nullable(),
   familyBackground: z.string().max(2000).optional().nullable(),
   expectations: z.string().max(2000).optional().nullable(),
-  photos: z.array(z.string()).max(5, "زیادہ سے زیادہ 5 تصاویر اپ لوڈ کر سکتے ہیں").default([]),
+  photos: z.array(z.string()).max(2, "زیادہ سے زیادہ 2 تصاویر (شخصی + فیملی) اپ لوڈ کر سکتے ہیں").default([]),
   isGuardianMode: z.boolean().default(false),
-  guardianName: z.string().optional().nullable(),
-  guardianRelation: z.string().optional().nullable(),
-  guardianPhone: z.string().optional().nullable(),
-  marriageForm: z.record(z.string(), z.any()).optional().nullable(),
+  guardianName: z.string().max(100).optional().nullable(),
+  guardianRelation: z.string().max(100).optional().nullable(),
+  guardianPhone: z.string().max(30).optional().nullable(),
+  formDetails: rishtaFormDetailsSchema,
 });
+
+/** POST — full form; the Halaf Nama (oath) checkbox is mandatory. */
+export const rishtaProfileSchema = rishtaProfileFields.refine(
+  (d) => d.formDetails.halafNama === true,
+  {
+    message:
+      "حلف نامہ مانتے ہوئے ہی فارم جمع ہو سکتا ہے — You must accept the Halaf Nama (oath) before submitting",
+    path: ["formDetails", "halafNama"],
+  }
+);
+
+/** Base fields without the oath refine (used for partial PATCH updates). */
+export type RishtaProfileFields = z.infer<typeof rishtaProfileFields>;
+export type RishtaFormDetails = z.infer<typeof rishtaFormDetailsSchema>;
 
 export const rishtaRequestSchema = z.object({
   receiverId: z.string().min(1, "پروفائل منتخب کریں"),
