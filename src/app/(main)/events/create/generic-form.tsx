@@ -30,6 +30,8 @@ import {
   type Invitee,
   type Opt,
 } from "./form-parts";
+import { InviteAudienceSelect } from "@/components/events/invite-audience";
+import type { InviteAudience } from "@/lib/event-invites";
 
 interface ExtraField {
   name: string;
@@ -224,6 +226,8 @@ export default function GenericEventForm({ type }: { type: string }) {
   const extras = TYPE_EXTRAS[type] ?? [];
 
   const [invitees, setInvitees] = useState<Invitee[]>([]);
+  // Round 12 (Fix 1) — bulk invite audience
+  const [audience, setAudience] = useState<InviteAudience>("SPECIFIC");
   const [selectVals, setSelectVals] = useState<Record<string, string>>({});
   const { loading, submit } = useEventSubmit();
 
@@ -288,6 +292,7 @@ export default function GenericEventForm({ type }: { type: string }) {
       description: data.description || null,
       details,
       invitees: invitees.map((i) => i.id),
+      audience,
       isPublic: form.watch("isPublic") ?? false,
       isRecurring: form.watch("isRecurring") ?? false,
       recurringPattern: form.watch("recurringPattern") || null,
@@ -355,7 +360,24 @@ export default function GenericEventForm({ type }: { type: string }) {
           <p className="mb-3 text-xs text-gray-500">
             مدعو ممبران کو اطلاع ملے گی اور وہ اسے کھول کر <span className="font-medium">Digital Card</span> دیکھ کر اپنا جواب بھیج سکیں گے۔
           </p>
-          <InviteesPicker value={invitees} onChange={setInvitees} />
+          <InviteAudienceSelect value={audience} onValueChange={setAudience} className="mb-3" />
+          {audience === "SPECIFIC" ? (
+            <InviteesPicker value={invitees} onChange={setInvitees} />
+          ) : (
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-xs text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+              <span dir="auto">
+                <span dir="ltr">One-click invite:</span>{" "}
+                <span dir="rtl" className="font-urdu">
+                  {audience === "FAMILY"
+                    ? "آپ کے فمیلی ٹری کے تمام ممبران کو"
+                    : audience === "CLAN"
+                      ? "آپ کے قبیلے کے تمام ممبران کو"
+                      : "آپ کی کمیونٹی کے تمام ممبران کو"}{" "}
+                  یہ ڈیجیٹل کارڈ بھیج دیا جائے گا۔
+                </span>
+              </span>
+            </div>
+          )}
         </Part>
 
         <div className="flex justify-end border-t pt-4">

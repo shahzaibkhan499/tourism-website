@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { Prisma } from "@prisma/client";
 import { eventSchema, eventQuerySchema } from "@/lib/validators";
+import { resolveAudienceUsers } from "@/lib/event-invites";
 import { apiError, apiSuccess, handleApiError, requireUser, auditLog, getIp } from "@/lib/api";
 import { sanitizeInput } from "@/lib/utils";
 import { getEventTypeInfo } from "@/lib/constants";
@@ -71,8 +72,16 @@ export async function POST(req: NextRequest) {
       return apiError(400, "ValidationError", parsed.error.flatten().fieldErrors);
     }
 
-    const { title, type, date, endDate, time, location, latitude, longitude, hijriDate, description, coverImage, isPublic, isRecurring, recurringPattern, details, invitees } =
+    const { title, type, date, endDate, time, location, latitude, longitude, hijriDate, description, coverImage, isPublic, isRecurring, recurringPattern, details, invitees, audience } =
       parsed.data;
+
+    // Round 12 (Fix 1) — resolve bulk audience (FAMILY / CLAN / COMMUNITY)
+    // to concrete user ids; merge with any explicitly selected invitees.
+    let inviteeIds = (invitees ?? []).filter((x) => x !== user.id);
+    if (audience !== "SPECIFIC") {
+      const groupIds = await resolveAudienceUsers(user.id, audience);
+      inviteeIds = Array.from(new Set([...inviteeIds, ...groupIds]));
+    }
 
     // Combine date and time if provided
     let eventDate = new Date(date);
@@ -98,7 +107,7 @@ export async function POST(req: NextRequest) {
         isRecurring,
         recurringPattern: recurringPattern || null,
         details: (details ?? undefined) as Prisma.InputJsonValue | undefined,
-        invitees: invitees?.length ? Array.from(new Set(invitees.filter((x) => x !== user.id))) : undefined,
+        invitees: inviteeIds.length > 0 ? inviteeIds : undefined,
         creatorId: user.id,
       },
     });
@@ -106,7 +115,6 @@ export async function POST(req: NextRequest) {
     await auditLog(user.id, "CREATE_EVENT", "Event", event.id, { title: event.title }, getIp(req.headers));
 
     // Round 10 — invitees get a notification that opens the digital invitation card
-    const inviteeIds = invitees?.filter((x) => x !== user.id) ?? [];
     if (inviteeIds.length > 0) {
       const typeLabel = getEventTypeInfo(type).label;
       await prisma.notification.createMany({

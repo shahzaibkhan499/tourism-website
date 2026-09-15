@@ -138,12 +138,21 @@ export const eventSchema = z.object({
   recurringPattern: z.string().optional().nullable(),
   // Round 10 — dynamic per-type details (JSON blob) + invitee user ids
   details: z.record(z.unknown()).optional().nullable(),
-  invitees: z.array(z.string().min(1)).max(100).optional().nullable(),
+  invitees: z.array(z.string().min(1)).max(500).optional().nullable(),
+  // Round 12 — bulk invite audience (Fix 1): FAMILY / CLAN / COMMUNITY
+  audience: z.enum(["SPECIFIC", "FAMILY", "CLAN", "COMMUNITY"]).default("SPECIFIC"),
 });
 
-export const inviteSchema = z.object({
-  invitees: z.array(z.string().min(1)).min(1, "Kam az kam 1 invitee zaroori hai").max(100),
-});
+export const inviteSchema = z
+  .object({
+    invitees: z.array(z.string().min(1)).max(500).optional().nullable(),
+    // Round 12 — bulk invite audience (Fix 1)
+    audience: z.enum(["SPECIFIC", "FAMILY", "CLAN", "COMMUNITY"]).default("SPECIFIC"),
+  })
+  .refine(
+    (d) => d.audience !== "SPECIFIC" || (d.invitees?.length ?? 0) >= 1,
+    { message: "Kam az kam 1 invitee zaroori hai", path: ["invitees"] }
+  );
 
 export const rsvpSchema = z.object({
   status: z.enum(["GOING", "NOT_GOING", "MAYBE"]),

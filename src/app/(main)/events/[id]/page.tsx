@@ -35,7 +35,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { RSVPButton } from "@/components/events/rsvp-button";
+import { InviteAudienceSelect } from "@/components/events/invite-audience";
 import { InviteesPicker, type Invitee } from "@/app/(main)/events/create/form-parts";
+import type { InviteAudience } from "@/lib/event-invites";
 import { formatDateTime, initials } from "@/lib/utils";
 import { getEventTypeInfo } from "@/lib/constants";
 import { Send } from "lucide-react";
@@ -531,23 +533,40 @@ export default function EventDetailPage() {
 
 function InviteSection({ eventId, onInvited }: { eventId: string; onInvited: () => void }) {
   const [invitees, setInvitees] = useState<Invitee[]>([]);
+  // Round 12 (Fix 1) — one-click bulk audience
+  const [audience, setAudience] = useState<InviteAudience>("SPECIFIC");
   const [sending, setSending] = useState(false);
 
+  const bulk = audience !== "SPECIFIC";
+  const bulkLabel =
+    audience === "FAMILY" ? "مکمل خاندان" : audience === "CLAN" ? "میرا قبیلہ" : "میری کمیونٹی";
+
   const send = async () => {
-    if (invitees.length === 0) return;
+    if (!bulk && invitees.length === 0) return;
     setSending(true);
     try {
       const res = await fetch(`/api/events/${eventId}/invite`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ invitees: invitees.map((i) => i.id) }),
+        body: JSON.stringify({
+          invitees: bulk ? [] : invitees.map((i) => i.id),
+          audience,
+        }),
       });
       const data = await res.json().catch(() => null);
       if (!res.ok) {
         toast.error(data?.error || "مدعو نہیں کیے جا سکے");
         return;
       }
-      toast.success(`${data.invited} مدعوین کو Digital Card بھجوا گیا 🎉`);
+      if (data.invited === 0) {
+        toast.warning("اس گروپ میں کوئی مدعوین نہیں ملے — Digital Card نہیں بھجا گیا");
+      } else {
+        toast.success(
+          bulk
+            ? `${data.invited} ممبران (آپ کا ${bulkLabel}) کو Digital Card بھجوا گیا 🎉`
+            : `${data.invited} مدعوین کو Digital Card بھجوا گیا 🎉`
+        );
+      }
       setInvitees([]);
       onInvited();
     } catch {
@@ -559,15 +578,27 @@ function InviteSection({ eventId, onInvited }: { eventId: string; onInvited: () 
 
   return (
     <div className="space-y-3">
-      <InviteesPicker value={invitees} onChange={setInvitees} />
+      <InviteAudienceSelect value={audience} onValueChange={setAudience} />
+      {bulk ? (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-xs text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200" dir="auto">
+          <span dir="auto">
+            <span dir="ltr">One-click invite:</span>{" "}
+            <span dir="rtl" className="font-urdu">
+              آپ کے {bulkLabel} کے تمام ممبران کو یہ ڈیجیٹل کارڈ بھیج دیا جائے گا۔
+            </span>
+          </span>
+        </div>
+      ) : (
+        <InviteesPicker value={invitees} onChange={setInvitees} />
+      )}
       <Button
         onClick={send}
-        disabled={sending || invitees.length === 0}
+        disabled={sending || (!bulk && invitees.length === 0)}
         className="w-full bg-emerald-600 hover:bg-emerald-700"
         size="sm"
       >
         {sending ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Send className="mr-1 h-4 w-4" />}
-        Digital Card بھجوائیں ({invitees.length})
+        {bulk ? `Digital Card بھجوائیں — ${bulkLabel}` : `Digital Card بھجوائیں (${invitees.length})`}
       </Button>
     </div>
   );

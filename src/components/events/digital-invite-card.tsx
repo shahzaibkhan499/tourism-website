@@ -13,9 +13,7 @@
 
 import { CalendarDays, Clock, MapPin, Navigation, User2, Sparkles, HeartHandshake } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatDateTime, initials, optimizeImageUrl } from "@/lib/utils";
+import { formatDateTime, optimizeImageUrl } from "@/lib/utils";
 import { getEventTypeInfo, getEventCardTheme, isCondolenceEvent, type EventCardTheme } from "@/lib/constants";
 import { RSVPButton } from "./rsvp-button";
 import { cn } from "@/lib/utils";
@@ -43,7 +41,19 @@ interface DigitalInviteCardProps {
 
 const THEME_STYLES: Record<
   EventCardTheme,
-  { shell: string; header: string; title: string; sub: string; metaBg: string; chip: string; pattern?: string }
+  {
+    shell: string;
+    header: string;
+    title: string;
+    sub: string;
+    metaBg: string;
+    chip: string;
+    pattern?: string;
+    /** Round 12 — page background (Fix 2): fills the invite page behind the
+     * card so no white/gray void appears below it. */
+    pageBg: string;
+    pageBgColor: string;
+  }
 > = {
   SOBER: {
     shell: "border-gray-300 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white shadow-2xl",
@@ -54,6 +64,8 @@ const THEME_STYLES: Record<
     chip: "bg-white/10 text-gray-200",
     pattern:
       "radial-gradient(circle at 25% 15%, rgba(255,255,255,0.06) 0, transparent 45%), radial-gradient(circle at 75% 85%, rgba(255,255,255,0.05) 0, transparent 45%)",
+    pageBg: "linear-gradient(180deg, #111827 0%, #0a0f1a 55%, #111827 100%)",
+    pageBgColor: "#0a0f1a",
   },
   ELEGANT: {
     shell: "border-amber-300/70 bg-gradient-to-b from-amber-50 via-yellow-50 to-amber-100 text-amber-950 shadow-2xl",
@@ -64,6 +76,8 @@ const THEME_STYLES: Record<
     chip: "bg-amber-100 text-amber-800",
     pattern:
       "radial-gradient(circle at 10% 10%, rgba(217,119,6,0.10) 0, transparent 40%), radial-gradient(circle at 90% 90%, rgba(217,119,6,0.10) 0, transparent 40%)",
+    pageBg: "linear-gradient(180deg, #fffbeb 0%, #fbeed0 50%, #f9e3b3 100%)",
+    pageBgColor: "#fbeed0",
   },
   CELEBRATORY: {
     shell: "border-pink-200 bg-gradient-to-b from-pink-50 via-sky-50 to-amber-50 text-gray-800 shadow-2xl",
@@ -74,6 +88,8 @@ const THEME_STYLES: Record<
     chip: "bg-pink-100 text-pink-700",
     pattern:
       "radial-gradient(circle at 15% 20%, rgba(244,114,182,0.18) 0, transparent 42%), radial-gradient(circle at 85% 15%, rgba(56,189,248,0.18) 0, transparent 42%), radial-gradient(circle at 75% 85%, rgba(251,191,36,0.18) 0, transparent 42%)",
+    pageBg: "linear-gradient(160deg, #fdf2f8 0%, #eff6ff 45%, #fffbeb 100%)",
+    pageBgColor: "#f5f3ff",
   },
   RELIGIOUS: {
     shell: "border-emerald-300/60 bg-gradient-to-b from-emerald-900 via-emerald-950 to-green-950 text-white shadow-2xl",
@@ -84,6 +100,8 @@ const THEME_STYLES: Record<
     chip: "bg-emerald-400/10 text-emerald-100",
     pattern:
       "radial-gradient(circle at 20% 12%, rgba(251,191,36,0.08) 0, transparent 45%), radial-gradient(circle at 80% 88%, rgba(16,185,129,0.12) 0, transparent 45%)",
+    pageBg: "linear-gradient(180deg, #022c22 0%, #064e3b 60%, #022c22 100%)",
+    pageBgColor: "#022c22",
   },
   ACHIEVEMENT: {
     shell: "border-sky-300/60 bg-gradient-to-b from-sky-600 via-blue-700 to-indigo-800 text-white shadow-2xl",
@@ -92,6 +110,8 @@ const THEME_STYLES: Record<
     sub: "text-sky-100/80",
     metaBg: "bg-white/10 text-white ring-white/20",
     chip: "bg-white/15 text-white",
+    pageBg: "linear-gradient(180deg, #0f2557 0%, #12306e 55%, #0c1a3a 100%)",
+    pageBgColor: "#0c1a3a",
   },
   DEFAULT: {
     shell: "border-emerald-300/70 bg-gradient-to-b from-emerald-500 via-emerald-600 to-green-700 text-white shadow-2xl",
@@ -100,8 +120,20 @@ const THEME_STYLES: Record<
     sub: "text-emerald-50/80",
     metaBg: "bg-white/10 text-white ring-white/20",
     chip: "bg-white/15 text-white",
+    pageBg: "linear-gradient(180deg, #065f46 0%, #047857 55%, #064e3b 100%)",
+    pageBgColor: "#064e3b",
   },
 };
+
+/** Round 12 (Fix 2) — CSS for the invite page wrapper so the themed
+ * background wraps the card edge-to-edge (no blank void below). */
+export function getCardPageStyle(eventType: string): React.CSSProperties {
+  const t = THEME_STYLES[getEventCardTheme(eventType)];
+  return {
+    backgroundColor: t.pageBgColor,
+    backgroundImage: t.pattern ? `${t.pageBg}, ${t.pattern}` : t.pageBg,
+  };
+}
 
 const THEME_DECOR: Record<EventCardTheme, { top: string; bottom: string }> = {
   SOBER: { top: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ", bottom: "إِنَّا لِلّهِ وَإِنَّـا إِلَيْهِ رَاجِعونَ" },

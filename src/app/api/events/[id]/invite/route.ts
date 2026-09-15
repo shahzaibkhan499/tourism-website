@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { inviteSchema } from "@/lib/validators";
+import { resolveAudienceUsers } from "@/lib/event-invites";
 import { getEventTypeInfo } from "@/lib/constants";
 import { apiError, apiSuccess, handleApiError, requireUser } from "@/lib/api";
 
@@ -20,12 +21,20 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       return apiError(400, "ValidationError", parsed.error.flatten().fieldErrors);
     }
 
+    const { invitees: explicit, audience } = parsed.data;
     const existing: string[] = Array.isArray(event.invitees) ? (event.invitees as string[]) : [];
-    const invitees = Array.from(new Set([...existing, ...parsed.data.invitees].filter((x) => x !== user.id)));
+
+    // Round 12 (Fix 1) — bulk audience (FAMILY / CLAN / COMMUNITY) is resolved
+    // to concrete user ids and merged with any explicit selections.
+    let merged = [...explicit ?? []];
+    if (audience !== "SPECIFIC") {
+      merged = [...merged, ...(await resolveAudienceUsers(user.id, audience))];
+    }
+    const invitees = Array.from(new Set([...existing, ...merged].filter((x) => x !== user.id)));
 
     await prisma.event.update({ where: { id }, data: { invitees } });
 
-    const newInvitees = parsed.data.invitees.filter((x) => !existing.includes(x) && x !== user.id);
+    const newInvitees = invitees.filter((x) => !existing.includes(x));
     if (newInvitees.length > 0) {
       const typeLabel = getEventTypeInfo(event.type).label;
       await prisma.notification.createMany({
@@ -39,7 +48,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       });
     }
 
-    return apiSuccess({ invited: newInvitees.length, totalInvitees: invitees.length });
+    return apiSuccess({
+      invited: newInvitees.length,
+      totalInvitees: invitees.length,
+      audience,
+      resolved: audience !== "SPECIFIC" ? invitees.length - existing.length : newInvitees.length,
+    });
   } catch (error) {
     return handleApiError(error);
   }

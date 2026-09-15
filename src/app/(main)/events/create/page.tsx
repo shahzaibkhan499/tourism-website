@@ -12,7 +12,7 @@ import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
-import { EVENT_TYPES, getEventTypeInfo } from "@/lib/constants";
+import { EVENT_TYPES } from "@/lib/constants";
 import { EventCategoryGrid } from "./event-category-grid";
 import DeathEventForm from "./death-form";
 import BirthEventForm from "./birth-form";

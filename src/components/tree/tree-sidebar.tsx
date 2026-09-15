@@ -3,7 +3,7 @@
 import { optimizeImageUrl } from "@/lib/utils";
 
 import { useMemo, useState } from "react";
-import { BookOpen, CalendarClock, HeartHandshake, Info, MessageCircle, X } from "lucide-react";
+import { BookOpen, CalendarClock, HeartHandshake, Info, MessageCircle, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTreeStore } from "@/stores/tree-store";
 import type { TreeGraphData } from "@/lib/tree-graph";
@@ -37,6 +37,9 @@ export function TreeSidebar({ treeId, graph, canEdit, onDataChanged }: TreeSideb
   const setTab = useTreeStore((s) => s.setDetailTab);
   const close = useTreeStore((s) => s.setDetailPanel);
   const setSelected = useTreeStore((s) => s.setSelectedMember);
+  // Round 12 (Fix 3) — sidebar button reuses the store-driven Edit Profile
+  // modal that is mounted in the tree page client.
+  const setEditMemberOpen = useTreeStore((s) => s.setEditMemberOpen);
 
   const member = selectedId ? graph.memberById.get(selectedId) : undefined;
   const [reorderOpen, setReorderOpen] = useState(false);
@@ -133,6 +136,25 @@ export function TreeSidebar({ treeId, graph, canEdit, onDataChanged }: TreeSideb
           <VerifySection treeId={treeId} memberId={member.id} canEdit={canEdit} />
         </div>
       </div>
+
+      {/* Round 12 (Fix 3) — Edit Profile (above the quick-add relatives) */}
+      {canEdit && (
+        <div className="border-b border-gray-200 px-4 py-2.5 dark:border-gray-800">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-center border-emerald-300 text-emerald-700 hover:border-emerald-400 hover:bg-emerald-50 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-950"
+            onClick={() => setEditMemberOpen(true)}
+          >
+            <Pencil className="mr-1.5 h-4 w-4" />
+            <span dir="ltr">Edit Profile</span>
+            <span className="text-gray-400"> — </span>
+            <span dir="rtl" className="font-urdu">
+              پروفائل میں ترمیم کریں
+            </span>
+          </Button>
+        </div>
+      )}
 
       {/* quick add relatives (GenoPro style) */}
       <QuickAddSection treeId={treeId} graph={graph} memberId={member.id} canEdit={canEdit} onAdded={onDataChanged ?? (() => {})} />

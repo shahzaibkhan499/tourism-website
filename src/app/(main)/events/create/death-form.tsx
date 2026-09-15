@@ -5,7 +5,7 @@
  * Saves all fields to Event.details JSON.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,7 +21,6 @@ import {
   NAMAZ_AFTER_OPTIONS,
 } from "@/lib/constants";
 import {
-  BasicsPart,
   CancelBackLink,
   Field,
   InviteesPicker,
@@ -33,6 +32,8 @@ import {
   type Invitee,
   type Opt,
 } from "./form-parts";
+import { InviteAudienceSelect } from "@/components/events/invite-audience";
+import type { InviteAudience } from "@/lib/event-invites";
 
 const opt = (o: { value: string; label: string; labelUrdu: string }): Opt => o;
 
@@ -172,8 +173,9 @@ export default function DeathEventForm() {
   const searchParams = useSearchParams();
   const editId = searchParams.get("edit");
   const [invitees, setInvitees] = useState<Invitee[]>([]);
+  // Round 12 (Fix 1) — bulk invite audience
+  const [audience, setAudience] = useState<InviteAudience>("SPECIFIC");
   const { loading, submit } = useEventSubmit();
-  const titleTouched = useRef(false);
 
   const form = useForm<FormData>({ resolver: zodResolver(schema), defaultValues: empty });
   const {
@@ -268,7 +270,6 @@ export default function DeathEventForm() {
     };
   }, [editId, router, setValue]);
 
-  const firstName = watch("firstName");
   const titlePrefix = watch("titlePrefix");
 
   const prefixSel = useSelectFormValue(form, "titlePrefix");
@@ -367,6 +368,7 @@ export default function DeathEventForm() {
       location: data.placeOfDeath || data.condCity || null,
       details,
       invitees: invitees.map((i) => i.id),
+      audience,
       isPublic: false,
       isRecurring: false,
     });
@@ -621,7 +623,24 @@ export default function DeathEventForm() {
           <p className="mb-3 text-xs text-gray-500">
             مدعو ممبران کو اطلاع ملے گی اور وہ اسے کھول کر <span className="font-medium">Digital Card</span> دیکھ کر اپنا جواب (دعائیں سمیت) بھیج سکیں گے۔
           </p>
-          <InviteesPicker value={invitees} onChange={setInvitees} />
+          <InviteAudienceSelect value={audience} onValueChange={setAudience} className="mb-3" />
+          {audience === "SPECIFIC" ? (
+            <InviteesPicker value={invitees} onChange={setInvitees} />
+          ) : (
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-xs text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+              <span dir="auto">
+                <span dir="ltr">One-click invite:</span>{" "}
+                <span dir="rtl" className="font-urdu">
+                  {audience === "FAMILY"
+                    ? "آپ کے فمیلی ٹری کے تمام ممبران کو"
+                    : audience === "CLAN"
+                      ? "آپ کے قبیلے کے تمام ممبران کو"
+                      : "آپ کی کمیونٹی کے تمام ممبران کو"}{" "}
+                  یہ ڈیجیٹل کارڈ بھیج دیا جائے گا۔
+                </span>
+              </span>
+            </div>
+          )}
         </Part>
 
         <div className="flex justify-end border-t pt-4">
