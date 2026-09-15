@@ -80,7 +80,11 @@ export default function CommunityPage() {
 
         <TabsContent value="all">
           {data?.communities.length === 0 ? (
-            <EmptyState icon={<Users className="h-12 w-12" />} title="کوئی ڈیٹا نہیں ملا" description="کوئی کمیونٹی نہیں ملی" />
+            <EmptyState icon={<Users className="h-12 w-12" />} title={<>
+              <span dir="ltr">No communities yet</span>
+              {" — "}
+              <span dir="rtl">کوئی کمیونٹی نہیں</span>
+            </>} description="ایڈمن کے بنائے ہوئے کمیونٹی اور کلان یہاں نظر آئیں گے۔" />
           ) : (
             <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {data?.communities.map((c) => (

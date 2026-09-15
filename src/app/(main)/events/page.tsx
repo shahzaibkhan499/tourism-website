@@ -136,7 +136,11 @@ export default function EventsPage() {
       ) : events.length === 0 ? (
         <EmptyState
           icon={<CalendarDays className="h-12 w-12" />}
-          title="کوئی ڈیٹا نہیں ملا"
+          title={<>
+            <span dir="ltr">No events yet</span>
+            {" — "}
+            <span dir="rtl">کوئی ایونٹ نہیں</span>
+          </>}
           description="ابھی کوئی ایونٹ نہیں ہے۔ پہلا ایونٹ بنائیں!"
           actionLabel="ایونٹ بنائیں"
           actionHref="/events/create"
