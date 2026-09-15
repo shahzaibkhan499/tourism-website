@@ -17,13 +17,29 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       return apiError(400, "ValidationError", parsed.error.flatten().fieldErrors);
     }
 
-    const { status, guests, note } = parsed.data;
+    const { status, guests, note, message } = parsed.data;
 
     const rsvp = await prisma.eventRSVP.upsert({
       where: { eventId_userId: { eventId: id, userId: user.id } },
-      update: { status, guests, note },
-      create: { eventId: id, userId: user.id, status, guests, note },
+      update: { status, guests, note, message },
+      create: { eventId: id, userId: user.id, status, guests, note, message },
     });
+
+    // Round 10 — notify the creator of the response (and its message/dua)
+    if (event.creatorId !== user.id) {
+      const statusLabel = status === "GOING" ? "shirkat ki tasdeeq ki" : status === "MAYBE" ? "shayad jayenge" : "nahi aa sakte";
+      await prisma.notification.create({
+        data: {
+          userId: event.creatorId,
+          type: "rsvp_update",
+          title: `${user.name ?? "Koi"} ne RSVP de di — ${event.title}`,
+          message: message
+            ? `${user.name ?? "Koi"} ne ${statusLabel} aur kaha: "${message.slice(0, 120)}${message.length > 120 ? "…" : ""}"`
+            : `${user.name ?? "Koi"} ne ${event.title} ke liye ${statusLabel}.`,
+          link: `/events/${id}`,
+        },
+      });
+    }
 
     return apiSuccess(rsvp);
   } catch (error) {

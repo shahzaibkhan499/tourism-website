@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Bell, CheckCheck, Trash2, Calendar, Heart, Briefcase, Users, BookOpen, Info } from "lucide-react";
+import { Bell, CheckCheck, Trash2, Calendar, Heart, Briefcase, Users, BookOpen, Info, Gift, MessageCircle } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,8 @@ import type { NotificationItem } from "@/types";
 
 const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   event_reminder: Calendar,
+  event_invite: Gift,
+  rsvp_update: MessageCircle,
   rishta_request: Heart,
   rishta_accepted: Heart,
   job_application: Briefcase,
@@ -37,6 +39,8 @@ const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
 
 const typeColors: Record<string, string> = {
   event_reminder: "bg-emerald-50 text-emerald-600",
+  event_invite: "bg-amber-50 text-amber-600",
+  rsvp_update: "bg-blue-50 text-blue-600",
   rishta_request: "bg-pink-50 text-pink-600",
   rishta_accepted: "bg-pink-50 text-pink-600",
   job_application: "bg-amber-50 text-amber-600",
@@ -163,6 +167,7 @@ export default function NotificationsPage() {
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="unread">Unread</TabsTrigger>
           <TabsTrigger value="event_reminder">Events</TabsTrigger>
+          <TabsTrigger value="event_invite">Invites — دعوتیں</TabsTrigger>
           <TabsTrigger value="rishta_request">Rishta</TabsTrigger>
           <TabsTrigger value="job_application">Jobs</TabsTrigger>
           <TabsTrigger value="system">System</TabsTrigger>

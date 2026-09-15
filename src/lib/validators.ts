@@ -118,6 +118,11 @@ export const eventSchema = z.object({
     "RAMADAN_IFTAR", "FAMILY_REUNION", "GRADUATION", "JOB_CELEBRATION",
     "WELCOME_HOME", "PANCHAYAT", "INDEPENDENCE_DAY", "PAKISTAN_DAY",
     "QUAID_E_AZAM_DAY", "IQBAL_DAY", "BASANT", "CHAND_RAAT", "EID_MILAN", "OTHER",
+    // Round 10 — additional event types
+    "BAPTISM", "BURIAL", "CREMATION", "ADOPTED", "DIVORCE", "ANNULMENT",
+    "QURAN_KHANI", "HIFZ_E_QURAN", "OCCUPATION", "RETIREMENT", "ELECTED",
+    "MILITARY_SERVICE", "ORDINATION", "EDUCATION", "DEGREE", "DOCTORATE",
+    "TRAVEL", "LEGAL", "RESIDENCE", "BUSINESS_OPENING",
   ]),
   date: z.string().min(1, "تاریخ منتخب کریں"),
   endDate: z.string().optional().nullable(),
@@ -131,12 +136,21 @@ export const eventSchema = z.object({
   isPublic: z.boolean().default(false),
   isRecurring: z.boolean().default(false),
   recurringPattern: z.string().optional().nullable(),
+  // Round 10 — dynamic per-type details (JSON blob) + invitee user ids
+  details: z.record(z.unknown()).optional().nullable(),
+  invitees: z.array(z.string().min(1)).max(100).optional().nullable(),
+});
+
+export const inviteSchema = z.object({
+  invitees: z.array(z.string().min(1)).min(1, "Kam az kam 1 invitee zaroori hai").max(100),
 });
 
 export const rsvpSchema = z.object({
   status: z.enum(["GOING", "NOT_GOING", "MAYBE"]),
   guests: z.number().int().min(0).max(50).default(0),
   note: z.string().max(500).optional().nullable(),
+  // Round 10 — message / dua sent with the RSVP
+  message: z.string().max(1000).optional().nullable(),
 });
 
 export const eventQuerySchema = z.object({

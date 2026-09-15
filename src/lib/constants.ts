@@ -313,6 +313,27 @@ export const EVENT_TYPES = [
   { value: "CHAND_RAAT", label: "Chand Raat", labelUrdu: "چاند رات", emoji: "🌙", group: "Cultural Events", groupUrdu: "ثقافتی مواقع" },
   { value: "EID_MILAN", label: "Eid Milan", labelUrdu: "عید ملن", emoji: "🤗", group: "Cultural Events", groupUrdu: "ثقافتی مواقع" },
   { value: "OTHER", label: "Other", labelUrdu: "دیگر", emoji: "📌", group: "Other", groupUrdu: "دیگر" },
+  // Round 10 — additional event types
+  { value: "BAPTISM", label: "Baptism", labelUrdu: "باپتسم", emoji: "✝️", group: "Life Events", groupUrdu: "زندگی کے مواقع" },
+  { value: "BURIAL", label: "Burial", labelUrdu: "تدفین", emoji: "⚱️", group: "Life Events", groupUrdu: "زندگی کے مواقع" },
+  { value: "CREMATION", label: "Cremation", labelUrdu: "سوزانا", emoji: "🔥", group: "Life Events", groupUrdu: "زندگی کے مواقع" },
+  { value: "ADOPTED", label: "Adopted", labelUrdu: "کفالت", emoji: "🍼", group: "Life Events", groupUrdu: "زندگی کے مواقع" },
+  { value: "DIVORCE", label: "Divorce", labelUrdu: "طلاق", emoji: "💔", group: "Family Events", groupUrdu: "خاندانی مواقع" },
+  { value: "ANNULMENT", label: "Annulment", labelUrdu: "فسخِ نکاح", emoji: "📜", group: "Family Events", groupUrdu: "خاندانی مواقع" },
+  { value: "QURAN_KHANI", label: "Quran Khani", labelUrdu: "قرآن خوانی", emoji: "📖", group: "Religious Events", groupUrdu: "مذہبی مواقع" },
+  { value: "HIFZ_E_QURAN", label: "Hifz e Quran", labelUrdu: "حفظِ قرآن", emoji: "📗", group: "Religious Events", groupUrdu: "مذہبی مواقع" },
+  { value: "OCCUPATION", label: "Occupation", labelUrdu: "روزگار", emoji: "💼", group: "Vocational/Academic", groupUrdu: "تعلیمی و پیشہ ورانہ" },
+  { value: "RETIREMENT", label: "Retirement", labelUrdu: "ریٹائرمنٹ", emoji: "🏖️", group: "Vocational/Academic", groupUrdu: "تعلیمی و پیشہ ورانہ" },
+  { value: "ELECTED", label: "Elected", labelUrdu: "منتخب", emoji: "🗳️", group: "Vocational/Academic", groupUrdu: "تعلیمی و پیشہ ورانہ" },
+  { value: "MILITARY_SERVICE", label: "Military Service", labelUrdu: "فوجی خدمت", emoji: "🎖️", group: "Vocational/Academic", groupUrdu: "تعلیمی و پیشہ ورانہ" },
+  { value: "ORDINATION", label: "Ordination", labelUrdu: "منصب", emoji: "📿", group: "Vocational/Academic", groupUrdu: "تعلیمی و پیشہ ورانہ" },
+  { value: "EDUCATION", label: "Education", labelUrdu: "تعلیم", emoji: "📚", group: "Vocational/Academic", groupUrdu: "تعلیمی و پیشہ ورانہ" },
+  { value: "DEGREE", label: "Degree", labelUrdu: "ڈگری", emoji: "🏅", group: "Vocational/Academic", groupUrdu: "تعلیمی و پیشہ ورانہ" },
+  { value: "DOCTORATE", label: "Doctorate", labelUrdu: "ڈاکٹریٹ", emoji: "👨‍🎓", group: "Vocational/Academic", groupUrdu: "تعلیمی و پیشہ ورانہ" },
+  { value: "TRAVEL", label: "Travel", labelUrdu: "سفر", emoji: "✈️", group: "Other", groupUrdu: "دیگر" },
+  { value: "LEGAL", label: "Legal", labelUrdu: "قانونی", emoji: "⚖️", group: "Other", groupUrdu: "دیگر" },
+  { value: "RESIDENCE", label: "Residence", labelUrdu: "رہائش", emoji: "🏠", group: "Other", groupUrdu: "دیگر" },
+  { value: "BUSINESS_OPENING", label: "Business Opening", labelUrdu: "بزنس افتتاح", emoji: "🏪", group: "Other", groupUrdu: "دیگر" },
 ] as const;
 
 export const MEMORY_CATEGORIES = [
@@ -530,6 +551,251 @@ export function getEventTypeInfo(type: string) {
       groupUrdu: "دیگر",
     }
   );
+}
+
+// ============================================================
+// ROUND 10 — Event category grid, dynamic-form option lists,
+// digital-card themes, and RSVP suggested messages / Duas.
+// ============================================================
+
+/** The 5 create-grid categories with the exact event types (in order). */
+export const EVENT_CREATE_CATEGORIES = [
+  {
+    id: "life",
+    label: "Life Events",
+    labelUrdu: "زندگی کے مواقع",
+    icon: "HeartPulse",
+    accent: "from-rose-500 to-pink-600",
+    types: [
+      { value: "BIRTH", label: "Birth" },
+      { value: "BAPTISM", label: "Baptism" },
+      { value: "DEATH", label: "Death" },
+      { value: "BURIAL", label: "Burial" },
+      { value: "CREMATION", label: "Cremation" },
+      { value: "ADOPTED", label: "Adopted" },
+    ],
+  },
+  {
+    id: "family",
+    label: "Family",
+    labelUrdu: "خاندان",
+    icon: "Users",
+    accent: "from-amber-500 to-orange-600",
+    types: [
+      { value: "ENGAGEMENT", label: "Engagement" },
+      { value: "NIKKAH", label: "Marriage" },
+      { value: "DIVORCE", label: "Divorce" },
+      { value: "AQEEQA", label: "Aqeeqa/Banuri" },
+      { value: "ANNULMENT", label: "Annulment" },
+    ],
+  },
+  {
+    id: "religious",
+    label: "Religious",
+    labelUrdu: "مذہبی",
+    icon: "MoonStar",
+    accent: "from-emerald-500 to-green-600",
+    types: [
+      { value: "QURAN_KHANI", label: "Quran Khani" },
+      { value: "HIFZ_E_QURAN", label: "Hifz e Quran" },
+      { value: "MILAD_UN_NABI", label: "Mehfil Meelad Shareef" },
+    ],
+  },
+  {
+    id: "vocational",
+    label: "Vocational / Academic",
+    labelUrdu: "تعلیمی و پیشہ ورانہ",
+    icon: "Briefcase",
+    accent: "from-sky-500 to-blue-600",
+    types: [
+      { value: "OCCUPATION", label: "Occupation" },
+      { value: "RETIREMENT", label: "Retirement" },
+      { value: "ELECTED", label: "Elected" },
+      { value: "MILITARY_SERVICE", label: "Military Service" },
+      { value: "ORDINATION", label: "Ordination" },
+      { value: "EDUCATION", label: "Education" },
+      { value: "DEGREE", label: "Degree" },
+      { value: "GRADUATION", label: "Graduation" },
+      { value: "DOCTORATE", label: "Doctorate" },
+    ],
+  },
+  {
+    id: "other",
+    label: "Other",
+    labelUrdu: "دیگر",
+    icon: "MoreHorizontal",
+    accent: "from-slate-500 to-gray-600",
+    types: [
+      { value: "TRAVEL", label: "Travel" },
+      { value: "LEGAL", label: "Legal" },
+      { value: "RESIDENCE", label: "Residence" },
+      { value: "BUSINESS_OPENING", label: "Business Opening" },
+    ],
+  },
+] as const;
+
+/** Title prefixes for the Death form (Part I). */
+export const DEATH_TITLE_PREFIXES = [
+  { value: "HAFIZ", label: "Hafiz", labelUrdu: "حافظ" },
+  { value: "DR", label: "Dr", labelUrdu: "ڈاکٹر" },
+  { value: "PROF", label: "Prof", labelUrdu: "پروفیسر" },
+  { value: "MR", label: "Mr", labelUrdu: "سارہجی" },
+  { value: "MS", label: "Ms", labelUrdu: "مسی" },
+  { value: "MRS", label: "Mrs", labelUrdu: "مہربان خاتون" },
+  { value: "MISS", label: "Miss", labelUrdu: "مسز" },
+] as const;
+
+/** Death form Part III — cause of death (exact 22 options). */
+export const CAUSE_OF_DEATH_OPTIONS = [
+  { value: "NATURAL_OLD_AGE", label: "Natural / Old Age", labelUrdu: "قدرتی / بڑھاپا" },
+  { value: "STROKE", label: "Stroke", labelUrdu: "اسٹروک" },
+  { value: "HEART_ATTACK", label: "Heart Attack", labelUrdu: "ہارٹ ایٹیک" },
+  { value: "CARDIAC_ARREST", label: "Cardiac Arrest", labelUrdu: "کارڈیک آریسٹ" },
+  { value: "CANCER", label: "Cancer", labelUrdu: "کینسر" },
+  { value: "DIABETES", label: "Diabetes", labelUrdu: "شوگر" },
+  { value: "ALZHEIMER", label: "Alzheimer", labelUrdu: "alzhaïmr — بھول کا مرض" },
+  { value: "KIDNEY_FAILURE", label: "Kidney Failure", labelUrdu: "گردے کی ناکامی" },
+  { value: "RESPIRATORY_PNEUMONIA", label: "Respiratory / Pneumonia", labelUrdu: "سانس / نمونیا" },
+  { value: "AIDS_HIV", label: "AIDS/HIV", labelUrdu: "ایڈز / اچو" },
+  { value: "ACCIDENT_INJURY", label: "Accident / Injury", labelUrdu: "کار حادثہ / زخم" },
+  { value: "MURDER_ASSASSINATION", label: "Murder / Assassination", labelUrdu: "قتل / ہلاکت" },
+  { value: "WAR", label: "War", labelUrdu: "جنگ" },
+  { value: "TERRORIST", label: "Terrorist", labelUrdu: "دہشت گردی" },
+  { value: "SUICIDE", label: "Suicide", labelUrdu: "خودکشی" },
+  { value: "GIVING_BIRTH", label: "Giving Birth", labelUrdu: "زچگی" },
+  { value: "STILLBIRTH", label: "Stillbirth", labelUrdu: "بدآمیزی" },
+  { value: "INFANT_DEATH", label: "Infant Death", labelUrdu: "نوزائیدہ کی ہلاکت" },
+  { value: "CHILDHOOD_DISEASE", label: "Childhood Disease", labelUrdu: "بچپن کی بیماری" },
+  { value: "NATURAL_HAZARDS", label: "Natural Hazards", labelUrdu: "قدرتی آفات" },
+  { value: "UNKNOWN_MYSTERY", label: "Unknown / Mystery", labelUrdu: "نامعلوم" },
+  { value: "OTHER", label: "Other", labelUrdu: "دیگر" },
+] as const;
+
+/** Death form Part IV — Namaz e Janaza: after/before which namaz. */
+export const NAMAZ_AFTER_OPTIONS = [
+  { value: "JUMMA", label: "Jumma", labelUrdu: "جمعہ" },
+  { value: "FAJR", label: "Fajr", labelUrdu: "فجر" },
+  { value: "ZOHR", label: "Zohr", labelUrdu: "ظہر" },
+  { value: "ASR", label: "Asr", labelUrdu: "عصر" },
+  { value: "MAGHRIB", label: "Maghrib", labelUrdu: "مغرب" },
+  { value: "ISHA", label: "Isha", labelUrdu: "عشاء" },
+] as const;
+
+export const BLOOD_TYPES = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-", "UNKNOWN"] as const;
+
+export const HAIR_COLORS = [
+  { value: "BLACK", label: "Black", labelUrdu: "کالی" },
+  { value: "BROWN", label: "Brown", labelUrdu: "بھوری" },
+  { value: "BLOND", label: "Blond", labelUrdu: "سنہری" },
+  { value: "GRAY", label: "Gray", labelUrdu: "صفائی" },
+  { value: "RED", label: "Red", labelUrdu: "لال" },
+  { value: "OTHER", label: "Other", labelUrdu: "دیگر" },
+] as const;
+
+export const EYE_COLORS = [
+  { value: "BROWN", label: "Brown", labelUrdu: "بھوری" },
+  { value: "BLACK", label: "Black", labelUrdu: "کالی" },
+  { value: "BLUE", label: "Blue", labelUrdu: "نیلی" },
+  { value: "GREEN", label: "Green", labelUrdu: "سبز" },
+  { value: "HAZEL", label: "Hazel", labelUrdu: "گلابی" },
+  { value: "OTHER", label: "Other", labelUrdu: "دیگر" },
+] as const;
+
+export const DELIVERY_TYPES = [
+  { value: "VAGINAL", label: "Vaginal", labelUrdu: "قدرتی زچگی" },
+  { value: "C_SECTION", label: "C-Section", labelUrdu: "سیکشن" },
+] as const;
+
+export const RELIGIONS = [
+  { value: "ISLAM", label: "Islam", labelUrdu: "اسلام" },
+  { value: "CHRISTIANITY", label: "Christianity", labelUrdu: "عیسائیت" },
+  { value: "HINDUISM", label: "Hinduism", labelUrdu: "ہندو" },
+  { value: "SIKHISM", label: "Sikhism", labelUrdu: "سکھ" },
+  { value: "OTHER", label: "Other", labelUrdu: "دیگر" },
+] as const;
+
+export const GENDERS = [
+  { value: "MALE", label: "Male — لڑکا", labelUrdu: "لڑکا" },
+  { value: "FEMALE", label: "Female — لڑکی", labelUrdu: "لڑکی" },
+  { value: "UNKNOWN", label: "Unknown", labelUrdu: "نامعلوم" },
+] as const;
+
+// ------------------------------------------------------------
+// Digital invitation card themes
+// ------------------------------------------------------------
+
+export type EventCardTheme = "SOBER" | "ELEGANT" | "CELEBRATORY" | "RELIGIOUS" | "ACHIEVEMENT" | "DEFAULT";
+
+const SOBER_EVENT_TYPES = new Set(["DEATH", "BURIAL", "CREMATION", "CHEHLUM", "BARSI"]);
+const ELEGANT_EVENT_TYPES = new Set(["ENGAGEMENT", "NIKKAH", "MEHNDI", "BARAAT", "WALIMA", "RUKHSATI"]);
+const CELEBRATORY_EVENT_TYPES = new Set(["BIRTH", "AQEEQA", "BISMILLAH", "ADOPTED", "FAMILY_REUNION", "WELCOME_HOME"]);
+const RELIGIOUS_EVENT_TYPES = new Set([
+  "QURAN_KHANI", "HIFZ_E_QURAN", "MILAD_UN_NABI", "KHATAM_QURAN",
+  "EID_UL_FITR", "EID_UL_ADHA", "SHAB_E_QADR", "SHAB_E_MERAJ", "RAMADAN_IFTAR",
+]);
+const ACHIEVEMENT_EVENT_TYPES = new Set([
+  "GRADUATION", "DEGREE", "DOCTORATE", "EDUCATION", "JOB_CELEBRATION", "OCCUPATION",
+  "RETIREMENT", "ELECTED", "MILITARY_SERVICE", "ORDINATION", "BUSINESS_OPENING",
+]);
+
+export function getEventCardTheme(type: string): EventCardTheme {
+  if (SOBER_EVENT_TYPES.has(type)) return "SOBER";
+  if (ELEGANT_EVENT_TYPES.has(type)) return "ELEGANT";
+  if (CELEBRATORY_EVENT_TYPES.has(type)) return "CELEBRATORY";
+  if (RELIGIOUS_EVENT_TYPES.has(type)) return "RELIGIOUS";
+  if (ACHIEVEMENT_EVENT_TYPES.has(type)) return "ACHIEVEMENT";
+  return "DEFAULT";
+}
+
+/** Death-family events: the RSVP "Going" action is labeled "Condole". */
+export function isCondolenceEvent(type: string): boolean {
+  return SOBER_EVENT_TYPES.has(type);
+}
+
+// ------------------------------------------------------------
+// RSVP suggested messages / Duas (exact wording from spec)
+// ------------------------------------------------------------
+
+export interface DuaSuggestion {
+  id: string;
+  emoji: string;
+  ar?: string;   // Arabic (rendered RTL)
+  ur?: string;   // Urdu script
+  en?: string;   // English / transliteration
+}
+
+export const DUA_SOBER: DuaSuggestion[] = [
+  { id: "s1", emoji: "🤲", ar: "إِنَّا لِلّهِ وَإِنَّـا إِلَيْهِ رَاجِعونَ", en: "Inna lillahi wa inna ilayhi raji'un" },
+  { id: "s2", emoji: "🕊️", ar: "كُلُّ نَفۡسٍ ذَآٮِٕقَةُ الۡمَوۡتِ‌ؕ", en: "Every soul will taste death" },
+  { id: "s3", emoji: "", ur: "اللہ سبحانہ و تعالیٰ مرحوم کی مغفرت فرمائیں اور انہیں جنت فردوس میں جگہ نصیب فرمائیں", en: "May Allah forgive the deceased and grant them Jannat al-Firdous" },
+  { id: "s4", emoji: "💚", ar: "آمِین ثُمَّ آمِین یَا رَبَّ العَالَمِین" },
+  { id: "s5", emoji: "🤍", ur: "اللّٰہ پاک آپ کو صبرِ جمیل عطا فرمائے", en: "May Allah grant you patience" },
+];
+
+export const DUA_CELEBRATORY: DuaSuggestion[] = [
+  { id: "c1", emoji: "✨", ar: "ماشاء الله تبارك الله", en: "Mashallah Tabarakallah" },
+  { id: "c2", emoji: "🌟", ar: "ماشاء الله لَا قُوَّةَ إِلَّا بِاللَّهِ" },
+  { id: "c3", emoji: "🍼", ar: "بَارَكَ اللهُ لَكَ فِي الْمَوْهُوْبِ لَكَ", en: "May Allah bless you in His gift to you" },
+  { id: "c4", emoji: "🤲", ar: "اللَّهُمَّ أكْثِرْ مَالَهُ، ووَلَدَهُ", en: "O Allah, multiply his wealth and children" },
+  { id: "c5", emoji: "🌸", ur: "آپ کے گھر کے آنگن میں ننھے پھول کی آمد بہت بہت مبارک ہو۔", en: "Congratulations on the arrival of the little flower" },
+  { id: "c6", emoji: "🧚", ur: "خدا کرے یہ ننھی پری/شہزادہ آپ کی زندگی میں لازوال خوشیاں لائے۔" },
+  { id: "c7", emoji: "🤲", ur: "اللہ پاک بچے کے نصیب اچھے کرے اور اسے نیک و صالح بنائے۔" },
+];
+
+export const DUA_GENERAL: DuaSuggestion[] = [
+  { id: "g1", emoji: "", ar: "السَّلَامُ عَلَيْكُمْ / وَعَلَيْكُمُ السَّلَام", en: "Peace be upon you" },
+  { id: "g2", emoji: "🌙", ar: "جَزَاكَ اللّٰهُ خَيْرًا كَثِيرًا", en: "May Allah reward you with much goodness" },
+  { id: "g3", emoji: "💚", ar: "بَارَكَ اللّٰهُ فِيك", en: "May Allah bless you" },
+  { id: "g4", emoji: "🤲", ur: "اللّٰہ آپ کو اس کا بہترین بدلہ دے", en: "May Allah give you the best reward for this" },
+  { id: "g5", emoji: "🏡", ur: "اللّٰہ آپ کے مال و جان میں برکت عطا فرمائے" },
+];
+
+/** Suggested messages for an event type (sober → condolence, birth-family → celebratory, else general). */
+export function getSuggestedDuas(type: string): DuaSuggestion[] {
+  const theme = getEventCardTheme(type);
+  if (theme === "SOBER") return DUA_SOBER;
+  if (theme === "CELEBRATORY") return DUA_CELEBRATORY;
+  return DUA_GENERAL;
 }
 
 export function getMemoryCategoryInfo(category: string) {

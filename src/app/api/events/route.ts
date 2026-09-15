@@ -1,8 +1,10 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 import { eventSchema, eventQuerySchema } from "@/lib/validators";
 import { apiError, apiSuccess, handleApiError, requireUser, auditLog, getIp } from "@/lib/api";
 import { sanitizeInput } from "@/lib/utils";
+import { getEventTypeInfo } from "@/lib/constants";
 
 export async function GET(req: NextRequest) {
   try {
@@ -69,7 +71,7 @@ export async function POST(req: NextRequest) {
       return apiError(400, "ValidationError", parsed.error.flatten().fieldErrors);
     }
 
-    const { title, type, date, endDate, time, location, latitude, longitude, hijriDate, description, coverImage, isPublic, isRecurring, recurringPattern } =
+    const { title, type, date, endDate, time, location, latitude, longitude, hijriDate, description, coverImage, isPublic, isRecurring, recurringPattern, details, invitees } =
       parsed.data;
 
     // Combine date and time if provided
@@ -95,11 +97,28 @@ export async function POST(req: NextRequest) {
         isPublic,
         isRecurring,
         recurringPattern: recurringPattern || null,
+        details: (details ?? undefined) as Prisma.InputJsonValue | undefined,
+        invitees: invitees?.length ? Array.from(new Set(invitees.filter((x) => x !== user.id))) : undefined,
         creatorId: user.id,
       },
     });
 
     await auditLog(user.id, "CREATE_EVENT", "Event", event.id, { title: event.title }, getIp(req.headers));
+
+    // Round 10 — invitees get a notification that opens the digital invitation card
+    const inviteeIds = invitees?.filter((x) => x !== user.id) ?? [];
+    if (inviteeIds.length > 0) {
+      const typeLabel = getEventTypeInfo(type).label;
+      await prisma.notification.createMany({
+        data: inviteeIds.map((userId) => ({
+          userId,
+          type: "event_invite",
+          title: `آپ کو مدعو کیا گیا — ${event.title}`,
+          message: `${user.name ?? "Koi"} ne aap ko "${event.title}" (${typeLabel}) mein shamil kiya hai. Digital card kholein aur apna jawab dein.`,
+          link: `/events/${event.id}/invite`,
+        })),
+      });
+    }
 
     return apiSuccess(event, 201);
   } catch (error) {

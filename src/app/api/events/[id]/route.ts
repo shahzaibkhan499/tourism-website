@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 import { eventSchema } from "@/lib/validators";
 import { apiError, apiSuccess, handleApiError, requireUser, auditLog, getIp } from "@/lib/api";
 import { sanitizeInput } from "@/lib/utils";
@@ -24,18 +25,39 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     });
 
     if (!event) throw new Error("NOT_FOUND");
-    if (!event.isPublic && event.creatorId !== user.id) throw new Error("FORBIDDEN");
+    // Round 10 — invited users can open the digital card even for private events
+    const inviteeIds: string[] = Array.isArray(event.invitees) ? (event.invitees as string[]) : [];
+    const isInvited = inviteeIds.includes(user.id);
+    if (!event.isPublic && event.creatorId !== user.id && !isInvited) throw new Error("FORBIDDEN");
 
     const going = event.rsvps.filter((r) => r.status === "GOING");
     const maybe = event.rsvps.filter((r) => r.status === "MAYBE");
     const notGoing = event.rsvps.filter((r) => r.status === "NOT_GOING");
     const myRsvp = event.rsvps.find((r) => r.userId === user.id) ?? null;
+    const isCreator = event.creatorId === user.id;
 
     return apiSuccess({
       ...event,
       counts: { going: going.length, maybe: maybe.length, notGoing: notGoing.length },
       attendees: going.map((r) => r.user),
-      myRsvp: myRsvp ? { status: myRsvp.status, guests: myRsvp.guests, note: myRsvp.note } : null,
+      isInvited,
+      // Round 10 — the creator sees every RSVP with its message/dua
+      rsvpsFull: isCreator
+        ? event.rsvps
+            .filter((r) => r.userId !== user.id)
+            .map((r) => ({
+              id: r.id,
+              status: r.status,
+              guests: r.guests,
+              note: r.note,
+              message: r.message,
+              createdAt: r.createdAt,
+              user: { id: r.user.id, name: r.user.name, image: r.user.image },
+            }))
+        : undefined,
+      myRsvp: myRsvp
+        ? { status: myRsvp.status, guests: myRsvp.guests, note: myRsvp.note, message: myRsvp.message }
+        : null,
       rsvps: undefined,
     });
   } catch (error) {
@@ -77,6 +99,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     if (parsed.data.isPublic !== undefined) data.isPublic = parsed.data.isPublic;
     if (parsed.data.isRecurring !== undefined) data.isRecurring = parsed.data.isRecurring;
     if (parsed.data.recurringPattern !== undefined) data.recurringPattern = parsed.data.recurringPattern;
+    if (parsed.data.details !== undefined) data.details = (parsed.data.details ?? null) as Prisma.InputJsonValue;
+    if (parsed.data.invitees !== undefined) {
+      data.invitees = Array.from(new Set((parsed.data.invitees ?? []).filter((x) => x !== user.id)));
+    }
 
     const updated = await prisma.event.update({ where: { id }, data });
 

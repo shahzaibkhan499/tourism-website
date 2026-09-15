@@ -194,6 +194,8 @@ model Event {
   isRecurring      Boolean   @default(false)
   recurringPattern String?
   coverImage       String?
+  details          Json?
+  invitees         Json?
   creatorId        String
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
@@ -213,6 +215,7 @@ model EventRSVP {
   status    RSVPStatus @default(PENDING)
   guests    Int        @default(0)
   note      String?
+  message   String?    @db.Text
   createdAt DateTime   @default(now())
   event     Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
   user      User       @relation(fields: [userId], references: [id])
@@ -254,6 +257,26 @@ enum EventType {
   CHAND_RAAT
   EID_MILAN
   OTHER
+  BAPTISM
+  BURIAL
+  CREMATION
+  ADOPTED
+  DIVORCE
+  ANNULMENT
+  QURAN_KHANI
+  HIFZ_E_QURAN
+  OCCUPATION
+  RETIREMENT
+  ELECTED
+  MILITARY_SERVICE
+  ORDINATION
+  EDUCATION
+  DEGREE
+  DOCTORATE
+  TRAVEL
+  LEGAL
+  RESIDENCE
+  BUSINESS_OPENING
 }
 
 enum RSVPStatus {
